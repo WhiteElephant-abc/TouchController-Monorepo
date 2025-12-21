@@ -11,11 +11,13 @@ import top.fifthlight.blazerod.render.GpuIndexBuffer
 import top.fifthlight.blazerod.render.RefCountedGpuBuffer
 import top.fifthlight.blazerod.runtime.resource.MorphTargetGroup
 import top.fifthlight.blazerod.runtime.resource.RenderPrimitive
+import top.fifthlight.blazerod.runtime.resource.RenderPhysicsJoint
 import top.fifthlight.blazerod.runtime.resource.RenderSkin
 import top.fifthlight.blazerod.runtime.resource.RenderTexture
 import java.nio.ByteBuffer
 import top.fifthlight.blazerod.model.Camera as ModelCamera
 import top.fifthlight.blazerod.model.IkTarget as ModelIkTarget
+import top.fifthlight.blazerod.model.RigidBody as ModelRigidBody
 
 data class TextureLoadData(
     val name: String?,
@@ -152,6 +154,11 @@ data class NodeLoadInfo(
             val influence: Influence,
             val transformId: TransformId,
         ) : Component()
+
+        data class RigidBody(
+            val rigidBodyIndex: Int,
+            val rigidBody: ModelRigidBody,
+        ) : Component()
     }
 }
 
@@ -160,7 +167,7 @@ data class GpuLoadVertexData(
     val cpuBuffer: ByteBuffer?,
 )
 
-data class ModelLoadInfo<Texture : Any?, Index : Any, Vertex : Any, Morph : Any>(
+data class ModelLoadInfo<Texture, Index : Any, Vertex : Any, Morph : Any>(
     val textures: List<Deferred<Texture>>,
     val indexBuffers: List<Deferred<Index>>,
     val vertexBuffers: List<Deferred<Vertex>>,
@@ -171,6 +178,7 @@ data class ModelLoadInfo<Texture : Any?, Index : Any, Vertex : Any, Morph : Any>
     val skins: List<RenderSkin>,
     val expressions: List<RenderExpression>,
     val expressionGroups: List<RenderExpressionGroup>,
+    val physicalJoints: List<RenderPhysicsJoint>,
     val renderTransform: NodeTransform?,
 )
 

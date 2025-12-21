@@ -11,12 +11,16 @@ import top.fifthlight.blazerod.model.Camera
 import top.fifthlight.blazerod.model.HumanoidTag
 import top.fifthlight.blazerod.model.NodeId
 import top.fifthlight.blazerod.model.NodeTransform
+import top.fifthlight.blazerod.physics.PhysicsInterface
+import top.fifthlight.blazerod.physics.PhysicsScene
 import top.fifthlight.blazerod.runtime.node.RenderNodeImpl
 import top.fifthlight.blazerod.runtime.node.UpdatePhase
 import top.fifthlight.blazerod.runtime.node.component.IkTargetComponent
 import top.fifthlight.blazerod.runtime.node.component.PrimitiveComponent
 import top.fifthlight.blazerod.runtime.node.component.RenderNodeComponent
+import top.fifthlight.blazerod.runtime.node.component.RigidBodyComponent
 import top.fifthlight.blazerod.runtime.node.forEach
+import top.fifthlight.blazerod.runtime.resource.RenderPhysicsJoint
 import top.fifthlight.blazerod.runtime.resource.RenderSkin
 
 class RenderSceneImpl(
@@ -26,8 +30,15 @@ class RenderSceneImpl(
     override val expressions: List<RenderExpression>,
     override val expressionGroups: List<RenderExpressionGroup>,
     override val cameras: List<Camera>,
+    val physicsJoints: List<RenderPhysicsJoint>,
     val renderTransform: NodeTransform?,
 ) : AbstractRefCount(), RenderScene {
+    companion object {
+        private const val PHYSICS_MAX_SUB_STEP_COUNT = 1
+        private const val PHYSICS_FPS = 120f
+        private const val PHYSICS_TIME_STEP = 1f / PHYSICS_FPS
+    }
+
     override val typeId: String
         get() = "scene"
 
@@ -37,9 +48,11 @@ class RenderSceneImpl(
     val morphedPrimitiveComponents: List<PrimitiveComponent>
     override val ikTargetData: List<RenderScene.IkTargetData>
     val ikTargetComponents: List<IkTargetComponent>
+    val rigidBodyComponents: List<Pair<Int, RigidBodyComponent>>
     override val nodeIdMap: Map<NodeId, RenderNodeImpl>
     override val nodeNameMap: Map<String, RenderNodeImpl>
     override val humanoidTagMap: Map<HumanoidTag, RenderNodeImpl>
+    val physicsScene: PhysicsScene?
 
     init {
         rootNode.increaseReferenceCount()
@@ -48,6 +61,7 @@ class RenderSceneImpl(
         val primitiveComponents = mutableListOf<PrimitiveComponent>()
         val morphedPrimitives = Int2ReferenceOpenHashMap<PrimitiveComponent>()
         val ikTargets = Int2ReferenceOpenHashMap<IkTargetComponent>()
+        val rigidBodyComponents = Int2ReferenceOpenHashMap<Pair<Int, RigidBodyComponent>>()
         val nodeIdMap = mutableMapOf<NodeId, RenderNodeImpl>()
         val nodeNameMap = mutableMapOf<String, RenderNodeImpl>()
         val humanoidTagMap = mutableMapOf<HumanoidTag, RenderNodeImpl>()
@@ -73,6 +87,9 @@ class RenderSceneImpl(
             node.getComponentsOfType(RenderNodeComponent.Type.IkTarget).forEach { component ->
                 ikTargets.put(component.ikIndex, component)
             }
+            node.getComponentsOfType(RenderNodeComponent.Type.RigidBody).forEach { component ->
+                rigidBodyComponents.put(component.rigidBodyIndex, node.nodeIndex to component)
+            }
         }
         this.sortedNodes = nodes
         this.debugRenderNodes = debugRenderNodes
@@ -87,9 +104,20 @@ class RenderSceneImpl(
         this.ikTargetComponents = (0 until ikTargets.size).map {
             ikTargets.get(it) ?: error("Ik target index not found: $it")
         }
+        this.rigidBodyComponents = (0 until rigidBodyComponents.size).map {
+            rigidBodyComponents.get(it) ?: error("Rigid body index not found: $it")
+        }
         this.nodeIdMap = nodeIdMap
         this.nodeNameMap = nodeNameMap
         this.humanoidTagMap = humanoidTagMap
+        this.physicsScene = this.rigidBodyComponents.takeIf {
+            PhysicsInterface.isPhysicsAvailable && it.isNotEmpty()
+        }?.let { components ->
+            PhysicsScene(
+                rigidBodies = components.map { (nodeIndex, component) -> component.rigidBodyData },
+                joints = physicsJoints,
+            )
+        }
     }
 
     private fun executePhase(instance: ModelInstanceImpl, phase: UpdatePhase) {
@@ -98,7 +126,35 @@ class RenderSceneImpl(
         }
     }
 
-    fun debugRender(instance: ModelInstanceImpl, viewProjectionMatrix: Matrix4fc, bufferSource: MultiBufferSource) {
+    private fun updatePhysics(
+        instance: ModelInstanceImpl,
+        time: Float, // For physics, in seconds
+    ) {
+        instance.physicsData?.let { data ->
+            if (data.lastPhysicsTime < 0) {
+                data.lastPhysicsTime = time
+                return@let
+            }
+            val timeStep = time - data.lastPhysicsTime
+            if (timeStep <= 0f) {
+                return@let
+            }
+
+            data.lastPhysicsTime = time
+
+            executePhase(instance, UpdatePhase.PhysicsUpdatePre)
+            data.world.step(timeStep, PHYSICS_MAX_SUB_STEP_COUNT, PHYSICS_TIME_STEP)
+            executePhase(instance, UpdatePhase.PhysicsUpdatePost)
+            executePhase(instance, UpdatePhase.GlobalTransformPropagation)
+        }
+    }
+
+    fun debugRender(
+        instance: ModelInstanceImpl,
+        viewProjectionMatrix: Matrix4fc,
+        bufferSource: MultiBufferSource,
+        time: Float,
+    ) {
         if (debugRenderNodes.isEmpty()) {
             return
         }
@@ -107,26 +163,52 @@ class RenderSceneImpl(
             executePhase(instance, UpdatePhase.IkUpdate)
             executePhase(instance, UpdatePhase.InfluenceTransformUpdate)
             executePhase(instance, UpdatePhase.GlobalTransformPropagation)
-            executePhase(instance, UpdatePhase.CameraUpdate)
+            if (instance.physicsData != null) {
+                updatePhysics(instance, time)
+                executePhase(instance, UpdatePhase.GlobalTransformPropagation)
+            }
+        } else if (instance.physicsData != null) {
+            executePhase(instance, UpdatePhase.GlobalTransformPropagation)
+            updatePhysics(instance, time)
         }
         UpdatePhase.DebugRender.acquire(viewProjectionMatrix, bufferSource).use {
             executePhase(instance, it)
         }
     }
 
-    fun updateRenderData(instance: ModelInstanceImpl) {
-        if (instance.modelData.undirtyNodeCount == nodes.size) {
-            return
+    fun updateRenderData(instance: ModelInstanceImpl, time: Float) {
+        if (instance.modelData.undirtyNodeCount != nodes.size) {
+            executePhase(instance, UpdatePhase.GlobalTransformPropagation)
+            executePhase(instance, UpdatePhase.IkUpdate)
+            executePhase(instance, UpdatePhase.InfluenceTransformUpdate)
+            executePhase(instance, UpdatePhase.GlobalTransformPropagation)
+            if (instance.physicsData != null) {
+                updatePhysics(instance, time)
+                executePhase(instance, UpdatePhase.GlobalTransformPropagation)
+            }
+            executePhase(instance, UpdatePhase.RenderDataUpdate)
+            executePhase(instance, UpdatePhase.CameraUpdate)
+        } else if (instance.physicsData != null) {
+            executePhase(instance, UpdatePhase.GlobalTransformPropagation)
+            updatePhysics(instance, time)
+            executePhase(instance, UpdatePhase.RenderDataUpdate)
         }
+    }
+
+    internal fun attachToInstance(instance: ModelInstanceImpl) {
         executePhase(instance, UpdatePhase.GlobalTransformPropagation)
         executePhase(instance, UpdatePhase.IkUpdate)
         executePhase(instance, UpdatePhase.InfluenceTransformUpdate)
         executePhase(instance, UpdatePhase.GlobalTransformPropagation)
-        executePhase(instance, UpdatePhase.RenderDataUpdate)
-        executePhase(instance, UpdatePhase.CameraUpdate)
+        for (node in nodes) {
+            for (component in node.components) {
+                component.onAttached(instance, node)
+            }
+        }
     }
 
     override fun onClosed() {
         rootNode.decreaseReferenceCount()
+        physicsScene?.close()
     }
 }

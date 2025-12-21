@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import net.minecraft.client.Minecraft
 import net.minecraft.client.player.AbstractClientPlayer
-import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.entity.state.PlayerRenderState
 import org.joml.Matrix4f
@@ -20,6 +19,7 @@ import java.lang.ref.WeakReference
 import java.util.*
 
 object PlayerRenderer {
+    private const val NANOSECONDS_PER_SECOND = 1_000_000_000L
     private var renderingWorld = false
 
     private var prevModelItem = WeakReference<ModelInstanceManager.ModelInstanceItem.Model?>(null)
@@ -92,15 +92,16 @@ object PlayerRenderer {
         val controller = entry.controller
         val instance = entry.instance
 
+        val time = System.nanoTime().toFloat() / NANOSECONDS_PER_SECOND.toFloat()
         controller.apply(uuid, instance, vanillaState)
-        instance.updateRenderData()
+        instance.updateRenderData(time)
 
         val backupItem = matrixStack.last().copy()
         matrixStack.popPose()
         matrixStack.pushPose()
 
         if (ArmorStandClient.instance.debugBone) {
-            instance.debugRender(matrixStack.last().pose(), consumers)
+            instance.debugRender(matrixStack.last().pose(), consumers, time)
         } else {
             matrix.set(matrixStack.last().pose())
             matrix.scale(ConfigHolder.config.value.modelScale)

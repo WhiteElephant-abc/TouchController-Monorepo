@@ -2,10 +2,7 @@ load("//rule:merge_library.bzl", "kt_merge_library")
 
 kt_merge_library(
     name = "layout",
-    srcs = [
-        "GpuDataLayout.kt",
-        "LayoutStrategy.kt",
-    ],
+    srcs = glob(["*.kt"]),
     merge_deps = [
         "//blazerod/render/main/util/math",
     ],
