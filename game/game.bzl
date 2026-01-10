@@ -14,6 +14,7 @@ def _game_version_impl(
         version,
         client,
         client_mappings,
+        client_parchment,
         client_assets,
         client_libraries,
         server,
@@ -38,6 +39,7 @@ def _game_version_impl(
     sodium_named = name + "_sodium_named"
     iris_named = name + "_iris_named"
     vanilla_client = name + "_vanilla_client"
+    parchment_input = name + "_parchment_input"
 
     if intermediary:
         extract_jar(
@@ -51,7 +53,6 @@ def _game_version_impl(
             name = intermediary_input,
             file = ":" + intermediary_mapping,
             format = "tinyv2",
-            source_namespace = "official",
         )
 
     if client_mappings:
@@ -63,7 +64,13 @@ def _game_version_impl(
                 "source": "named",
                 "target": "official",
             },
-            source_namespace = "official",
+        )
+
+    if client_parchment:
+        merge_mapping_input(
+            name = parchment_input,
+            file = client_parchment,
+            format = "parchment",
         )
 
     decompile_jar(
@@ -72,17 +79,30 @@ def _game_version_impl(
     )
 
     if intermediary or client_mappings:
-        intermediary_input_item = [":" + intermediary_input] if intermediary else []
-        named_input_item = [":" + named_input] if client_mappings else []
+        inputs = {}
+        if intermediary:
+            inputs["intermediary"] = ":" + intermediary_input
+        if client_mappings:
+            inputs["mojmap"] = ":" + named_input
+        if client_parchment:
+            inputs["parchment"] = ":" + parchment_input
+
+        operations = []
+        if client_mappings:
+            operations.append(">mojmap")
+            if client_parchment:
+                operations.append(">parchment")
+            operations.append("changeSrc(official)")
+
+        if intermediary:
+            operations.append(">intermediary")
+            operations.append("completeNamespace(named -> intermediary)")
 
         merge_mapping(
             name = merged_mapping,
-            complete_namespace = {
-                "named": "intermediary",
-            },
-            inputs = intermediary_input_item + named_input_item,
+            inputs = inputs,
             output = "merged.tiny",
-            output_source_namespace = "official",
+            operations = operations,
             visibility = visibility,
         )
 
@@ -115,6 +135,7 @@ def _game_version_impl(
         decompile_jar(
             name = client_named_source,
             inputs = [":" + client_named],
+            mappings = ":" + merged_mapping,
         )
 
     if neoforge:
@@ -229,6 +250,12 @@ game_version = macro(
             mandatory = False,
             allow_single_file = True,
             doc = "Client mappings file",
+            configurable = False,
+        ),
+        "client_parchment": attr.label(
+            mandatory = False,
+            allow_single_file = True,
+            doc = "Parchment mappings file",
             configurable = False,
         ),
         "client_assets": attr.label(

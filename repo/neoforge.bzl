@@ -13,7 +13,7 @@ _mojang_repository_url = "https://libraries.minecraft.net"
 
 def _convert_maven_coordinate_to_url_with_repo(repository, maven_coordinate, extension = "jar"):
     # Ugly but works
-    if "mojang" in maven_coordinate:
+    if "mojang" in maven_coordinate or "vecmath" in maven_coordinate:
         return _convert_maven_coordinate_to_url(_mojang_repository_url, maven_coordinate, extension)
     else:
         return _convert_maven_coordinate_to_url(repository, maven_coordinate, extension)
@@ -24,6 +24,7 @@ def _neoforge_repo_impl(rctx):
     version_universal_sha256 = rctx.attr.universal_sha256
     version_sources_sha256 = rctx.attr.sources_sha256
     version_legacy = rctx.attr.legacy
+    version_java_target = rctx.attr.java_target
 
     neoforge_userdev_zip = "neoforge.zip"
     neoforge_universal_zip = "neoforge_unversal.jar"
@@ -126,7 +127,7 @@ def _neoforge_repo_impl(rctx):
         '        ":neoforge_universal",',
         "        %s" % neoforge_libraries,
         "    ],",
-        '    javacopts = ["-XepDisableAllChecks", "-nowarn", "-g", "-proc:none", "-implicit:none"],',
+        '    javacopts = ["-XepDisableAllChecks", "-nowarn", "-g", "-proc:none", "-implicit:none", "--release", "%s"],' % version_java_target,
         ")",
         "",
         "remove_manifest(",
@@ -166,6 +167,10 @@ def _neoforge_repo_impl(rctx):
 _neoforge_repo = repository_rule(
     implementation = _neoforge_repo_impl,
     attrs = {
+        "java_target": attr.int(
+            doc = "Java target",
+            mandatory = True,
+        ),
         "version": attr.string(
             doc = "Version of NeoForge",
             mandatory = True,
@@ -197,9 +202,10 @@ _neoforge_repo = repository_rule(
 
 def _neoforge_pin_impl(rctx):
     url_lines = ['"%s"' % url for url in rctx.attr.urls]
+    pin_target = str(rctx.path(rctx.attr.pin_file)) if rctx.attr.pin_file else "neoforge_pin.txt"
     rctx.template("PinGenerator.java", rctx.attr._pinner_source, {
         "/*INJECT HERE*/": ", ".join(url_lines),
-        "/*OUTPUT NAME*/": "neoforge_pin",
+        "$PIN_TARGET": pin_target,
     })
 
     build_bazel_contents = [
@@ -220,6 +226,11 @@ neoforge_pin = repository_rule(
         "urls": attr.string_list(
             doc = "List of URLs to pin",
         ),
+        "pin_file": attr.label(
+            doc = "Pin file output path",
+            allow_single_file = True,
+            mandatory = False,
+        ),
         "_pinner_source": attr.label(
             allow_single_file = [".java"],
             default = "@//repo/neoform/pin_generator:PinGenerator.java",
@@ -229,6 +240,10 @@ neoforge_pin = repository_rule(
 
 version = tag_class(
     attrs = {
+        "java_target": attr.int(
+            doc = "Java target",
+            mandatory = True,
+        ),
         "version": attr.string(
             doc = "Version of NeoForge",
             mandatory = True,
@@ -289,9 +304,12 @@ def _neoforge_impl(mctx):
                     fail("NeoForm version %s already exists with a different sources SHA-256" % version.version)
                 elif versions[version.version].joined_patched_sources != version.joined_patched_sources:
                     fail("NeoForm version %s already exists with a different joined patched sources" % version.version)
+                elif versions[version.version].java_target != version.java_target:
+                    fail("NeoForm version %s already exists with a different java target" % version.version)
             else:
                 versions[version.version] = {
                     "version": version.version,
+                    "java_target": version.java_target,
                     "legacy": version.legacy,
                     "userdev_sha256": version.userdev_sha256,
                     "universal_sha256": version.universal_sha256,
@@ -314,6 +332,7 @@ def _neoforge_impl(mctx):
         version_name = version["version"]
         version_userdev_sha256 = version["userdev_sha256"]
         version_legacy = version["legacy"]
+        version_java_target = version["java_target"]
         output_prefix = "neoforge/%s" % version_name
 
         config_link = _config_link_legacy if version_legacy else _config_link
@@ -331,8 +350,9 @@ def _neoforge_impl(mctx):
         repo_name = "%s_%s" % (repository_prefix, _convert_maven_coordinate(version_name))
         _neoforge_repo(
             name = repo_name,
-            legacy = version_legacy,
             version = version_name,
+            java_target = version_java_target,
+            legacy = version_legacy,
             userdev_sha256 = version_userdev_sha256,
             universal_sha256 = version["universal_sha256"],
             sources_sha256 = version["sources_sha256"],
@@ -366,6 +386,7 @@ def _neoforge_impl(mctx):
             )
             for library in libraries
         ],
+        pin_file = pin_file,
     )
 
 neoforge = module_extension(
