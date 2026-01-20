@@ -114,6 +114,9 @@ class AssimpLoader : ModelFileLoader {
         private val keyFrameSplit: List<Pair<String, Int>> =
             param.loaderParams["keyFrameSplit"] as? List<Pair<String, Int>> ?: listOf()
 
+        private val useVanillaMaterial: Boolean =
+            param.loaderParams["useVanillaMaterial"] as? Boolean ?: false
+
         companion object {
             private val EMPTY_LOAD_RESULT = LoadResult(
                 metadata = null,
@@ -211,17 +214,31 @@ class AssimpLoader : ModelFileLoader {
                 val diffuseColor = material.getColor(Assimp.AI_MATKEY_COLOR_DIFFUSE, 0, 0)
                 val diffuseTexture = material.getTexturePath(Assimp.aiTextureType_DIFFUSE, 0)
 
-                Material.Unlit(
-                    name = "Material #${index}",
-                    baseColor = diffuseColor ?: RgbaColor(1f, 1f, 1f, 1f),
-                    baseColorTexture = diffuseTexture
-                        ?.let { loadTexture(it).getOrNull() }
-                        ?.let { texture ->
-                            Material.TextureInfo(
-                                texture = texture,
-                            )
-                        },
-                )
+                if (useVanillaMaterial) {
+                    Material.Vanilla(
+                        name = "Material #${index}",
+                        baseColor = diffuseColor ?: RgbaColor(1f, 1f, 1f, 1f),
+                        baseColorTexture = diffuseTexture
+                            ?.let { loadTexture(it).getOrNull() }
+                            ?.let { texture ->
+                                Material.TextureInfo(
+                                    texture = texture,
+                                )
+                            },
+                    )
+                } else {
+                    Material.Unlit(
+                        name = "Material #${index}",
+                        baseColor = diffuseColor ?: RgbaColor(1f, 1f, 1f, 1f),
+                        baseColorTexture = diffuseTexture
+                            ?.let { loadTexture(it).getOrNull() }
+                            ?.let { texture ->
+                                Material.TextureInfo(
+                                    texture = texture,
+                                )
+                            },
+                    )
+                }
             }
         }
 
@@ -846,7 +863,7 @@ class AssimpLoader : ModelFileLoader {
         private val seekProc: AIFileSeek,
     ) : AIFile(address, null) {
         companion object {
-            fun create(buffer: ByteBuffer) = MemoryUtil.memAllocPointer(SIZEOF).let {
+            fun create(buffer: ByteBuffer) = MemoryUtil.nmemAlignedAlloc(ALIGNOF.toLong(), SIZEOF.toLong()).let {
                 val readProc = AIFileReadProc.create { _, dstAddress, size, count ->
                     val availableItems = buffer.remaining() / size
                     val readItems = min(availableItems, count)
@@ -885,11 +902,12 @@ class AssimpLoader : ModelFileLoader {
                     buffer.position(newPosition)
                     Assimp.aiReturn_SUCCESS
                 }
-                BufferBackedFile(it.address(), readProc, tellProc, fileSizeProc, seekProc)
+                BufferBackedFile(it, readProc, tellProc, fileSizeProc, seekProc)
             }
         }
 
         init {
+            clear()
             ReadProc(readProc)
             TellProc(tellProc)
             FileSizeProc(fileSizeProc)
@@ -897,11 +915,11 @@ class AssimpLoader : ModelFileLoader {
         }
 
         override fun free() {
-            super.free()
             readProc.free()
             tellProc.free()
             fileSizeProc.free()
             seekProc.free()
+            super.free()
         }
     }
 
@@ -911,7 +929,7 @@ class AssimpLoader : ModelFileLoader {
         private val closeProc: AIFileCloseProc,
     ) : AIFileIO(address, null) {
         companion object {
-            fun create(context: LoadContext) = MemoryUtil.memAllocPointer(SIZEOF).let {
+            fun create(context: LoadContext) = MemoryUtil.nmemAlignedAlloc(ALIGNOF.toLong(), SIZEOF.toLong()).let {
                 // FIXME: get away from this map
                 val files = mutableMapOf<Long, BufferBackedFile>()
                 val openProc = AIFileOpenProc.create { _, fileNameAddress, _ ->
@@ -935,7 +953,7 @@ class AssimpLoader : ModelFileLoader {
                 val closeProc = AIFileCloseProc.create { _, fileAddress ->
                     files.remove(fileAddress)?.close()
                 }
-                ContextFileIO(it.address(), openProc, closeProc)
+                ContextFileIO(it, openProc, closeProc)
             }
         }
 
@@ -945,10 +963,9 @@ class AssimpLoader : ModelFileLoader {
         }
 
         override fun free() {
-            super.free()
             openProc.free()
             closeProc.free()
-            MemoryUtil.nmemFree(address)
+            super.free()
         }
     }
 
@@ -981,8 +998,7 @@ class AssimpLoader : ModelFileLoader {
         return if (context != LoadContext.Empty) {
             val plainPath = path.last()
             val context = LoadContextWrapper(plainPath, path, context)
-            val fileIO = ContextFileIO.create(context)
-            fileIO.use {
+            ContextFileIO.create(context).use { fileIO ->
                 Context(
                     scene = Assimp.aiImportFileEx(plainPath.toString(), flags, fileIO) ?: throw AssimpLoadException(
                         Assimp.aiGetErrorString() ?: "Unknown error"

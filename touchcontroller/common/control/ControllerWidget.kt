@@ -8,22 +8,20 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import top.fifthlight.combine.data.Identifier
-import top.fifthlight.combine.data.LocalTextFactory
-import top.fifthlight.combine.data.TextFactory
 import top.fifthlight.combine.data.TextFactoryFactory
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.IntSize
 import top.fifthlight.touchcontroller.assets.Texts
-import top.fifthlight.touchcontroller.common.util.uuid.fastRandomUuid
+import top.fifthlight.touchcontroller.common.config.preset.info.PresetControlInfo
 import top.fifthlight.touchcontroller.common.layout.Context
 import top.fifthlight.touchcontroller.common.layout.align.Align
-import kotlin.math.round
+import top.fifthlight.touchcontroller.common.util.uuid.fastRandomUuid
 import kotlin.uuid.Uuid
 
 @Immutable
 @Serializable
-sealed class ControllerWidget {
+abstract class ControllerWidget {
     abstract val id: Uuid
     abstract val name: Name
     abstract val align: Align
@@ -42,17 +40,11 @@ sealed class ControllerWidget {
         @SerialName("literal")
         data class Literal(val string: String) : Name()
 
-        fun getText(textFactory: TextFactory) = when (this) {
+        fun getText() = when (this) {
             is Translatable -> textFactory.of(identifier)
             is Literal -> textFactory.literal(string)
         }
 
-        @Composable
-        fun getText() = getText(LocalTextFactory.current)
-
-        fun asString(textFactory: TextFactory) = getText(textFactory).string
-
-        @Composable
         fun asString() = getText().string
     }
 
@@ -60,11 +52,15 @@ sealed class ControllerWidget {
         val getValue: (Config) -> Value,
         val setValue: (Config, Value) -> Config,
     ) {
+        interface ConfigContext {
+            val presetControlInfo: PresetControlInfo?
+        }
+
         @Composable
         abstract fun controller(
             modifier: Modifier,
             config: ControllerWidget,
-            currentPreset: LayoutPreset?,
+            context: ConfigContext,
             onConfigChanged: (ControllerWidget) -> Unit,
         )
     }
@@ -94,7 +90,7 @@ sealed class ControllerWidget {
                 messageFormatter = { opacity ->
                     textFactory.format(
                         Texts.WIDGET_GENERAL_PROPERTY_OPACITY,
-                        round(opacity * 100f).toInt().toString()
+                        kotlin.math.round(opacity * 100f).toInt().toString()
                     )
                 }
             )

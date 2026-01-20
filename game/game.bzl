@@ -12,8 +12,12 @@ def _game_version_impl(
         name,
         visibility,
         version,
+        split_source_namespace,
         client,
+        client_legacy,
         client_mappings,
+        client_legacy_assets,
+        client_native_manifest,
         client_parchment,
         client_assets,
         client_libraries,
@@ -21,10 +25,12 @@ def _game_version_impl(
         server_legacy,
         neoforge,
         intermediary,
+        yarn,
         sodium_intermediary,
         iris_intermediary):
     intermediary_mapping = name + "_intermediary_mapping"
     intermediary_input = name + "_intermediary_input"
+    yarn_mapping = name + "_yarn_mapping"
     named_input = name + "_named_input"
     merged_mapping = name + "_merged_mapping"
     mapping_jar = name + "_mapping_jar"
@@ -40,6 +46,9 @@ def _game_version_impl(
     iris_named = name + "_iris_named"
     vanilla_client = name + "_vanilla_client"
     parchment_input = name + "_parchment_input"
+
+    client_namespace = "client" if split_source_namespace else "official"
+    server_namespace = "server" if split_source_namespace else "official"
 
     if intermediary:
         extract_jar(
@@ -65,8 +74,25 @@ def _game_version_impl(
                 "target": "official",
             },
         )
+    elif yarn:
+        if not intermediary:
+            fail("Yarn requires intermediary")
+        extract_jar(
+            name = yarn_mapping,
+            entry_path = "mappings/mappings.tiny",
+            filename = "yarn.tiny",
+            input = yarn,
+        )
+
+        merge_mapping_input(
+            name = named_input,
+            file = ":" + yarn_mapping,
+            format = "tinyv2",
+        )
 
     if client_parchment:
+        if yarn:
+            fail("Parchment cannot be used with yarn")
         merge_mapping_input(
             name = parchment_input,
             file = client_parchment,
@@ -95,14 +121,17 @@ def _game_version_impl(
     decompile_jar(
         name = client_source,
         inputs = [client],
+        tags = ["manual"],
     )
 
-    if intermediary or client_mappings:
+    if client_mappings or yarn:
         inputs = {}
-        if intermediary:
-            inputs["intermediary"] = ":" + intermediary_input
         if client_mappings:
             inputs["mojmap"] = ":" + named_input
+        elif yarn:
+            inputs["yarn"] = ":" + named_input
+        if intermediary:
+            inputs["intermediary"] = ":" + intermediary_input
         if client_parchment:
             inputs["parchment"] = ":" + parchment_input
 
@@ -112,10 +141,15 @@ def _game_version_impl(
             if client_parchment:
                 operations.append(">parchment")
             operations.append("changeSrc(official)")
-
-        if intermediary:
+            if intermediary:
+                operations.append(">intermediary")
+                operations.append("completeNamespace(named -> intermediary)")
+        elif yarn:
             operations.append(">intermediary")
+            operations.append("changeSrc(intermediary)")
+            operations.append(">yarn")
             operations.append("completeNamespace(named -> intermediary)")
+            operations.append("changeSrc(%s)" % client_namespace)
 
         merge_mapping(
             name = merged_mapping,
@@ -133,18 +167,19 @@ def _game_version_impl(
             visibility = visibility,
         )
 
-        remap_jar(
-            name = client_intermediary,
-            from_namespace = "official",
-            inputs = [client],
-            mapping = ":" + merged_mapping,
-            to_namespace = "intermediary",
-            visibility = visibility,
-        )
+        if intermediary:
+            remap_jar(
+                name = client_intermediary,
+                from_namespace = client_namespace,
+                inputs = [client],
+                mapping = ":" + merged_mapping,
+                to_namespace = "intermediary",
+                visibility = visibility,
+            )
 
         remap_jar(
             name = client_named,
-            from_namespace = "official",
+            from_namespace = client_namespace,
             inputs = [client],
             mapping = ":" + merged_mapping,
             to_namespace = "named",
@@ -155,6 +190,7 @@ def _game_version_impl(
             name = client_named_source,
             inputs = [":" + client_named],
             mappings = ":" + merged_mapping,
+            tags = ["manual"],
         )
 
     if neoforge:
@@ -164,32 +200,33 @@ def _game_version_impl(
             visibility = visibility,
         )
 
-    if server_legacy:
-        native.alias(
-            name = server_jar,
-            actual = server,
-            visibility = visibility,
-        )
-    else:
-        extract_jar(
-            name = server_jar_file,
-            entry_path = "META-INF/versions/%s/server-%s.jar" % (version, version),
-            filename = "_minecraft/server.jar",
-            input = server,
-        )
+    if server:
+        if server_legacy:
+            native.alias(
+                name = server_jar,
+                actual = server,
+                visibility = visibility,
+            )
+        else:
+            extract_jar(
+                name = server_jar_file,
+                entry_path = "META-INF/versions/%s/server-%s.jar" % (version, version),
+                filename = "_minecraft/server.jar",
+                input = server,
+            )
 
-        java_import(
-            name = server_jar,
-            jars = [
-                ":" + server_jar_file,
-            ],
-            visibility = visibility,
-        )
+            java_import(
+                name = server_jar,
+                jars = [
+                    ":" + server_jar_file,
+                ],
+                visibility = visibility,
+            )
 
-    if intermediary:
+    if server and (client_mappings or yarn):
         remap_jar(
             name = server_named,
-            from_namespace = "official",
+            from_namespace = server_namespace,
             inputs = [":" + server_jar],
             mapping = ":" + merged_mapping,
             to_namespace = "named",
@@ -232,7 +269,7 @@ def _game_version_impl(
             data = [
                 "@minecraft_assets//:assets",
                 client_assets,
-            ],
+            ] + [client_native_manifest] if client_native_manifest else [],
             env = {
                 "LANG": "en_US.UTF8",
             },
@@ -240,9 +277,11 @@ def _game_version_impl(
                 "-Ddev.launch.version=%s" % version,
                 "-Ddev.launch.type=client",
                 "-Ddev.launch.assetsPath=$(rlocationpath @minecraft_assets//:assets)",
-                "-Ddev.launch.mainClass=net.minecraft.client.main.Main",
+                "-Ddev.launch.mainClass=%s" % ("net.minecraft.client.Minecraft" if client_legacy else "net.minecraft.client.main.Main"),
+                "-Ddev.launch.legacyAssets=%s" % ("true" if client_legacy_assets else "false"),
+                "-Ddev.launch.legacyHome=%s" % ("true" if client_legacy else "false"),
                 "-Xmx4G",
-            ],
+            ] + ["-Ddev.launch.nativeManifest=$(rlocationpath %s)" % client_native_manifest] if client_native_manifest else [],
             main_class = "top.fifthlight.fabazel.devlaunchwrapper.DevLaunchWrapper",
             runtime_deps = [
                 client,
@@ -259,16 +298,39 @@ game_version = macro(
             doc = "Minecraft version",
             configurable = False,
         ),
+        "split_source_namespace": attr.bool(
+            mandatory = False,
+            doc = "Use 'client' and 'server' source namespace in mappings. Used by babric.",
+            default = False,
+            configurable = False,
+        ),
         "client": attr.label(
             mandatory = True,
             allow_single_file = True,
             doc = "Client JAR file",
             configurable = False,
         ),
+        "client_legacy": attr.bool(
+            default = False,
+            doc = "Use legacy main class",
+            configurable = False,
+        ),
         "client_mappings": attr.label(
             mandatory = False,
             allow_single_file = True,
             doc = "Client mappings file",
+            configurable = False,
+        ),
+        "client_legacy_assets": attr.bool(
+            mandatory = False,
+            default = False,
+            doc = "Use legacy assets",
+            configurable = False,
+        ),
+        "client_native_manifest": attr.label(
+            mandatory = False,
+            allow_single_file = ["json"],
+            doc = "Client natives file",
             configurable = False,
         ),
         "client_parchment": attr.label(
@@ -288,7 +350,7 @@ game_version = macro(
             configurable = False,
         ),
         "server": attr.label(
-            mandatory = True,
+            mandatory = False,
             allow_single_file = True,
             doc = "Server JAR file",
             configurable = False,
@@ -307,6 +369,11 @@ game_version = macro(
         "intermediary": attr.label(
             mandatory = False,
             doc = "Intermediary mappings",
+            configurable = False,
+        ),
+        "yarn": attr.label(
+            mandatory = False,
+            doc = "Yarn mappings. For those versions without official mapping.",
             configurable = False,
         ),
         "sodium_intermediary": attr.label(
