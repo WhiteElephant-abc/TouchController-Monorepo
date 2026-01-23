@@ -25,6 +25,7 @@ jobs:
       - name: Build
         run: |
           bazel build \
+            -c opt \
             --verbose_failures \
             //armorstand:mod_fabric \
             //armorstand:mod_neoforge \
