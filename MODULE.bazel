@@ -91,6 +91,7 @@ bazel_dep(name = "libffi", version = "3.4.7.bcr.3")
 bazel_dep(name = "bullet", version = "3.26.0-rc0.bcr.1")
 bazel_dep(name = "glfw", version = "3.4.0.bcr.1")
 bazel_dep(name = "glm", version = "1.0.3")
+bazel_dep(name = "assimp", version = "6.0.3")
 
 # Patch libexpat to add windows support
 bazel_dep(name = "libexpat", version = "2.7.1.bcr1")
