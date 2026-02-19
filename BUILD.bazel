@@ -9,6 +9,13 @@ config_setting(
     },
 )
 
+config_setting(
+    name = "config_fastbuild",
+    values = {
+        "compilation_mode": "fastbuild",
+    },
+)
+
 kt_compiler_plugin(
     name = "kotlin_serialization_plugin",
     compile_phase = True,
