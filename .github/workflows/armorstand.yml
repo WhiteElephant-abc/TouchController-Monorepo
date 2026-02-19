@@ -45,6 +45,17 @@ jobs:
             --verbose_failures \
             //blazerod/model:test \
             //blazerod/render:test
+      - name: Locate Artifacts
+        run: |
+          echo "Bazel Bin Info:"
+          bazel info bazel-bin
+          echo "Searching for mod_*.jar:"
+          find bazel-bin -name "mod_*.jar"
+          echo "Searching for blazerod_*.jar:"
+          find bazel-bin -name "blazerod_*.jar"
+          echo "Listing armorstand directory:"
+          ls -R bazel-bin/armorstand || echo "armorstand dir not found"
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
