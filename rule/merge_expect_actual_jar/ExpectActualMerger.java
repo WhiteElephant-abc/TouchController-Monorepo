@@ -12,11 +12,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.jar.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class ExpectActualMerger implements AutoCloseable {
     private static final long DOS_EPOCH = 315532800000L;
 
-    private static void setJarEntryTime(JarEntry entry) {
+    private static void setZipEntryTime(ZipEntry entry) {
         entry.setCreationTime(FileTime.fromMillis(DOS_EPOCH));
         entry.setLastAccessTime(FileTime.fromMillis(DOS_EPOCH));
         entry.setLastModifiedTime(FileTime.fromMillis(DOS_EPOCH));
@@ -103,11 +105,17 @@ public class ExpectActualMerger implements AutoCloseable {
         for (var entry : environment.getManifestEntries().entrySet()) {
             manifest.getMainAttributes().putValue(entry.getKey(), entry.getValue());
         }
-        try (var outputStream = new JarOutputStream(Files.newOutputStream(outputPath), manifest)) {
+        try (var outputStream = new ZipOutputStream(Files.newOutputStream(outputPath))) {
+            var manifestEntry = new ZipEntry(JarFile.MANIFEST_NAME);
+            setZipEntryTime(manifestEntry);
+            outputStream.putNextEntry(manifestEntry);
+            manifest.write(outputStream);
+            outputStream.closeEntry();
+
             for (var entry : entries) {
                 var value = entry.getValue();
-                var outputEntry = new JarEntry(entry.getKey());
-                setJarEntryTime(outputEntry);
+                var outputEntry = new ZipEntry(entry.getKey());
+                setZipEntryTime(outputEntry);
                 outputStream.putNextEntry(outputEntry);
                 value.write(outputStream);
                 outputStream.closeEntry();
