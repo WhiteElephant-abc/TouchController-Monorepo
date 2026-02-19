@@ -62,7 +62,7 @@ fabric_merge_jij(
         "//blazerod/model/model-pmx": "blazerod-model-formats-pmx:=",
         "//blazerod/model/model-vmd": "blazerod-model-formats-vmd:=",
         "//blazerod/model/model-bedrock": "blazerod-model-formats-bedrock:=",
-        "//blazerod/render:render_fabric_merged": "blazerod-render:=",
+        "//blazerod/render/versions/1.21.8/fabric": "blazerod-render:=",
         "//blazerod:blazerod_fabric_without_jij": "blazerod:=",
     },
 )
@@ -84,7 +84,7 @@ neoforge_merge_jij(
         "//blazerod/model/model-pmx": "top.fifthlight.blazerod:blazerod-model-formats-pmx:%s:" % blazerod_version,
         "//blazerod/model/model-vmd": "top.fifthlight.blazerod:blazerod-model-formats-vmd:%s:" % blazerod_version,
         "//blazerod/model/model-bedrock": "top.fifthlight.blazerod:blazerod-model-formats-bedrock:%s:" % blazerod_version,
-        "//blazerod/render:render_neoforge_merged": "top.fifthlight.blazerod:blazerod-render:%s:" % blazerod_version,
+        "//blazerod/render/versions/1.21.8/neoforge": "top.fifthlight.blazerod:blazerod-render:%s:" % blazerod_version,
         "//blazerod:blazerod_neoforge_without_jij": "top.fifthlight.blazerod:blazerod:%s:" % blazerod_version,
     },
 )
@@ -126,6 +126,7 @@ java_binary(
         ":mod_fabric_unmapped",
         "//armorstand/fabric_client:remapped_deps",
         "//blazerod:blazerod_fabric_without_jij",
+        "//blazerod/render/versions/1.21.8/fabric:fabric_unmapped_unmerged",
         "//game/1.21.8:game_iris_named",
         "//game/1.21.8:game_mapping_jar",
         "//game/1.21.8:game_sodium_named",

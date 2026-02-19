@@ -1,5 +1,7 @@
 load("//blazerod:properties.bzl", "blazerod_version", "home_page", "issue_tracker", "license", "sources_page")
+load("//rule:maven_publish.bzl", "maven_publish")
 load("//rule:merge_library.bzl", "kt_merge_library", "merge_library_jar")
+load("//rule:remap_jar.bzl", "remap_jar")
 load("//rule/neoforge:mod_toml_jar.bzl", "neoforge_mod_toml_jar")
 
 neoforge_mod_toml_jar(
@@ -18,7 +20,7 @@ neoforge_mod_toml_jar(
 )
 
 kt_merge_library(
-    name = "neoforge",
+    name = "neoforge_unmapped_unmerged",
     srcs = glob(["**/*.kt"]),
     actual = True,
     merge_deps = [
@@ -55,7 +57,42 @@ kt_merge_library(
 )
 
 merge_library_jar(
-    name = "neoforge_merged",
+    name = "neoforge_unmapped",
     visibility = ["//blazerod/render:__subpackages__"],
-    deps = [":neoforge"],
+    deps = [
+        ":neoforge_unmapped_unmerged",
+        "//blazerod/render/api",
+        "//blazerod/render/common:common_group",
+        "//blazerod/render/versions/1.21.8",
+    ],
+)
+
+remap_jar(
+    name = "neoforge",
+    classpath = ["//game/1.21.8:game_client_named"],
+    from_namespace = "named",
+    inputs = [":neoforge_unmapped"],
+    mapping = "//game/1.21.8:game_merged_mapping",
+    mixin = True,
+    to_namespace = "intermediary",
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "neoforge_unmapped_sources",
+    srcs = [":neoforge_unmapped_sources.jar"],
+)
+
+maven_publish(
+    name = "neoforge.publish",
+    src = ":neoforge",
+    artifacts = {
+        "sources": ":neoforge_unmapped_sources",
+    },
+    coordinates = "top.fifthlight.blazerod:render-neoforge-1.21.8:%s" % blazerod_version,
+    deps = [
+        "//blazerod/model/model-base",
+        "@maven//:org_joml_joml",
+        "@maven//:org_slf4j_slf4j_api",
+    ],
 )

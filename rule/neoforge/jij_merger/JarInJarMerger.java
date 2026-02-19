@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -75,6 +76,9 @@ public class JarInJarMerger {
                 try (var entryByteOutputStream = new ByteArrayOutputStream();
                      var entryInputStream = new JarInputStream(Files.newInputStream(jijEntry.path()))) {
                     var manifest = entryInputStream.getManifest();
+                    if (manifest == null) {
+                        manifest = new Manifest();
+                    }
                     if (!jijEntry.fmlType.isBlank()) {
                         manifest.getMainAttributes().putValue("FMLType", jijEntry.fmlType);
                     }

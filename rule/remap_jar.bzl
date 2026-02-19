@@ -35,9 +35,9 @@ def _remap_jar_impl(ctx):
 
         if ctx.attr.remap_transitive_deps:
             # Generate unique output name per input
-            output_jar = ctx.actions.declare_file("_remapped/%s_%s" % (ctx.label.name, input_jar.basename))
+            output_jar = ctx.actions.declare_file("remapped_%s_%s" % (ctx.label.name, input_jar.basename))
         else:
-            output_jar = ctx.actions.declare_file("_remapped/%s.jar" % ctx.label.name)
+            output_jar = ctx.actions.declare_file("remapped_%s.jar" % ctx.label.name)
         output_jars.append(output_jar)
 
         # Generate arguments for Tiny Remapper
