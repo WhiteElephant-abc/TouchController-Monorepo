@@ -19,5 +19,10 @@
         "java": ">=21",
         "fabric-language-kotlin": "*"
     },
-    "accessWidener": "combine.accesswidener"
+    "accessWidener": "combine.accesswidener",
+    "custom": {
+        "modmenu": {
+            "badges": ["library"]
+        }
+    }
 }
