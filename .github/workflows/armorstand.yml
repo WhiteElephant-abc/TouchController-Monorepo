@@ -45,24 +45,30 @@ jobs:
             --verbose_failures \
             //blazerod/model:test \
             //blazerod/render:test
-      - name: Locate Artifacts
+      - name: Package artifacts
         run: |
-          echo "Bazel Bin Info:"
-          bazel info bazel-bin
-          echo "Searching for mod_*.jar:"
-          find bazel-bin -name "mod_*.jar"
-          echo "Searching for blazerod_*.jar:"
-          find bazel-bin -name "blazerod_*.jar"
-          echo "Listing armorstand directory:"
-          ls -R bazel-bin/armorstand || echo "armorstand dir not found"
+          mkdir -p dist
+          BAZEL_BIN=$(bazel info bazel-bin -c opt)
+          echo "Bazel Bin: $BAZEL_BIN"
+          
+          # Copy main mods
+          cp "$BAZEL_BIN/armorstand/mod_fabric.jar" dist/ArmorStand-fabric.jar
+          cp "$BAZEL_BIN/armorstand/mod_neoforge.jar" dist/ArmorStand-neoforge.jar
+          cp "$BAZEL_BIN/blazerod/blazerod_fabric.jar" dist/BlazeRod-fabric.jar
+          cp "$BAZEL_BIN/blazerod/blazerod_neoforge.jar" dist/BlazeRod-neoforge.jar
+          
+          # Copy models
+          cp "$BAZEL_BIN/blazerod/model/model-base/model-base.jar" dist/
+          cp "$BAZEL_BIN/blazerod/model/model-formats/model-formats.jar" dist/
+          cp "$BAZEL_BIN/blazerod/model/model-gltf/model-gltf.jar" dist/
+          cp "$BAZEL_BIN/blazerod/model/model-pmd/model-pmd.jar" dist/
+          cp "$BAZEL_BIN/blazerod/model/model-pmx/model-pmx.jar" dist/
+          cp "$BAZEL_BIN/blazerod/model/model-vmd/model-vmd.jar" dist/
+          cp "$BAZEL_BIN/blazerod/model/model-assimp/model-assimp-merged.jar" dist/
+          cp "$BAZEL_BIN/blazerod/example/ball_block/ball_block.jar" dist/
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: artifacts-bazel
-          if-no-files-found: error
-          path: |
-            bazel-bin/armorstand/mod_*.jar
-            bazel-bin/blazerod/blazerod_*.jar
-            bazel-bin/blazerod/model/model-*/*.jar
-            bazel-bin/blazerod/example/ball_block/*.jar
+          path: dist/
