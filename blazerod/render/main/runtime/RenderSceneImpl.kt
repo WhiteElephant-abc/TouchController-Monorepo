@@ -209,9 +209,11 @@ class RenderSceneImpl(
                 data.world.pushTransforms(data.transformArray)
 
                 val stepStart = System.nanoTime()
-                val maxTimeStep = PHYSICS_MAX_SUB_STEP_COUNT * PHYSICS_TIME_STEP
-                val clampedAccumulator = minOf(data.physicsAccumulator, maxTimeStep)
-                data.world.step(clampedAccumulator, PHYSICS_MAX_SUB_STEP_COUNT, PHYSICS_TIME_STEP)
+                val steps = (data.physicsAccumulator / PHYSICS_TIME_STEP).toInt().coerceAtMost(PHYSICS_MAX_SUB_STEP_COUNT)
+                val clampedAccumulator = steps * PHYSICS_TIME_STEP
+                if (steps > 0) {
+                    data.world.step(clampedAccumulator, steps, PHYSICS_TIME_STEP)
+                }
                 val stepTimeMs = (System.nanoTime() - stepStart) / 1_000_000f
 
                 data.world.pullTransforms(data.transformArray)
