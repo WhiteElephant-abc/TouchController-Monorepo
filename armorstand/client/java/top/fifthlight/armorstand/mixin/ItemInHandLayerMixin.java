@@ -15,22 +15,24 @@ import top.fifthlight.armorstand.state.ModelInstanceManager;
 @Mixin(ItemInHandLayer.class)
 public class ItemInHandLayerMixin {
     @Inject(
-        method = "render(Lnet/minecraft/client/renderer/entity/state/ArmedEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V",
+        method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/ArmedEntityRenderState;FF)V",
         at = @At("HEAD"),
         cancellable = true
     )
     private void armorstand$cancelVanillaHeldItemRender(
-        ArmedEntityRenderState arg,
-        PoseStack arg2,
-        MultiBufferSource arg3,
-        int i,
+        PoseStack arg,
+        MultiBufferSource arg2,
+        int arg3,
+        ArmedEntityRenderState arg4,
+        float arg5,
+        float arg6,
         CallbackInfo ci
     ) {
-        if (!(arg instanceof PlayerRenderState)) {
+        if (!(arg4 instanceof PlayerRenderState)) {
             return;
         }
 
-        var uuid = ((PlayerRenderStateExtInternal) arg).armorstand$getUuid();
+        var uuid = ((PlayerRenderStateExtInternal) arg4).armorstand$getUuid();
         if (uuid == null) {
             return;
         }
