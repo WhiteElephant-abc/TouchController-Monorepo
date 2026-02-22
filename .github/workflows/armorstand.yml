@@ -45,7 +45,8 @@ jobs:
           bazel test \
             --verbose_failures \
             //blazerod/model:test \
-            //blazerod/render:test
+            //blazerod/render/common/layout/test \
+            //blazerod/render/versions/1.21.8/runtime/test
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

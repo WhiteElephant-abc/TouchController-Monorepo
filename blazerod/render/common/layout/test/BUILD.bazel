@@ -7,7 +7,7 @@ kt_junit_test(
         # Unsafe cause strange crashes in this test
         "-Djoml.nounsafe=true",
     ],
-    test_class = "top.fifthlight.blazerod.render.layout.test.Std140Test",
+    test_class = "top.fifthlight.blazerod.render.common.layout.test.Std140Test",
     deps = [
         "//blazerod/render/common/layout",
         "@maven//:it_unimi_dsi_fastutil",
@@ -22,7 +22,7 @@ kt_junit_test(
         # Unsafe cause strange crashes in this test
         "-Djoml.nounsafe=true",
     ],
-    test_class = "top.fifthlight.blazerod.render.layout.test.Std430Test",
+    test_class = "top.fifthlight.blazerod.render.common.layout.test.Std430Test",
     deps = [
         "//blazerod/render/common/layout",
         "@maven//:it_unimi_dsi_fastutil",
