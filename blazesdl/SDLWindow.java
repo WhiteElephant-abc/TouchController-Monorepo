@@ -9,7 +9,6 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.*;
 import org.lwjgl.system.JNI;
-import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -157,14 +156,7 @@ public class SDLWindow extends Window {
 
     @Override
     public void setIMEPreeditArea(int x0, int y0, int x1, int y1) {
-        try (var stack = MemoryStack.stackPush()) {
-            var rect = SDL_Rect.calloc(1, stack);
-            rect.x(x0);
-            rect.y(y0);
-            rect.w(x1 - x0);
-            rect.h(y1 - y0);
-            SDLKeyboard.SDL_SetTextInputArea(handle, rect, 0);
-        }
+        SDLUtil.updateTextInputAreaScaled(this, x0, y0, x1 - x0, y1 - y0, 0);
     }
 
     public boolean shouldClose = false;

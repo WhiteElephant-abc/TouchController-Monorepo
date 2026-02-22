@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallbackI;
 import org.lwjgl.sdl.*;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,6 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.fifthlight.blazesdl.*;
 import top.fifthlight.blazesdl.SDLError;
 
+import java.nio.IntBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.PrimitiveIterator;
 import java.util.function.LongSupplier;
 
 import static java.awt.SystemColor.window;
@@ -90,6 +94,9 @@ public class RenderSystemMixin {
                         if (windowCallback != null) {
                             windowCallback.invoke(windowHandle, event.window().data1(), event.window().data2());
                         }
+                    }
+                    case SDLEvents.SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED -> {
+                        var windowHandle = windowIdToHandle(event.window().windowID());
                         var framebufferCallback = EventCallback.onFramebufferResize;
                         if (framebufferCallback != null) {
                             var w = stack.ints(0);
@@ -104,7 +111,11 @@ public class RenderSystemMixin {
                     case SDLEvents.SDL_EVENT_WINDOW_FOCUS_GAINED, SDLEvents.SDL_EVENT_WINDOW_FOCUS_LOST -> {
                         var callback = EventCallback.onWindowFocus;
                         if (callback != null) {
-                            callback.invoke(windowIdToHandle(event.window().windowID()), eventType == SDLEvents.SDL_EVENT_WINDOW_FOCUS_GAINED);
+                            var focused = eventType == SDLEvents.SDL_EVENT_WINDOW_FOCUS_GAINED;
+                            if (focused) {
+                                SDLUtil.refreshTextInputStatus();
+                            }
+                            callback.invoke(windowIdToHandle(event.window().windowID()), focused);
                         }
                     }
                     case SDLEvents.SDL_EVENT_WINDOW_CLOSE_REQUESTED -> sdlWindow.shouldClose = true;
@@ -125,26 +136,93 @@ public class RenderSystemMixin {
                             }
                             var keyCode = SDLKeyMapping.toGlfwKey(key.key());
                             var modifier = SDLKeyMapping.getGlfwModifiers(key.mod());
-                            callback.invoke(windowIdToHandle(event.window().windowID()), keyCode, key.scancode(), action, modifier);
+                            callback.invoke(windowIdToHandle(key.windowID()), keyCode, key.scancode(), action, modifier);
                         }
                     }
                     case SDLEvents.SDL_EVENT_TEXT_INPUT -> {
                         var callback = EventCallback.charTypedCallback;
                         if (callback != null) {
                             var text = event.text();
-                            var windowHandle = windowIdToHandle(event.window().windowID());
+                            var windowHandle = windowIdToHandle(text.windowID());
                             var textStr = text.textString();
                             if (textStr != null) {
-                                textStr.chars().forEach(ch -> callback.invoke(windowHandle, ch));
+                                textStr.codePoints().forEach(ch -> callback.invoke(windowHandle, ch));
                             }
                         }
                     }
                     case SDLEvents.SDL_EVENT_TEXT_EDITING -> {
                         var callback = EventCallback.preeditCallback;
-                        if (callback != null) {
-                            var text = event.edit();
-                            // TODO
+                        if (callback == null) {
+                            break;
                         }
+
+                        var edit = event.edit();
+                        var textString = edit.textString();
+                        if (textString == null || textString.isEmpty()) {
+                            callback.invoke(windowIdToHandle(edit.windowID()), 0, 0L, 0, 0L, 0, 0);
+                            break;
+                        }
+
+                        var codePoints = stack.mallocInt(textString.length()); // At most textString.length codepoints
+                        textString.codePoints().forEachOrdered(codePoints::put);
+                        codePoints.flip();
+
+                        var totalCodePoints = codePoints.limit();
+                        var rawStart = edit.start();
+                        var rawLength = edit.length();
+
+                        int codePointStart;
+                        int codePointLength;
+                        if (SDLUtil.IS_WINDOWS && rawStart != -1 && rawLength != -1) {
+                            var charLimit = textString.length();
+                            var charStart = Math.clamp(rawStart, 0, charLimit);
+                            var charEnd = Math.clamp(charStart + rawLength, charStart, charLimit);
+
+                            codePointStart = textString.codePointCount(0, charStart);
+                            codePointLength = textString.codePointCount(charStart, charEnd);
+                        } else {
+                            codePointStart = rawStart;
+                            codePointLength = rawLength;
+                        }
+
+                        if (codePointStart == -1 || codePointLength == -1) {
+                            codePointStart = 0;
+                            codePointLength = totalCodePoints;
+                        } else {
+                            codePointStart = Math.min(codePointStart, totalCodePoints);
+                            codePointLength = Math.min(codePointLength, totalCodePoints - codePointStart);
+                        }
+
+                        // Populate text blocks
+                        var blockSizes = stack.mallocInt(3);
+                        var blockCount = 0;
+                        var focusedBlock = 0;
+                        if (codePointStart > 0) {
+                            blockSizes.put(codePointStart);
+                            blockCount++;
+                        }
+                        if (codePointLength > 0) {
+                            focusedBlock = blockCount;
+                            blockSizes.put(codePointLength);
+                            blockCount++;
+                        }
+                        var afterSelectedLength = totalCodePoints - (codePointStart + codePointLength);
+                        if (afterSelectedLength > 0) {
+                            blockSizes.put(afterSelectedLength);
+                            blockCount++;
+                        }
+                        blockSizes.flip();
+
+                        var caretPosition = codePointStart + codePointLength;
+                        callback.invoke(
+                                windowIdToHandle(edit.windowID()),
+                                codePoints.limit(), // preedit_count
+                                MemoryUtil.memAddress(codePoints), // preedit_string
+                                blockCount, // block_count
+                                MemoryUtil.memAddress(blockSizes), // block_sizes
+                                focusedBlock, // focused_block
+                                caretPosition // caret
+                        );
                     }
 
                     case SDLEvents.SDL_EVENT_MOUSE_MOTION -> {
@@ -167,16 +245,16 @@ public class RenderSystemMixin {
                         var callback = EventCallback.onPressCallback;
                         if (callback != null) {
                             var action = (eventType == SDLEvents.SDL_EVENT_MOUSE_BUTTON_DOWN) ? GLFW.GLFW_PRESS : GLFW.GLFW_RELEASE;
-                            var buttonEvent = event.button();
-                            int sdlButton = buttonEvent.button();
-                            var button = switch (sdlButton) {
+                            var button = event.button();
+                            int sdlButton = button.button();
+                            var buttonId = switch (sdlButton) {
                                 case SDLMouse.SDL_BUTTON_LEFT -> GLFW.GLFW_MOUSE_BUTTON_LEFT;
                                 case SDLMouse.SDL_BUTTON_MIDDLE -> GLFW.GLFW_MOUSE_BUTTON_MIDDLE;
                                 case SDLMouse.SDL_BUTTON_RIGHT -> GLFW.GLFW_MOUSE_BUTTON_RIGHT;
                                 default -> sdlButton - 1;
                             };
                             var modifier = SDLKeyMapping.getGlfwModifiers(SDLKeyboard.SDL_GetModState());
-                            callback.invoke(windowIdToHandle(buttonEvent.windowID()), button, action, modifier);
+                            callback.invoke(windowIdToHandle(button.windowID()), buttonId, action, modifier);
                         }
                     }
 

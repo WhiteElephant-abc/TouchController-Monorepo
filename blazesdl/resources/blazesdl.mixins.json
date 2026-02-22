@@ -8,6 +8,7 @@
     "client": [
         "Blaze3DMixin",
         "CursorTypeMixin",
+        "EditBoxMixin",
         "GlDeviceMixin",
         "GLFWMixin",
         "InputConstantsMixin",

@@ -37,3 +37,5 @@ accessible field com/mojang/blaze3d/opengl/GlBackend VERSION_MINOR I
 
 accessible method com/mojang/blaze3d/opengl/GlDevice <init> (JLcom/mojang/blaze3d/shaders/ShaderSource;Lcom/mojang/blaze3d/shaders/GpuDebugOptions;)V
 accessible field com/mojang/blaze3d/opengl/GlDevice windowHandle J
+
+accessible field net/minecraft/client/gui/components/EditBox preeditOverlay Lnet/minecraft/client/gui/components/IMEPreeditOverlay;
