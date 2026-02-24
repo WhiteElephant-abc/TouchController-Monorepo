@@ -21,6 +21,10 @@ kt_merge_library(
         "//combine/style",
         "//combine/theme/vanilla",
     ],
+    merge_only_deps = [
+        "//combine",
+        "//combine/item",
+    ],
     visibility = ["//visibility:public"],
     deps = [
         "//:compose",
