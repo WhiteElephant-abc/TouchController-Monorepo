@@ -5,6 +5,7 @@ import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.minecraft.client.Minecraft
 import org.slf4j.LoggerFactory
+import top.fifthlight.blazerod.physics.PhysicsInterface
 import top.fifthlight.blazerod.render.common.BlazeRod
 import top.fifthlight.blazerod.render.api.event.RenderEvents
 import top.fifthlight.blazerod.render.common.runtime.uniform.UniformBuffer
@@ -19,6 +20,8 @@ object BlazeRodFabric : ClientModInitializer {
 
     override fun onInitializeClient() {
         BlazeRod.mainDispatcher = BlockableEventLoopDispatcher(Minecraft.getInstance())
+
+        PhysicsInterface.load()
 
         if (System.getProperty("blazerod.debug") == "true") {
             BlazeRod.debug = true

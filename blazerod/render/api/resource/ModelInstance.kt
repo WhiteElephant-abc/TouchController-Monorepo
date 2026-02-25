@@ -11,9 +11,12 @@ import java.util.function.Consumer
 
 interface ModelInstance : RefCount {
     val scene: RenderScene
+    var lodDistance: Float
 
     fun clearTransform()
     fun setTransformMatrix(nodeIndex: Int, transformId: TransformId, matrix: Matrix4f)
+    fun setTransformMatrix(nodeIndex: Int, transformId: TransformId, updater: Consumer<NodeTransform.Matrix>)
+    fun setTransformMatrix(nodeIndex: Int, transformId: TransformId, updater: NodeTransform.Matrix.() -> Unit)
     fun setTransformDecomposed(nodeIndex: Int, transformId: TransformId, decomposed: NodeTransformView.Decomposed)
     fun setTransformDecomposed(nodeIndex: Int, transformId: TransformId, updater: Consumer<NodeTransform.Decomposed>)
     fun setTransformDecomposed(nodeIndex: Int, transformId: TransformId, updater: NodeTransform.Decomposed.() -> Unit)
@@ -22,9 +25,10 @@ interface ModelInstance : RefCount {
     fun setIkEnabled(index: Int, enabled: Boolean)
     fun setGroupWeight(morphedPrimitiveIndex: Int, targetGroupIndex: Int, weight: Float)
 
+    fun copyNodeWorldTransform(nodeIndex: Int, dest: Matrix4f)
     fun getCameraTransform(index: Int): CameraTransform?
 
-    fun updateRenderData()
+    fun updateRenderData(time: Float)
 
     fun createRenderTask(
         modelMatrix: Matrix4fc,

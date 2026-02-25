@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory
 import top.fifthlight.blazerod.render.common.BlazeRod
 import top.fifthlight.blazerod.render.api.event.RenderEvents
 import top.fifthlight.blazerod.render.common.runtime.uniform.UniformBuffer
+import top.fifthlight.blazerod.render.common.physics.PhysicsInterface
 import top.fifthlight.blazerod.render.common.util.objectpool.cleanupObjectPools
 import top.fifthlight.blazerod.render.common.debug.*
 import top.fifthlight.blazerod.render.version_1_21_8.util.dispatchers.BlockableEventLoopDispatcher
@@ -30,6 +31,8 @@ class BlazeRodNeoForge(private val container: ModContainer) {
         @JvmStatic
         fun onClientSetup(event: FMLClientSetupEvent) {
             BlazeRod.mainDispatcher = BlockableEventLoopDispatcher(Minecraft.getInstance())
+
+            PhysicsInterface.load()
 
             // NeoForge initialize device before us, so no RenderEvents.INITIALIZE_DEVICE here
             event.enqueueWork {

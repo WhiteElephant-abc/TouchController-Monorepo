@@ -13,6 +13,7 @@
       "GameRendererMixin",
       "MinecraftMixin",
       "MouseHandlerMixin",
+      "ItemInHandLayerMixin",
       "PlayerEntityRenderStateMixin",
       "PlayerModelMixin",
       "PlayerRendererMixin"

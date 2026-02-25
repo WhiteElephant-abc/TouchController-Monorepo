@@ -5,8 +5,8 @@ import net.minecraft.client.renderer.MultiBufferSource
 import top.fifthlight.blazerod.render.api.resource.ModelInstance
 
 interface DebugRenderable {
-    fun debugRender(viewProjectionMatrix: Matrix4fc, bufferSource: MultiBufferSource)
+    fun debugRender(viewProjectionMatrix: Matrix4fc, bufferSource: MultiBufferSource, time: Float)
 }
 
-fun ModelInstance.debugRender(viewProjectionMatrix: Matrix4fc, bufferSource: MultiBufferSource) =
-    (this as DebugRenderable).debugRender(viewProjectionMatrix, bufferSource)
+fun ModelInstance.debugRender(viewProjectionMatrix: Matrix4fc, bufferSource: MultiBufferSource, time: Float) =
+    (this as DebugRenderable).debugRender(viewProjectionMatrix, bufferSource, time)

@@ -10,6 +10,7 @@ import top.fifthlight.blazerod.render.version_1_21_8.runtime.node.component.IkTa
 import top.fifthlight.blazerod.render.version_1_21_8.runtime.node.component.InfluenceSourceComponent
 import top.fifthlight.blazerod.render.version_1_21_8.runtime.node.component.JointComponent
 import top.fifthlight.blazerod.render.version_1_21_8.runtime.node.component.PrimitiveComponent
+import top.fifthlight.blazerod.render.version_1_21_8.runtime.node.component.RigidBodyComponent
 import top.fifthlight.blazerod.render.version_1_21_8.runtime.resource.RenderMaterial
 import top.fifthlight.blazerod.render.version_1_21_8.runtime.resource.RenderPrimitive
 import top.fifthlight.blazerod.render.version_1_21_8.runtime.resource.RenderTexture
@@ -156,6 +157,13 @@ class SceneReconstructor private constructor(private val info: GpuLoadModelLoadI
                         }
                     )
                 }
+
+                is NodeLoadInfo.Component.RigidBody -> {
+                    RigidBodyComponent(
+                        rigidBodyIndex = component.rigidBodyIndex,
+                        rigidBodyData = component.rigidBody,
+                    )
+                }
             }
         },
     )
@@ -173,6 +181,7 @@ class SceneReconstructor private constructor(private val info: GpuLoadModelLoadI
             expressions = info.expressions,
             expressionGroups = info.expressionGroups,
             cameras = cameras,
+            physicsJoints = info.physicalJoints,
             renderTransform = info.renderTransform,
         )
     }

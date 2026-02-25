@@ -3,6 +3,9 @@ package top.fifthlight.blazerod.render.common.runtime.load
 import com.mojang.blaze3d.platform.NativeImage
 import com.mojang.blaze3d.vertex.VertexFormat
 import kotlinx.coroutines.Deferred
+import top.fifthlight.blazerod.common.resource.MorphTargetGroup
+import top.fifthlight.blazerod.common.resource.RenderPhysicsJoint
+import top.fifthlight.blazerod.common.resource.RenderSkin
 import top.fifthlight.blazerod.render.api.resource.RenderExpression
 import top.fifthlight.blazerod.render.api.resource.RenderExpressionGroup
 import top.fifthlight.blazerod.model.*
@@ -13,6 +16,7 @@ import top.fifthlight.blazerod.render.version_1_21_8.runtime.resource.*
 import java.nio.ByteBuffer
 import top.fifthlight.blazerod.model.Camera as ModelCamera
 import top.fifthlight.blazerod.model.IkTarget as ModelIkTarget
+import top.fifthlight.blazerod.model.RigidBody as ModelRigidBody
 
 data class TextureLoadData(
     val name: String?,
@@ -149,6 +153,11 @@ data class NodeLoadInfo(
             val influence: Influence,
             val transformId: TransformId,
         ) : Component()
+
+        data class RigidBody(
+            val rigidBodyIndex: Int,
+            val rigidBody: ModelRigidBody,
+        ) : Component()
     }
 }
 
@@ -168,6 +177,7 @@ data class ModelLoadInfo<Texture, Index : Any, Vertex : Any, Morph : Any>(
     val skins: List<RenderSkin>,
     val expressions: List<RenderExpression>,
     val expressionGroups: List<RenderExpressionGroup>,
+    val physicalJoints: List<RenderPhysicsJoint>,
     val renderTransform: NodeTransform?,
 )
 

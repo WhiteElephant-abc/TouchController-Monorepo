@@ -1,30 +1,30 @@
-package top.fifthlight.blazerod.render.version_1_21_8.runtime.resource
+package top.fifthlight.blazerod.common.resource
 
 import org.joml.*
 import top.fifthlight.blazerod.render.api.resource.CameraTransform
 import top.fifthlight.blazerod.model.Camera
 
-sealed class CameraTransformImpl : CameraTransform {
-    override val rotationQuaternion = Quaternionf()
-    override val rotationEulerAngles = Vector3f()
-    override val position = Vector3f()
+sealed class CameraTransformImpl : top.fifthlight.blazerod.render.api.resource.CameraTransform {
+    override val rotationQuaternion = org.joml.Quaternionf()
+    override val rotationEulerAngles = org.joml.Vector3f()
+    override val position = org.joml.Vector3f()
 
     companion object {
-        fun of(camera: Camera) = when (camera) {
-            is Camera.MMD -> MMD(
-                targetPosition = Vector3f(0f),
+        fun of(camera: top.fifthlight.blazerod.model.Camera) = when (camera) {
+            is top.fifthlight.blazerod.model.Camera.MMD -> MMD(
+                targetPosition = org.joml.Vector3f(0f),
                 fov = 70f,
                 distance = 1f,
-                rotationEulerAngles = Vector3f(),
+                rotationEulerAngles = org.joml.Vector3f(),
             )
 
-            is Camera.Perspective -> Perspective(
+            is top.fifthlight.blazerod.model.Camera.Perspective -> Perspective(
                 yfov = camera.yfov,
                 zfar = camera.zfar,
                 znear = camera.znear
             )
 
-            is Camera.Orthographic -> Orthographic(
+            is top.fifthlight.blazerod.model.Camera.Orthographic -> Orthographic(
                 xmag = camera.ymag,
                 ymag = camera.xmag,
                 zfar = camera.zfar,
@@ -34,19 +34,19 @@ sealed class CameraTransformImpl : CameraTransform {
     }
 
     class MMD(
-        override val targetPosition: Vector3f,
+        override val targetPosition: org.joml.Vector3f,
         override var fov: Float,
         override var distance: Float,
-        rotationEulerAngles: Vector3fc,
-    ) : CameraTransformImpl(), CameraTransform.MMD {
-        private val offsetCache = Vector3f()
+        rotationEulerAngles: org.joml.Vector3fc,
+    ) : CameraTransformImpl(), top.fifthlight.blazerod.render.api.resource.CameraTransform.MMD {
+        private val offsetCache = org.joml.Vector3f()
 
         init {
             this.rotationEulerAngles.set(rotationEulerAngles)
-            update(Matrix4f())
+            update(org.joml.Matrix4f())
         }
 
-        override fun update(matrix: Matrix4fc) {
+        override fun update(matrix: org.joml.Matrix4fc) {
             rotationQuaternion.rotationZYX(
                 this.rotationEulerAngles.z(),
                 this.rotationEulerAngles.y(),
@@ -58,7 +58,7 @@ sealed class CameraTransformImpl : CameraTransform {
             matrix.getTranslation(position).add(targetPosition).add(rotatedCameraOffset)
         }
 
-        override fun getMatrix(matrix: Matrix4f, aspectRatio: Float, farPlaneDistance: Float) {
+        override fun getMatrix(matrix: org.joml.Matrix4f, aspectRatio: Float, farPlaneDistance: Float) {
             matrix.perspective(fov, aspectRatio, 0.05f, farPlaneDistance)
         }
     }
@@ -67,8 +67,8 @@ sealed class CameraTransformImpl : CameraTransform {
         override var yfov: Float,
         override var zfar: Float? = null,
         override var znear: Float,
-    ) : CameraTransformImpl(), CameraTransform.Perspective {
-        override fun getMatrix(matrix: Matrix4f, aspectRatio: Float, farPlaneDistance: Float) {
+    ) : CameraTransformImpl(), top.fifthlight.blazerod.render.api.resource.CameraTransform.Perspective {
+        override fun getMatrix(matrix: org.joml.Matrix4f, aspectRatio: Float, farPlaneDistance: Float) {
             matrix.perspective(yfov, aspectRatio, znear, zfar ?: farPlaneDistance)
         }
     }
@@ -78,14 +78,14 @@ sealed class CameraTransformImpl : CameraTransform {
         override var ymag: Float,
         override var zfar: Float,
         override var znear: Float,
-    ) : CameraTransformImpl(), CameraTransform.Orthographic {
-        override fun getMatrix(matrix: Matrix4f, aspectRatio: Float, farPlaneDistance: Float) {
+    ) : CameraTransformImpl(), top.fifthlight.blazerod.render.api.resource.CameraTransform.Orthographic {
+        override fun getMatrix(matrix: org.joml.Matrix4f, aspectRatio: Float, farPlaneDistance: Float) {
             val xmag = ymag * aspectRatio
             matrix.ortho(-xmag, xmag, -ymag, ymag, znear, zfar)
         }
     }
 
-    open fun update(matrix: Matrix4fc) {
+    open fun update(matrix: org.joml.Matrix4fc) {
         matrix.getTranslation(position)
         matrix.getUnnormalizedRotation(rotationQuaternion)
         rotationQuaternion.getEulerAnglesXYZ(rotationEulerAngles)

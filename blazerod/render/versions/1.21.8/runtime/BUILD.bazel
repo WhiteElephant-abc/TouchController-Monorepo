@@ -7,7 +7,10 @@ kt_merge_library(
     merge_deps = [
         "//blazerod/render/api/refcount",
         "//blazerod/render/api/resource",
+        "//blazerod/render/api/physics",
         "//blazerod/render/common",
+        "//blazerod/render/common/physics",
+        "//blazerod/render/common/resource",
         "//blazerod/render/common/util/cowbuffer",
         "//blazerod/render/common/util/iterator",
         "//blazerod/render/common/util/objectpool",
@@ -21,7 +24,6 @@ kt_merge_library(
     deps = [
         "//blazerod/model/model-base",
         "//blazerod/render/versions/1.21.8/game:remapped_client_access_widened_named",
-        "@maven//:it_unimi_dsi_fastutil",
-        "@maven//:org_joml_joml",
+        "//game/1.21.8:game_client_libraries",
     ],
 )

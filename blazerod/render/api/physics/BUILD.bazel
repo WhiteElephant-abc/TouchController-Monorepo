@@ -1,0 +1,14 @@
+load("//rule:merge_library.bzl", "kt_merge_library")
+
+kt_merge_library(
+    name = "physics",
+    srcs = glob(["*.kt"]),
+    visibility = ["//visibility:public"],
+    merge_deps = [
+        "//blazerod/render/api/resource",
+        "//blazerod/render/api/refcount",
+    ],
+    deps = [
+        "@maven//:org_joml_joml",
+    ],
+)

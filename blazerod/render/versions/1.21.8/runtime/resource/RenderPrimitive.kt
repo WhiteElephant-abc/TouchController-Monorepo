@@ -2,6 +2,7 @@ package top.fifthlight.blazerod.render.version_1_21_8.runtime.resource
 
 import com.mojang.blaze3d.buffers.GpuBuffer
 import com.mojang.blaze3d.vertex.VertexFormat
+import top.fifthlight.blazerod.common.resource.MorphTargetGroup
 import top.fifthlight.blazerod.render.common.util.refcount.AbstractRefCount
 import top.fifthlight.blazerod.render.version_1_21_8.extension.GpuBufferExt
 import top.fifthlight.blazerod.render.version_1_21_8.extension.extraUsage

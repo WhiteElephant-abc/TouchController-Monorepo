@@ -8,6 +8,7 @@ kt_merge_library(
         "//blazerod/render/api/loader",
         "//blazerod/render/api/refcount",
         "//blazerod/render/api/resource",
+        "//blazerod/render/common/resource",
         "//blazerod/render/common/util/dispatchers",
         "//blazerod/render/versions/1.21.8/extension",
         "//blazerod/render/versions/1.21.8/render",

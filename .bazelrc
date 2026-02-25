@@ -36,6 +36,7 @@ common --@protobuf//bazel/toolchains:prefer_prebuilt_protoc
 common --android_platforms=@//platforms:android_arm32,@//platforms:android_arm64,@//platforms:android_x86_32,@//platforms:android_x86_64
 
 # C++17
-common:linux --cxxopt=-std=c++17 --host_cxxopt=-std=c++17
-common:macos --cxxopt=-std=c++17 --host_cxxopt=-std=c++17
-common:windows --cxxopt=/std:c++17 --host_cxxopt=/std:c++17
+common --cxxopt=-std=c++17 --host_cxxopt=-std=c++17
+
+# Workaround of https://github.com/bazelbuild/bazel-central-registry/issues/7682
+common --incompatible_autoload_externally=+cc_library

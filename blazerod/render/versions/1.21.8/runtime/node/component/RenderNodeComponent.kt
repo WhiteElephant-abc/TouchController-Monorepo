@@ -32,9 +32,12 @@ sealed class RenderNodeComponent<C : RenderNodeComponent<C>> : AbstractRefCount(
         object InfluenceSource : Type<InfluenceSourceComponent>()
         object Camera : Type<CameraComponent>()
         object IkTarget : Type<IkTargetComponent>()
+        object RigidBody : Type<RigidBodyComponent>()
     }
 
     abstract val type: Type<C>
+
+    open fun onAttached(instance: ModelInstanceImpl, node: RenderNodeImpl) {}
 
     abstract val updatePhases: List<UpdatePhase.Type>
     abstract fun update(phase: UpdatePhase, node: RenderNodeImpl, instance: ModelInstanceImpl)

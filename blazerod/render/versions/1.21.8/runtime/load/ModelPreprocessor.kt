@@ -4,15 +4,16 @@ import com.mojang.blaze3d.textures.TextureFormat
 import com.mojang.blaze3d.vertex.VertexFormat
 import com.mojang.blaze3d.vertex.VertexFormatElement
 import kotlinx.coroutines.*
+import top.fifthlight.blazerod.common.resource.MorphTargetGroup
+import top.fifthlight.blazerod.common.resource.RenderPhysicsJoint
+import top.fifthlight.blazerod.common.resource.RenderSkin
+import top.fifthlight.blazerod.model.*
 import top.fifthlight.blazerod.render.api.resource.RenderExpression
 import top.fifthlight.blazerod.render.api.resource.RenderExpressionGroup
-import top.fifthlight.blazerod.model.*
 import top.fifthlight.blazerod.render.version_1_21_8.extension.NativeImageExt
 import top.fifthlight.blazerod.render.version_1_21_8.extension.TextureFormatExt
 import top.fifthlight.blazerod.render.version_1_21_8.render.BlazerodVertexFormatElements
 import top.fifthlight.blazerod.render.version_1_21_8.render.BlazerodVertexFormats
-import top.fifthlight.blazerod.render.version_1_21_8.runtime.resource.MorphTargetGroup
-import top.fifthlight.blazerod.render.version_1_21_8.runtime.resource.RenderSkin
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -488,6 +489,8 @@ class ModelPreprocessor private constructor(
     }
 
     private var ikCount = 0
+    private var rigidBodyCount = 0
+    private val rigidBodyIdToIndexMap = mutableMapOf<RigidBodyId, Int>()
     private val nodes = mutableListOf<NodeLoadInfo>()
     private fun loadNode(node: Node): Int {
         val skinJointData = skinJointsData[node.id]
@@ -542,6 +545,16 @@ class ModelPreprocessor private constructor(
                                 NodeLoadInfo.Component.InfluenceSource(
                                     influence = component.influence,
                                     transformId = component.transformId,
+                                )
+                            )
+                        }
+
+                        is NodeComponent.RigidBodyComponent -> {
+                            rigidBodyIdToIndexMap[component.rigidBodyId] = rigidBodyCount
+                            add(
+                                NodeLoadInfo.Component.RigidBody(
+                                    rigidBodyIndex = rigidBodyCount++,
+                                    rigidBody = component.rigidBody,
                                 )
                             )
                         }
@@ -619,6 +632,36 @@ class ModelPreprocessor private constructor(
         return Pair(expressions, expressionGroups)
     }
 
+    private fun loadPhysicalJoints(modelPhysicalJoints: List<PhysicalJoint>) =
+        modelPhysicalJoints.mapIndexedNotNull { index, joint ->
+            val rigidBodyAIndex = rigidBodyIdToIndexMap[joint.rigidBodyA] ?: return@mapIndexedNotNull null
+            val rigidBodyBIndex = rigidBodyIdToIndexMap[joint.rigidBodyB] ?: return@mapIndexedNotNull null
+
+            val position = joint.position
+            val rotation = joint.rotation
+            val positionMin = joint.positionMin
+            val positionMax = joint.positionMax
+            val rotationMin = joint.rotationMin
+            val rotationMax = joint.rotationMax
+            val positionSpring = joint.positionSpring
+            val rotationSpring = joint.rotationSpring
+
+            RenderPhysicsJoint(
+                name = joint.name,
+                type = joint.type,
+                rigidBodyAIndex = rigidBodyAIndex,
+                rigidBodyBIndex = rigidBodyBIndex,
+                position = position,
+                rotation = rotation,
+                positionMin = positionMin,
+                positionMax = positionMax,
+                rotationMin = rotationMin,
+                rotationMax = rotationMax,
+                positionSpring = positionSpring,
+                rotationSpring = rotationSpring,
+            )
+        }
+
     private fun loadScene(scene: Scene, expressions: List<Expression>): PreProcessModelLoadInfo {
         val rootNode = NodeLoadInfo(
             nodeId = null,
@@ -631,6 +674,7 @@ class ModelPreprocessor private constructor(
         val rootNodeIndex = nodes.size
         nodes.add(rootNode)
         val (expressions, expressionGroups) = loadExpressions(expressions)
+        val physicalJoints = loadPhysicalJoints(model.physicalJoints)
         return PreProcessModelLoadInfo(
             textures = textures,
             indexBuffers = indexBuffers,
@@ -642,6 +686,7 @@ class ModelPreprocessor private constructor(
             morphTargetInfos = morphTargetInfos,
             expressions = expressions,
             expressionGroups = expressionGroups,
+            physicalJoints = physicalJoints,
             renderTransform = scene.transform,
         )
     }
