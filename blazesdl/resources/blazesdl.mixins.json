@@ -6,7 +6,6 @@
         "defaultRequire": 1
     },
     "client": [
-        "AbstractSignEditScreenMixin",
         "Blaze3DMixin",
         "CursorTypeMixin",
         "EditBoxMixin",

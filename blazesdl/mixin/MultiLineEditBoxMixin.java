@@ -17,11 +17,6 @@ public abstract class MultiLineEditBoxMixin {
     @Shadow
     private IMEPreeditOverlay preeditOverlay;
 
-    @Inject(method = "setFocused", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/AbstractTextAreaWidget;setFocused(Z)V"))
-    private void focusedChanged(boolean focused, CallbackInfo ci) {
-        SDLUtil.updateTextInputStatus(focused);
-    }
-
     @Inject(method = "renderContents", at = @At(value = "TAIL"))
     private void updateTextPos(GuiGraphics graphics, int mouseX, int mouseY, float a, CallbackInfo ci, @Local(name = "cursorX") int cursorX, @Local(name = "hasDrawnCursor") boolean hasDrawnCursor) {
         var editBox = (MultiLineEditBox) (Object) this;

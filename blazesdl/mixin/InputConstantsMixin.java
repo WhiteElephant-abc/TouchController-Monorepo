@@ -22,11 +22,12 @@ import top.fifthlight.blazesdl.SDLWindow;
 @Mixin(InputConstants.class)
 public abstract class InputConstantsMixin {
     @Inject(method = "setupKeyboardCallbacks", at = @At(value = "HEAD"), cancellable = true)
-    private static void skipGlfwKeyboardCallbacks(Window window, GLFWKeyCallbackI keyPressCallback, GLFWCharCallbackI charTypedCallback, GLFWPreeditCallbackI preeditCallback, CallbackInfo ci) {
+    private static void skipGlfwKeyboardCallbacks(Window window, GLFWKeyCallbackI keyPressCallback, GLFWCharCallbackI charTypedCallback, GLFWPreeditCallbackI preeditCallback, GLFWIMEStatusCallbackI imeStatusCallback, CallbackInfo ci) {
         if (window instanceof SDLWindow) {
             EventCallback.keyPressCallback = keyPressCallback;
             EventCallback.charTypedCallback = charTypedCallback;
             EventCallback.preeditCallback = preeditCallback;
+            EventCallback.imeStatusCallback = imeStatusCallback;
             ci.cancel();
         }
     }

@@ -1,6 +1,7 @@
 package top.fifthlight.touchcontroller.version_26_1.gal
 
 import com.mojang.blaze3d.pipeline.BlendFunction
+import com.mojang.blaze3d.pipeline.ColorTargetState
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.platform.DestFactor
 import com.mojang.blaze3d.platform.SourceFactor
@@ -41,14 +42,7 @@ private val CROSSHAIR_SNIPPET = RenderPipeline.builder()
     .withUniform("Projection", UniformType.UNIFORM_BUFFER)
     .withVertexShader("core/gui")
     .withFragmentShader("core/gui")
-    .withBlend(
-        BlendFunction(
-            SourceFactor.ONE_MINUS_DST_COLOR,
-            DestFactor.ONE_MINUS_SRC_COLOR,
-            SourceFactor.ONE,
-            DestFactor.ZERO
-        )
-    )
+    .withColorTargetState(ColorTargetState(BlendFunction.INVERT))
     .buildSnippet()
 
 private class CrosshairOuterGuiElementRenderState(

@@ -112,9 +112,6 @@ public class RenderSystemMixin {
                         var callback = EventCallback.onWindowFocus;
                         if (callback != null) {
                             var focused = eventType == SDLEvents.SDL_EVENT_WINDOW_FOCUS_GAINED;
-                            if (focused) {
-                                SDLUtil.refreshTextInputStatus();
-                            }
                             callback.invoke(windowIdToHandle(event.window().windowID()), focused);
                         }
                     }

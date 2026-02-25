@@ -22,32 +22,7 @@ public class SDLUtil {
     public static float realMouseX = 0f;
     public static float realMouseY = 0f;
 
-    private static boolean enterTextInput = false;
-
-    public static void refreshTextInputStatus() {
-        var window = Minecraft.getInstance().getWindow();
-        if (!(window instanceof SDLWindow sdlWindow)) {
-            return;
-        }
-        if (enterTextInput) {
-            SDLKeyboard.SDL_StartTextInput(sdlWindow.handle());
-        } else {
-            SDLKeyboard.SDL_StopTextInput(sdlWindow.handle());
-        }
-    }
-
-    public static void updateTextInputStatus(boolean enter) {
-        if (enterTextInput == enter) {
-            return;
-        }
-        enterTextInput = enter;
-        refreshTextInputStatus();
-    }
-
     public static void updateTextInputArea(Window window, int x, int y, int w, int h, int cursor) {
-        if (!enterTextInput) {
-            return;
-        }
         if (!(window instanceof SDLWindow sdlWindow)) {
             return;
         }

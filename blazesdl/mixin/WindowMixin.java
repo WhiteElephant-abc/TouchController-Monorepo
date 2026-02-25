@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import top.fifthlight.blazesdl.*;
 
@@ -154,5 +155,14 @@ public abstract class WindowMixin {
     @Inject(method = "getPlatform", at = @At(value = "INVOKE", target = "Lorg/lwjgl/glfw/GLFW;glfwGetPlatform()I"), cancellable = true)
     private static void overrideGetPlatform(CallbackInfoReturnable<String> cir) {
         cir.setReturnValue(SDLPlatform.SDL_GetPlatform());
+    }
+
+    @Inject(method = "onFocus", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/WindowEventHandler;setWindowActive(Z)V"))
+    private void refreshImeWhenFocus(long handle, boolean focused, CallbackInfo ci) {
+        var window = blazesdl$getSdlWindow();
+        if (window != null) {
+            return;
+        }
+        window.refreshIME();
     }
 }

@@ -144,6 +144,25 @@ public class SDLWindow extends Window {
         }
     }
 
+    private boolean imeEnabled = false;
+
+    @Override
+    public void toggleIME(boolean enabled) {
+        if (enabled == imeEnabled) {
+            return;
+        }
+        imeEnabled = enabled;
+        refreshIME();
+    }
+
+    public void refreshIME() {
+        if (imeEnabled) {
+            SDLKeyboard.SDL_StartTextInput(handle);
+        } else {
+            SDLKeyboard.SDL_StopTextInput(handle);
+        }
+    }
+
     @Override
     protected void setBootErrorCallback() {
         // no-op

@@ -12,11 +12,6 @@ import top.fifthlight.blazesdl.SDLUtil;
 
 @Mixin(EditBox.class)
 public class EditBoxMixin {
-    @Inject(method = "setFocused", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/AbstractWidget;setFocused(Z)V"))
-    private void focusedChanged(boolean focused, CallbackInfo ci) {
-        SDLUtil.updateTextInputStatus(focused);
-    }
-
     @Inject(method = "renderWidget", at = @At(value = "TAIL"))
     private void updateTextPos(GuiGraphics graphics, int mouseX, int mouseY, float a, CallbackInfo ci, @Local(name = "cursorX") int cursorX) {
         var editBox = (EditBox) (Object) this;

@@ -16,6 +16,7 @@ public class EventCallback {
     public static GLFWKeyCallbackI keyPressCallback;
     public static GLFWCharCallbackI charTypedCallback;
     public static GLFWPreeditCallbackI preeditCallback;
+    public static GLFWIMEStatusCallbackI imeStatusCallback;
 
     public static GLFWCursorPosCallbackI onMoveCallback;
     public static GLFWMouseButtonCallbackI onPressCallback;
