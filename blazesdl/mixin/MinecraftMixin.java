@@ -8,6 +8,7 @@ import com.mojang.blaze3d.shaders.GpuDebugOptions;
 import com.mojang.blaze3d.shaders.ShaderSource;
 import com.mojang.blaze3d.systems.GpuBackend;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.main.GameConfig;
 import org.lwjgl.system.Configuration;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.fifthlight.blazesdl.SDLGlBackend;
+import top.fifthlight.blazesdl.SDLUtil;
 import top.fifthlight.blazesdl.SDLWindow;
 
 @Mixin(Minecraft.class)
@@ -47,5 +49,10 @@ public abstract class MinecraftMixin {
     private GlBackend replaceGlBackend() {
         LOGGER.info("BlazeSDL: Replacing GlBackend to SDLGlBackend!");
         return new SDLGlBackend();
+    }
+
+    @Inject(method = "setScreen", at = @At(value = "HEAD"))
+    private void onSetScreen(Screen screen, CallbackInfo ci) {
+        SDLUtil.updateTextInputStatus(false);
     }
 }

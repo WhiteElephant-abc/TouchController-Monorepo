@@ -2,6 +2,7 @@ package top.fifthlight.blazesdl.mixin;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.sdl.*;
+import org.lwjgl.system.NativeType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import top.fifthlight.blazesdl.SDLKeyMapping;
@@ -47,5 +48,15 @@ public abstract class GLFWMixin {
             return -1;
         }
         return scan;
+    }
+
+    @Overwrite
+    public static String glfwGetClipboardString(@NativeType("GLFWwindow *") long window) {
+        return SDLClipboard.SDL_GetClipboardText();
+    }
+
+    @Overwrite
+    public static void glfwSetClipboardString(@NativeType("GLFWwindow *") long window, CharSequence string) {
+        SDLClipboard.SDL_SetClipboardText(string);
     }
 }
