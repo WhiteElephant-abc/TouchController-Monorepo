@@ -267,7 +267,7 @@ PhysicsWorld::PhysicsWorld(const PhysicsScene& scene, size_t initial_transform_c
                 throw std::invalid_argument("Invalid shape");
             }
         }
-
+        
         float mass = rigidbody_item.physics_mode == PhysicsMode::FOLLOW_BONE ? 0.0f : rigidbody_item.mass;
         btVector3 local_inertia(0, 0, 0);
         if (mass != 0.0f) {

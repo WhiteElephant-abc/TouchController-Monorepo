@@ -18,5 +18,9 @@ interface RenderScene : RefCount {
     val nodeNameMap: Map<String, RenderNode>
     val humanoidTagMap: Map<HumanoidTag, RenderNode>
 
+    val renderTransform: top.fifthlight.blazerod.model.NodeTransform?
+    
+    val attachments: Map<Class<*>, Any>
+
     data class IkTargetData(val effectorNode: RenderNode)
 }

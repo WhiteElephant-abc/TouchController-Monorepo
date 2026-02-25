@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.MultiBufferSource
 import org.joml.Matrix4f
 import org.joml.Matrix4fc
 import org.lwjgl.system.MemoryStack
+import top.fifthlight.blazerod.api.physics.PhysicsEngine
 import top.fifthlight.blazerod.common.resource.CameraTransformImpl
 import top.fifthlight.blazerod.render.api.resource.ModelInstance
 import top.fifthlight.blazerod.render.api.resource.RenderScene
@@ -40,9 +41,13 @@ class ModelInstanceImpl(
     override val typeId: String
         get() = "model_instance"
 
+    override var lodDistance: Float = 0f
+
     val modelData = ModelData(scene)
-    internal val physicsData = if (PhysicsInterface.isPhysicsAvailable && scene.physicsScene != null) {
-        PhysicsData(scene, modelData, scene.physicsScene)
+    
+    internal val physicsData = if (PhysicsInterface.isPhysicsAvailable && scene.attachments[PhysicsScene::class.java] != null) {
+        val physicsScene = scene.attachments[PhysicsScene::class.java] as PhysicsScene
+        PhysicsData(this, scene, modelData, physicsScene)
     } else {
         null
     }
@@ -50,45 +55,121 @@ class ModelInstanceImpl(
     init {
         scene.increaseReferenceCount()
         scene.attachToInstance(this)
-        // Ensure transforms are calculated (Bind Pose) before initializing physics
-        // Otherwise rigid bodies will be initialized with Identity transforms, leading to incorrect offsets
         for (i in scene.nodes.indices) {
             updateNodeTransform(i)
         }
+        if (physicsData != null) {
+            PhysicsEngine.register(
+                instance = this,
+                provider = {
+                    val bulletWorld = MemoryStack.stackPush().use { stack ->
+                        val initialTransform = stack.malloc(scene.rigidBodyComponents.size * 64)
+                        scene.rigidBodyComponents.forEach { (nodeIndex, component) ->
+                            val nodeWorldTransform = modelData.worldTransforms[nodeIndex]
+                            nodeWorldTransform.get(component.rigidBodyIndex * 64, initialTransform)
+                        }
+                        PhysicsWorld(physicsData.physicsScene, initialTransform)
+                    }
+
+                    object : PhysicsEngine.World {
+                        override fun applyVelocityDamping(rigidBodyIndex: Int, linearAttenuation: Float, angularAttenuation: Float) {
+                            bulletWorld.applyVelocityDamping(rigidBodyIndex, linearAttenuation, angularAttenuation)
+                        }
+
+                        override fun resetRigidBody(rigidBodyIndex: Int, position: org.joml.Vector3f, rotation: org.joml.Quaternionf) {
+                            bulletWorld.resetRigidBody(rigidBodyIndex, position, rotation)
+                        }
+
+                        override fun pullTransforms(dst: FloatArray) {
+                            bulletWorld.pullTransforms(dst)
+                        }
+
+                        override fun pushTransforms(src: FloatArray) {
+                            bulletWorld.pushTransforms(src)
+                        }
+
+                        override fun step(deltaTime: Float, maxSubSteps: Int, fixedTimeStep: Float) {
+                            bulletWorld.step(deltaTime, maxSubSteps, fixedTimeStep)
+                        }
+
+                        override fun dispose() {
+                            bulletWorld.close()
+                        }
+                    }
+                }
+            )
+        }
+        
         physicsData?.initialize()
     }
 
     class PhysicsData(
+        val instance: ModelInstanceImpl,
         private val scene: RenderSceneImpl,
         private val modelData: ModelData,
-        private val physicsScene: PhysicsScene,
+        val physicsScene: PhysicsScene,
     ) : AutoCloseable {
         var lastPhysicsTime: Float = -1f
-        private var _world: PhysicsWorld? = null
-        val world: PhysicsWorld
-            get() = _world ?: error("PhysicsWorld is not initialized")
+        var lastRootPos = org.joml.Vector3f()
+        var lastFrameDistSq: Float = 0f
+        
+        // Speed history ring buffer for deceleration detection
+        private val speedHistory = FloatArray(SPEED_HISTORY_SIZE)
+        private var speedHistoryIndex = 0
+        private var speedHistoryFilled = false
+        
+        fun recordSpeed(distSq: Float) {
+            speedHistory[speedHistoryIndex] = distSq
+            speedHistoryIndex = (speedHistoryIndex + 1) % SPEED_HISTORY_SIZE
+            if (speedHistoryIndex == 0) speedHistoryFilled = true
+        }
+        
+        fun averageRecentSpeed(): Float {
+            val count = if (speedHistoryFilled) SPEED_HISTORY_SIZE else speedHistoryIndex
+            if (count == 0) return 0f
+            var sum = 0f
+            for (i in 0 until count) sum += speedHistory[i]
+            return sum / count
+        }
+        
+        val world: PhysicsEngine.World
+            get() = PhysicsEngine.getWorld(instance) ?: error("PhysicsWorld is not initialized")
         lateinit var transformArray: FloatArray
             private set
 
+        // Adaptive throttling state
+        lateinit var previousTransforms: FloatArray
+            private set
+        lateinit var currentTransforms: FloatArray
+            private set
+        var physicsAccumulator: Float = 0f
+        var physicsStepTimeMs: Float = 0f
+        var currentPhysicsInterval: Float = MIN_INTERVAL
+        var explosionLogCount: Int = 0
+        var debugStepCount: Int = 0
+
+        companion object {
+            const val BUDGET_HIGH_MS = 4.0f
+            const val BUDGET_LOW_MS = 1.0f
+            const val MIN_INTERVAL = 1f / 120f
+            const val MAX_INTERVAL = 1f / 15f
+            const val SPEED_HISTORY_SIZE = 5
+            const val SPRINT_SPEED_THRESHOLD = 0.04f  // ~squared dist for sprinting speed
+            const val STOP_SPEED_THRESHOLD = 0.002f   // ~squared dist for "stopped"
+        }
+
         fun initialize() {
-            if (_world != null) {
-                return
-            }
-            MemoryStack.stackPush().use { stack ->
-                val initialTransform = stack.malloc(scene.rigidBodyComponents.size * 64)
-                scene.rigidBodyComponents.forEach { (nodeIndex, component) ->
-                    val nodeWorldTransform = modelData.worldTransforms[nodeIndex]
-                    nodeWorldTransform.get(component.rigidBodyIndex * 64, initialTransform)
-                }
-                _world = PhysicsWorld(physicsScene, initialTransform)
-                transformArray = FloatArray(scene.rigidBodyComponents.size * 7)
-                // Initial pull to populate array
-                _world!!.pullTransforms(transformArray)
-            }
+            // Memory is initialized when PhysicsWorld is created in the provider
+            val arraySize = scene.rigidBodyComponents.size * 7
+            transformArray = FloatArray(arraySize)
+            previousTransforms = FloatArray(arraySize)
+            currentTransforms = FloatArray(arraySize)
+            world.pullTransforms(transformArray)
+            transformArray.copyInto(previousTransforms)
+            transformArray.copyInto(currentTransforms)
         }
 
         override fun close() {
-            _world?.close()
         }
     }
 
@@ -244,6 +325,10 @@ class ModelInstanceImpl(
         }
     }
 
+    override fun copyNodeWorldTransform(nodeIndex: Int, dest: Matrix4f) {
+        modelData.worldTransforms[nodeIndex].get(dest)
+    }
+
     override fun getCameraTransform(index: Int) = modelData.cameraTransforms.getOrNull(index)
 
     override fun debugRender(viewProjectionMatrix: Matrix4fc, bufferSource: MultiBufferSource, time: Float) {
@@ -301,7 +386,6 @@ class ModelInstanceImpl(
             localMatricesBuffer = modelData.localMatricesBuffer.copy(),
             skinBuffer = modelData.skinBuffers.copy(),
             morphTargetBuffer = modelData.targetBuffers.copy().also { buffer ->
-                // Upload indices don't change the actual data
                 buffer.forEach {
                     it.content.uploadIndices()
                 }
@@ -314,6 +398,7 @@ class ModelInstanceImpl(
     }
 
     override fun onClosed() {
+        top.fifthlight.blazerod.api.physics.PhysicsEngine.unregister(this)
         scene.decreaseReferenceCount()
         physicsData?.close()
         modelData.close()

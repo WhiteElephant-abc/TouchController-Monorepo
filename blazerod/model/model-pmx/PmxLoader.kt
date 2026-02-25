@@ -1229,9 +1229,9 @@ class PmxLoader : ModelFileLoader {
                                         shapePosition = rigidBody.shapePosition,
                                         shapeRotation = rigidBody.shapeRotation,
                                         mass = rigidBody.mass,
-                                        moveAttenuation = rigidBody.moveAttenuation,
-                                        rotationDamping = rigidBody.rotationDamping,
-                                        repulsion = rigidBody.repulsion,
+                                        moveAttenuation = (rigidBody.moveAttenuation + 0.05f).coerceAtMost(1f),
+                                        rotationDamping = (rigidBody.rotationDamping + 0.05f).coerceAtMost(1f),
+                                        repulsion = rigidBody.repulsion.coerceAtMost(0.1f),
                                         frictionForce = rigidBody.frictionForce,
                                         physicsMode = adjustedPhysicsMode,
                                     )

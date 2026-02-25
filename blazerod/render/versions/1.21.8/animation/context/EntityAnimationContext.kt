@@ -48,10 +48,10 @@ open class EntityAnimationContext(
         }.let { intBuffer.apply { value = it } }
 
         EntityGroundSpeed -> doubleBuffer.apply {
-            value = entity.knownMovement.horizontalDistance()
+            value = entity.deltaMovement.horizontalDistance()
         }
 
-        EntityVerticalSpeed -> doubleBuffer.apply { value = entity.knownMovement.y }
+        EntityVerticalSpeed -> doubleBuffer.apply { value = entity.deltaMovement.y }
 
         EntityHasRider -> booleanBuffer.apply { value = entity.isVehicle }
 

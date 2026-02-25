@@ -2,6 +2,7 @@ package top.fifthlight.blazerod.physics;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import top.fifthlight.blazerod.util.nativeloader.NativeLoader;
 
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -34,6 +35,9 @@ public class PhysicsLibrary {
     public native static void resetRigidBody(long physicsWorld, int rigidBodyIndex,
                                              float px, float py, float pz,
                                              float qx, float qy, float qz, float qw);
+
+    public native static void applyVelocityDamping(long physicsWorld, int rigidBodyIndex,
+                                                   float linearAttenuation, float angularAttenuation);
 
     public native static void destroyPhysicsWorld(long physicsWorld);
 
@@ -82,7 +86,6 @@ public class PhysicsLibrary {
             system = "windows";
             extension = "dll";
         } else if (systemName.contains("android")) {
-            // Most OpenJDK on Android declare themselves as Linux, but just in case
             system = "android";
             extension = "so";
         } else {
@@ -100,47 +103,19 @@ public class PhysicsLibrary {
             return false;
         }
 
-        var resourcePath = "bullet_%s_%s/libbullet.%s".formatted(system, arch, extension);
-        try (var libraryUrl = PhysicsLibrary.class.getClassLoader().getResourceAsStream(resourcePath)) {
-            if (libraryUrl == null) {
-                logger.error("Failed to find physics library: {}", resourcePath);
-                return false;
-            }
-
-            var outputPath = Files.createTempFile("bullet_", "." + extension);
-            logger.info("Extracting {} to {}", resourcePath, outputPath);
-
-            Files.copy(libraryUrl, outputPath, StandardCopyOption.REPLACE_EXISTING);
-            try {
-                // Set file to read only after extracting
-                if ("windows".equals(system)) {
-                    var attributeView = Files.getFileAttributeView(outputPath, DosFileAttributeView.class);
-                    attributeView.setReadOnly(true);
-                } else {
-                    var attributeView = Files.getFileAttributeView(outputPath, PosixFileAttributeView.class);
-                    // 500
-                    attributeView.setPermissions(Set.of(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_EXECUTE));
-                }
-            } catch (Exception ignored) {
-            }
-
-            try {
-                System.load(outputPath.toAbsolutePath().toString());
-            } catch (UnsatisfiedLinkError ex) {
-                logger.error("Failed to load bullet physics native library", ex);
-                return false;
-            }
-            try {
-                Files.delete(outputPath);
-            } catch (Exception ignored) {
-                // On Windows, the file is locked.
-            }
-
+        try {
+            NativeLoader.load(
+                PhysicsLibrary.class.getClassLoader(), 
+                "bullet", 
+                "bullet"
+            );
             isPhysicsAvailable = true;
             logger.info("Loaded bullet physics native library");
             return true;
-        } catch (Exception ex) {
+        } catch (Exception | LinkageError ex) {
             logger.error("Failed to load bullet physics native library", ex);
+            System.err.println("CRITICAL JNI LOAD ERROR:");
+            ex.printStackTrace(System.err);
             return false;
         }
     }

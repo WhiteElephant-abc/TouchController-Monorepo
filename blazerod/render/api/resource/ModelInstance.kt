@@ -11,6 +11,7 @@ import java.util.function.Consumer
 
 interface ModelInstance : RefCount {
     val scene: RenderScene
+    var lodDistance: Float
 
     fun clearTransform()
     fun setTransformMatrix(nodeIndex: Int, transformId: TransformId, matrix: Matrix4f)
@@ -24,6 +25,7 @@ interface ModelInstance : RefCount {
     fun setIkEnabled(index: Int, enabled: Boolean)
     fun setGroupWeight(morphedPrimitiveIndex: Int, targetGroupIndex: Int, weight: Float)
 
+    fun copyNodeWorldTransform(nodeIndex: Int, dest: Matrix4f)
     fun getCameraTransform(index: Int): CameraTransform?
 
     fun updateRenderData(time: Float)

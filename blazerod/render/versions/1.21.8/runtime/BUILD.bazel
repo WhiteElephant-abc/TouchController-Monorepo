@@ -7,6 +7,7 @@ kt_merge_library(
     merge_deps = [
         "//blazerod/render/api/refcount",
         "//blazerod/render/api/resource",
+        "//blazerod/render/api/physics",
         "//blazerod/render/common",
         "//blazerod/render/common/physics",
         "//blazerod/render/common/resource",

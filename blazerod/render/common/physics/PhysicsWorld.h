@@ -72,6 +72,6 @@ class PhysicsWorld {
                         float qx, float qy, float qz, float qw);
     void Step(float delta_time, int max_sub_steps, float fixed_time_step);
 };
-}  // namespace blazerod::physics
+} 
 
-#endif  // BLAZEROD_PHYSICSWORLD_H
+#endif
