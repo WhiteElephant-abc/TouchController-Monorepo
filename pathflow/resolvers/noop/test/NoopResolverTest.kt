@@ -1,7 +1,7 @@
-package top.fifthlight.pathflow.resolvers.test
+package top.fifthlight.pathflow.resolvers.noop.test
 
 import org.junit.jupiter.api.assertNull
-import top.fifthlight.pathflow.resolvers.NoopResolver
+import top.fifthlight.pathflow.resolvers.noop.NoopResolver
 import kotlin.test.Test
 
 class NoopResolverTest {

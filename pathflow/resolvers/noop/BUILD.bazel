@@ -1,7 +1,7 @@
 load("//rule:merge_library.bzl", "kt_merge_library")
 
 kt_merge_library(
-    name = "resolvers",
+    name = "noop",
     srcs = glob(["*.kt"]),
     merge_deps = [
         "//pathflow/data",

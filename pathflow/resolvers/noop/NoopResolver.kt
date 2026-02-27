@@ -1,4 +1,4 @@
-package top.fifthlight.pathflow.resolvers
+package top.fifthlight.pathflow.resolvers.noop
 
 import top.fifthlight.pathflow.data.FlowData
 import top.fifthlight.pathflow.feature.FlowFeature

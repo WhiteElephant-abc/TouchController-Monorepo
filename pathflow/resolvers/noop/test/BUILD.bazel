@@ -3,10 +3,10 @@ load("//rule:junit_test.bzl", "kt_junit_test")
 kt_junit_test(
     name = "noop-test",
     srcs = ["NoopResolverTest.kt"],
-    test_class = "top.fifthlight.pathflow.resolvers.test.NoopResolverTest",
+    test_class = "top.fifthlight.pathflow.resolvers.noop.test.NoopResolverTest",
     deps = [
         "//pathflow/data",
-        "//pathflow/resolvers",
+        "//pathflow/resolvers/noop",
     ],
 )
 
