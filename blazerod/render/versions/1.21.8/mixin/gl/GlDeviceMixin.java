@@ -181,6 +181,9 @@ public abstract class GlDeviceMixin implements GpuDeviceExtInternal {
 
     @Inject(method = "compilePipeline", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/opengl/GlProgram;setupUniforms(Ljava/util/List;Ljava/util/List;)V"))
     private void onSetGlProgram(RenderPipeline pipeline, BiFunction<ResourceLocation, ShaderType, String> sourceRetriever, CallbackInfoReturnable<GlRenderPipeline> cir, @Local GlProgram shaderProgram) {
+        if (!blazerod$supportSsbo) {
+            return;
+        }
         var shaderProgramExt = (ShaderProgramExtInternal) shaderProgram;
         var pipelineExt = (RenderPipelineExtInternal) pipeline;
         shaderProgramExt.blazerod$setStorageBuffers(pipelineExt.blazerod$getStorageBuffers());

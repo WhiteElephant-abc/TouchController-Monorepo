@@ -45,7 +45,10 @@ public abstract class GlProgramMixin implements ShaderProgramExtInternal {
     @Override
     public void blazerod$setStorageBuffers(Set<String> storageBuffers) {
         var device = (GpuDeviceExt) RenderSystem.getDevice();
-        if (!device.blazerod$supportSsbo() && !storageBuffers.isEmpty()) {
+        if (storageBuffers.isEmpty()) {
+            return;
+        }
+        if (!device.blazerod$supportSsbo()) {
             throw new UnsupportedOperationException("Storage buffer is not supported");
         }
 
