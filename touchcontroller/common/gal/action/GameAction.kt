@@ -21,4 +21,6 @@ interface GameAction {
     interface Factory {
         fun of(): GameAction
     }
+
+    companion object : GameAction by GameActionFactory.of()
 }

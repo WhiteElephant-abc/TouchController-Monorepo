@@ -6,6 +6,7 @@ kt_merge_library(
     merge_deps = [
         "//touchcontroller/common/platform",
         "//touchcontroller/common/platform/provider",
+        "//touchcontroller/common/platform/warning",
         "//touchcontroller/common/ui/config/tab/status/state",
         "//touchcontroller/common/ui/model",
     ],

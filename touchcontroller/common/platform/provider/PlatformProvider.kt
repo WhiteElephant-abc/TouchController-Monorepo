@@ -31,8 +31,8 @@ object PlatformProvider {
     private val nativeLibraryPathGetter: NativeLibraryPathGetter = NativeLibraryPathGetterFactory.of()
     private val logger = LoggerFactory.getLogger(PlatformProvider::class.java)
 
-    private val systemName by lazy { System.getProperty("os.name") }
-    private val systemArch by lazy { System.getProperty("os.arch") }
+    val systemName: String by lazy { System.getProperty("os.name") }
+    val systemArch: String by lazy { System.getProperty("os.arch") }
 
     val isAndroid: Boolean by lazy {
         // Detect the existence of /system/build.prop
@@ -59,6 +59,14 @@ object PlatformProvider {
         } catch (ex: Exception) {
             logger.info("Failed to check iOS path, assuming iOS", ex)
             true
+        }
+    }
+
+    val displayName by lazy {
+        when {
+            PlatformProvider.isAndroid -> "Android"
+            PlatformProvider.isIos -> "iOS"
+            else -> PlatformProvider.systemName
         }
     }
 

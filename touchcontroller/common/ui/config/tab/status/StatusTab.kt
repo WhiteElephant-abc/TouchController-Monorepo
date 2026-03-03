@@ -5,8 +5,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import top.fifthlight.combine.data.Text
+import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.placement.fillMaxSize
+import top.fifthlight.combine.modifier.placement.fillMaxWidth
 import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.widget.layout.Column
@@ -33,11 +35,31 @@ object StatusTab : Tab() {
                 .padding(8)
                 .verticalScroll(background = LocalTouchControllerTheme.current.background)
                 .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8),
         ) {
             uiState.currentPlatform?.let {
                 Text(Text.format(Texts.SCREEN_CONFIG_STATUS_PLATFORM, it))
             } ?: run {
-                Text(Text.format(Texts.SCREEN_CONFIG_STATUS_PLATFORM, Text.translatable(Texts.SCREEN_CONFIG_STATUS_PLATFORM_UNAVAILABLE)))
+                Text(
+                    Text.format(
+                        Texts.SCREEN_CONFIG_STATUS_PLATFORM,
+                        Text.translatable(Texts.SCREEN_CONFIG_STATUS_PLATFORM_UNAVAILABLE)
+                    )
+                )
+            }
+
+            uiState.systemInfo?.let { systemInfo ->
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8),
+                ) {
+                    Text(Text.translatable(Texts.SCREEN_CONFIG_STATUS_DEBUG_INFO_TITLE))
+
+                    Text(Text.format(Texts.SCREEN_CONFIG_STATUS_DEBUG_INFO_SYSTEM, systemInfo.system))
+                    Text(Text.format(Texts.SCREEN_CONFIG_STATUS_DEBUG_INFO_ARCHITECTURE, systemInfo.arch))
+
+                    uiState.warningMessage?.let { Text(it) }
+                }
             }
         }
     }

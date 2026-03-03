@@ -51,6 +51,9 @@
   "touchcontroller.screen.config.status.title": "Status",
   "touchcontroller.screen.config.status.platform": "Current platform: %s",
   "touchcontroller.screen.config.status.platform.unavailable": "Unavailable",
+  "touchcontroller.screen.config.status.debug_info.title": "Debug info",
+  "touchcontroller.screen.config.status.debug_info.system": "System: %s",
+  "touchcontroller.screen.config.status.debug_info.architecture": "CPU architecture: %s",
 
   "touchcontroller.screen.config.about.title": "About",
   "touchcontroller.screen.config.about.authors.title": "Authors: ",

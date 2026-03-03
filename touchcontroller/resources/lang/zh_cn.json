@@ -51,6 +51,9 @@
   "touchcontroller.screen.config.status.title": "状态",
   "touchcontroller.screen.config.status.platform": "平台：%s",
   "touchcontroller.screen.config.status.platform.unavailable": "不可用",
+  "touchcontroller.screen.config.status.debug_info.title": "调试信息",
+  "touchcontroller.screen.config.status.debug_info.system": "系统：%s",
+  "touchcontroller.screen.config.status.debug_info.architecture": "CPU 架构：%s",
 
   "touchcontroller.screen.config.about.title": "关于",
   "touchcontroller.screen.config.about.authors.title": "作者：",
