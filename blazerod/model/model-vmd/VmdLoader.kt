@@ -523,16 +523,12 @@ class VmdLoader : ModelFileLoader {
             val (indexer, data) = channel.toData()
             listOf(
                 KeyFrameAnimationChannel(
-                    type = AnimationChannel.Type.IkEnabled,
-                    typeData = AnimationChannel.Type.TransformData(
-                        node = AnimationChannel.Type.NodeData(
-                            targetNode = null,
-                            targetNodeName = name,
-                            targetHumanoidTag = HumanoidTag.fromPmxJapanese(name),
-                        ),
-                        transformId = TransformId.IK,
+                    type = AnimationChannel.Type.IkEnabled as AnimationChannel.Type<MutableBoolean, AnimationChannel.Type.NodeData>,
+                    typeData = AnimationChannel.Type.NodeData(
+                        targetNode = null,
+                        targetNodeName = name,
+                        targetHumanoidTag = HumanoidTag.fromPmxJapanese(name),
                     ),
-                    components = emptyList<AnimationChannelComponent<*, *>>(),
                     indexer = indexer,
                     keyframeData = data,
                     interpolation = AnimationInterpolation.step,

@@ -2,6 +2,7 @@ package top.fifthlight.blazerod.model.animation
 
 import org.joml.Quaternionf
 import org.joml.Vector3f
+import top.fifthlight.blazerod.model.util.MutableBoolean
 import top.fifthlight.blazerod.model.util.MutableFloat
 
 data class KeyFrameAnimationChannel<T : Any, D>(
@@ -129,27 +130,27 @@ fun <D> KeyFrameAnimationChannel(
 
 @JvmName("BooleanKeyFrameAnimationChannel")
 fun <D> KeyFrameAnimationChannel(
-    type: AnimationChannel.Type<top.fifthlight.blazerod.model.util.MutableBoolean, D>,
+    type: AnimationChannel.Type<MutableBoolean, D>,
     typeData: D,
-    components: List<top.fifthlight.blazerod.model.animation.AnimationChannelComponent<*, *>> = emptyList(),
+    components: List<AnimationChannelComponent<*, *>> = listOf(),
     indexer: AnimationKeyFrameIndexer,
-    keyframeData: AnimationKeyFrameData<top.fifthlight.blazerod.model.util.MutableBoolean>,
+    keyframeData: AnimationKeyFrameData<MutableBoolean>,
     interpolation: AnimationInterpolation,
-): KeyFrameAnimationChannel<top.fifthlight.blazerod.model.util.MutableBoolean, D> = KeyFrameAnimationChannel(
+): KeyFrameAnimationChannel<MutableBoolean, D> = KeyFrameAnimationChannel(
     type = type,
     typeData = typeData,
     components = components,
     indexer = indexer,
-    interpolator = object : AnimationInterpolator<top.fifthlight.blazerod.model.util.MutableBoolean> {
+    interpolator = object : AnimationInterpolator<MutableBoolean> {
         override fun interpolate(
             context: AnimationContext,
             state: AnimationState,
             delta: Float,
             startFrame: Int,
             endFrame: Int,
-            startValue: List<top.fifthlight.blazerod.model.util.MutableBoolean>,
-            endValue: List<top.fifthlight.blazerod.model.util.MutableBoolean>,
-            result: top.fifthlight.blazerod.model.util.MutableBoolean
+            startValue: List<MutableBoolean>,
+            endValue: List<MutableBoolean>,
+            result: MutableBoolean
         ) {
             result.value = startValue[0].value
         }
@@ -157,6 +158,6 @@ fun <D> KeyFrameAnimationChannel(
     keyframeData = keyframeData,
     interpolation = interpolation,
     valueSetter = { values, result -> result.value = values[0].value },
-    defaultValue = { top.fifthlight.blazerod.model.util.MutableBoolean(true) },
+    defaultValue = { MutableBoolean(true) },
 )
 
