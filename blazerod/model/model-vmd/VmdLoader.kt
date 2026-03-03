@@ -466,12 +466,17 @@ class VmdLoader : ModelFileLoader {
                 sortedEnableList.add(enableList.getByte(i))
             }
 
-            // Custom AnimationKeyFrameData for MutableBoolean
             val frameData = object : AnimationKeyFrameData<top.fifthlight.blazerod.model.util.MutableBoolean> {
-                override val size: Int get() = sortedEnableList.size
-                override val channels: Int get() = 1
-                override fun get(frameIndex: Int, channelIndex: Int, result: top.fifthlight.blazerod.model.util.MutableBoolean) {
-                    result.value = sortedEnableList.getByte(frameIndex) != 0.toByte()
+                override val frames: Int get() = sortedEnableList.size
+                override val elements: Int get() = 1
+                override fun get(
+                    context: AnimationContext,
+                    state: AnimationState,
+                    index: Int,
+                    data: List<top.fifthlight.blazerod.model.util.MutableBoolean>,
+                    post: Boolean,
+                ) {
+                    data[0].value = sortedEnableList.getByte(index) != 0.toByte()
                 }
             }
 
@@ -526,7 +531,7 @@ class VmdLoader : ModelFileLoader {
                         ),
                         transformId = TransformId.IK,
                     ),
-                    components = emptyList(),
+                    components = emptyList<AnimationChannelComponent>(),
                     indexer = indexer,
                     keyframeData = data,
                     interpolation = AnimationInterpolation.step,
