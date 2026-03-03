@@ -3,6 +3,7 @@ load("@rules_java//java:defs.bzl", "java_binary")
 java_binary(
     name = "create_jar",
     srcs = ["JarCreator.java"],
+    jvm_flags = ["-Duser.timezone=UTC"],
     main_class = "top.fifthlight.fabazel.jarcreator.JarCreator",
     visibility = ["//visibility:public"],
 )
@@ -13,6 +14,7 @@ java_binary(
         "JarCreator.java",
         "JarCreatorWorker.java",
     ],
+    jvm_flags = ["-Duser.timezone=UTC"],
     main_class = "top.fifthlight.fabazel.jarcreator.JarCreatorWorker",
     visibility = ["//visibility:public"],
     deps = [

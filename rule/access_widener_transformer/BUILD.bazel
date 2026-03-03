@@ -3,6 +3,7 @@ load("@rules_java//java:defs.bzl", "java_binary")
 java_binary(
     name = "access_widener_transformer",
     srcs = ["AccessWidenerTransformer.java"],
+    jvm_flags = ["-Duser.timezone=UTC"],
     main_class = "top.fifthlight.fabazel.accesswidenertransformer.AccessWidenerTransformer",
     visibility = ["//visibility:public"],
     deps = [

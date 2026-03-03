@@ -3,6 +3,7 @@ load("@rules_java//java:defs.bzl", "java_binary")
 java_binary(
     name = "jij_merger",
     srcs = ["JarInJarMerger.java"],
+    jvm_flags = ["-Duser.timezone=UTC"],
     main_class = "top.fifthlight.armorstand.jijmerger.JarInJarMerger",
     visibility = ["//visibility:public"],
     deps = [

@@ -14,6 +14,7 @@ java_library(
 
 java_binary(
     name = "core",
+    jvm_flags = ["-Duser.timezone=UTC"],
     main_class = "top.fifthlight.mergetools.merger.ExpectActualMergerWorker",
     visibility = ["//visibility:public"],
     runtime_deps = [
@@ -26,6 +27,7 @@ java_binary(
 
 java_binary(
     name = "expect_actual",
+    jvm_flags = ["-Duser.timezone=UTC"],
     main_class = "top.fifthlight.mergetools.merger.ExpectActualMergerWorker",
     visibility = ["//visibility:public"],
     runtime_deps = [
