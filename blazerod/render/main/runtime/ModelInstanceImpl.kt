@@ -180,10 +180,10 @@ class ModelInstanceImpl(
         val worldTransforms = Array(scene.nodes.size) { Matrix4f() }
         val worldTransformsNoPhysics = Array(scene.nodes.size) { Matrix4f() }
 
-        val centerNodeIndex = scene.nodes.indexOfFirst { it.humanoidTag == top.fifthlight.blazerod.model.HumanoidTag.Hips }.takeIf { it != -1 }
+        val centerNodeIndex = scene.nodes.indexOfFirst { it.humanoidTags.contains(top.fifthlight.blazerod.model.HumanoidTag.HIPS) }.takeIf { it != -1 }
         val isIkTargetNode = BooleanArray(scene.nodes.size).apply {
             scene.nodes.forEachIndexed { i, node ->
-                if (node.getComponentsOfType(top.fifthlight.blazerod.runtime.node.component.IkTargetComponent.Type).isNotEmpty()) {
+                if (node.getComponentsOfType(top.fifthlight.blazerod.runtime.node.component.RenderNodeComponent.Type.IkTarget).isNotEmpty()) {
                     set(i, true)
                 }
             }
