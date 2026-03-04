@@ -20,14 +20,31 @@ class CrossfadeAnimationItemPendingValues(
 class CrossfadeAnimationState(
     val sourceState: AnimationState,
     val targetState: AnimationState,
-    var elapsedTime: Float = 0f,
-    val duration: Float
+    context: AnimationContext,
+    override val duration: Float
 ) : AnimationState {
+    
+    var elapsedTime: Float = 0f
+    private var prevGameTick: Long = context.getGameTick()
+    private var prevDeltaTick: Float = context.getDeltaTick()
+
+    override val playing: Boolean
+        get() = true
+
     override fun updateTime(context: AnimationContext) {
         sourceState.updateTime(context)
         targetState.updateTime(context)
-        elapsedTime += context.deltaTime
+        
+        val currentTick = context.getGameTick()
+        val currentDelta = context.getDeltaTick()
+        val timePassed = ((currentTick - prevGameTick).toFloat() + (currentDelta - prevDeltaTick)) * AnimationContext.SECONDS_PER_TICK
+        
+        prevGameTick = currentTick
+        prevDeltaTick = currentDelta
+        elapsedTime += timePassed
     }
+
+    override fun getTime(): Float = elapsedTime
 }
 
 class CrossfadeAnimationItemInstance(
@@ -39,7 +56,7 @@ class CrossfadeAnimationItemInstance(
     override fun createState(context: AnimationContext): AnimationState {
         val sourceState = sourceInstance.createState(context)
         val targetState = targetInstance.createState(context)
-        return CrossfadeAnimationState(sourceState, targetState, 0f, duration)
+        return CrossfadeAnimationState(sourceState, targetState, context, duration)
     }
 
     override fun update(context: AnimationContext, state: AnimationState): AnimationItemPendingValues {
