@@ -58,51 +58,6 @@ public class PhysicsLibrary {
 
         logger.info("Loading bullet physics native library");
 
-        var systemName = System.getProperty("os.name").toLowerCase(Locale.ROOT);
-        var systemArch = System.getProperty("os.arch").toLowerCase(Locale.ROOT);
-
-        String system;
-        String extension;
-        if (systemName.startsWith("linux")) {
-            var isAndroid = false;
-            for (var path : androidPaths) {
-                try {
-                    if (Files.exists(path)) {
-                        isAndroid = true;
-                        break;
-                    }
-                } catch (SecurityException ex) {
-                    logger.info("Failed to access {}, may running on Android", path, ex);
-                }
-            }
-
-            if (isAndroid) {
-                system = "android";
-            } else {
-                system = "linux";
-            }
-            extension = "so";
-        } else if (systemName.startsWith("windows")) {
-            system = "windows";
-            extension = "dll";
-        } else if (systemName.contains("android")) {
-            system = "android";
-            extension = "so";
-        } else {
-            logger.error("Unsupported system: {}", systemName);
-            return false;
-        }
-
-        var arch = switch (systemArch) {
-            case "amd64", "x86_64" -> "x86_64";
-            case "arm64", "aarch64" -> "aarch64";
-            default -> null;
-        };
-        if (arch == null) {
-            logger.error("Unsupported architecture: {}", systemArch);
-            return false;
-        }
-
         try {
             NativeLoader.load(
                 PhysicsLibrary.class.getClassLoader(), 

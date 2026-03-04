@@ -52,6 +52,9 @@ public class NativeLoader {
             // Most OpenJDK on Android declare themselves as Linux, but just in case
             system = "android";
             extension = "so";
+        } else if (systemName.contains("mac")) {
+            system = "macos";
+            extension = "dylib";
         } else {
             throw new UnsupportedOperationException("Unsupported system: " + systemName);
         }
