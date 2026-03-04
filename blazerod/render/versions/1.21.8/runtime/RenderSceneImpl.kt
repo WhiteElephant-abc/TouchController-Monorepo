@@ -306,9 +306,7 @@ class RenderSceneImpl(
             executePhase(instance, UpdatePhase.GlobalTransformPropagation)
             updatePhysics(instance, time)
         }
-        UpdatePhase.DebugRender.acquire(viewProjectionMatrix, bufferSource).use {
-            executePhase(instance, it)
-        }
+        executePhase(instance, UpdatePhase.DebugRender(viewProjectionMatrix, bufferSource))
     }
 
     fun updateRenderData(instance: ModelInstanceImpl, time: Float) {

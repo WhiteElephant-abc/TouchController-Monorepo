@@ -30,7 +30,6 @@ kt_merge_library(
         "//blazerod/render/common/layout",
         "//blazerod/render/common/physics",
         "//blazerod/render/common/util/dispatchers",
-        "//blazerod/render/common/util/objectpool",
         "//blazerod/render/versions/1.21.8",
         "//blazerod/render/versions/1.21.8/expect",
         "//blazerod/render/versions/1.21.8/runtime",

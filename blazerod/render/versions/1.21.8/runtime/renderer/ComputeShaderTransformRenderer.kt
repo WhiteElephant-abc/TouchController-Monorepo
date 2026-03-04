@@ -27,7 +27,6 @@ import top.fifthlight.blazerod.render.common.util.bitmap.BitmapItem
 import top.fifthlight.blazerod.render.common.util.gpushaderpool.GpuShaderDataPool
 import top.fifthlight.blazerod.render.common.util.gpushaderpool.ofSsbo
 import top.fifthlight.blazerod.render.common.util.gpushaderpool.upload
-import top.fifthlight.blazerod.render.common.util.objectpool.ObjectPool
 import top.fifthlight.blazerod.render.version_1_21_8.extension.*
 import top.fifthlight.blazerod.model.toVector4f
 import top.fifthlight.blazerod.render.common.util.math.ceilDiv
@@ -293,59 +292,12 @@ class ComputeShaderTransformRenderer private constructor() :
         return targetVertexData
     }
 
-    private class ComputeItem private constructor() {
-        private var released = true
-        private var _primitiveComponent: PrimitiveComponent? = null
-        private var _renderTask: RenderTaskImpl? = null
-        private var _vertexFormat: VertexFormat? = null
-        private var _vertexBuffer: GpuBufferSlice? = null
-
-        val primitiveComponent
-            get() = _primitiveComponent!!
-        val renderTask
-            get() = _renderTask!!
-        val vertexFormat
-            get() = _vertexFormat!!
-        val vertexBuffer
-            get() = _vertexBuffer!!
-
-        fun release() {
-            if (released) {
-                return
-            }
-            POOL.release(this)
-        }
-
-        companion object {
-            private val POOL = ObjectPool(
-                identifier = "compute_item",
-                create = ::ComputeItem,
-                onAcquired = {
-                    released = false
-                },
-                onReleased = {
-                    released = true
-                    _primitiveComponent = null
-                    _renderTask = null
-                    _vertexFormat = null
-                    _vertexBuffer = null
-                },
-                onClosed = {},
-            )
-
-            fun acquire(
-                primitiveComponent: PrimitiveComponent,
-                renderTask: RenderTaskImpl,
-                vertexFormat: VertexFormat,
-                vertexBuffer: GpuBufferSlice,
-            ) = POOL.acquire().apply {
-                _primitiveComponent = primitiveComponent
-                _renderTask = renderTask
-                _vertexFormat = vertexFormat
-                _vertexBuffer = vertexBuffer
-            }
-        }
-    }
+    private class ComputeItem(
+        val primitiveComponent: PrimitiveComponent,
+        val renderTask: RenderTaskImpl,
+        val vertexFormat: VertexFormat,
+        val vertexBuffer: GpuBufferSlice,
+    )
 
     private val modelMatrix = Matrix4f()
     private val modelNormalMatrix = Matrix4f()
@@ -387,7 +339,7 @@ class ComputeShaderTransformRenderer private constructor() :
                 modelNormalMatrix = modelNormalMatrix,
             )
 
-            val item = ComputeItem.acquire(
+            val item = ComputeItem(
                 primitiveComponent = primitiveComponent,
                 renderTask = task,
                 vertexFormat = targetVertexFormat,
@@ -473,7 +425,6 @@ class ComputeShaderTransformRenderer private constructor() :
                     }
                 }
             }
-            item.release()
         }
         computeItems.clear()
         renderTasks.forEach { it.release() }
@@ -567,7 +518,6 @@ class ComputeShaderTransformRenderer private constructor() :
     }
 
     override fun rotate() {
-        computeItems.forEach { it.release() }
         computeItems.clear()
         renderTasks.forEach { it.release() }
         renderTasks.clear()
@@ -576,7 +526,6 @@ class ComputeShaderTransformRenderer private constructor() :
     }
 
     override fun close() {
-        computeItems.forEach { it.release() }
         computeItems.clear()
         renderTasks.forEach { it.release() }
         renderTasks.clear()

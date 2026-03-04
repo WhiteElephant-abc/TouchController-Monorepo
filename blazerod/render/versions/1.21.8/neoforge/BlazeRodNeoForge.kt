@@ -15,7 +15,6 @@ import top.fifthlight.blazerod.physics.PhysicsInterface
 import top.fifthlight.blazerod.render.common.BlazeRod
 import top.fifthlight.blazerod.render.api.event.RenderEvents
 import top.fifthlight.blazerod.render.common.runtime.uniform.UniformBuffer
-import top.fifthlight.blazerod.render.common.util.objectpool.cleanupObjectPools
 import top.fifthlight.blazerod.render.common.debug.*
 import top.fifthlight.blazerod.render.version_1_21_8.util.dispatchers.BlockableEventLoopDispatcher
 import top.fifthlight.blazerod.render.version_1_21_8.runtime.resource.RenderTexture
@@ -42,13 +41,11 @@ class BlazeRodNeoForge(private val container: ModContainer) {
                     GlRenderPass.VALIDATION = true
                     if (System.getProperty("blazerod.debug.gui") == "true") {
                         ResourceCountTracker.initialize()
-                        ObjectPoolTracker.initialize()
                         UniformBufferTracker.initialize()
                         System.setProperty("java.awt.headless", "false")
                         SwingUtilities.invokeLater {
                             try {
                                 ResourceCountTrackerFrame().isVisible = true
-                                ObjectCountTrackerFrame().isVisible = true
                                 UniformBufferTrackerFrame().isVisible = true
                             } catch (ex: Exception) {
                                 LOGGER.info("Failed to show debug windows", ex)
@@ -67,7 +64,6 @@ class BlazeRodNeoForge(private val container: ModContainer) {
             NeoForge.EVENT_BUS.register(object {
                 @SubscribeEvent
                 fun clientStop(event: ClientStoppingEvent) {
-                    cleanupObjectPools()
                     UniformBuffer.close()
                 }
             })

@@ -3,7 +3,6 @@ package top.fifthlight.blazerod.render.version_1_21_8.runtime.node
 import net.minecraft.client.renderer.MultiBufferSource
 import org.joml.Matrix4f
 import org.joml.Matrix4fc
-import top.fifthlight.blazerod.render.common.util.objectpool.ObjectPool
 
 sealed class UpdatePhase(
     val type: Type,
@@ -34,45 +33,10 @@ sealed class UpdatePhase(
 
     data object CameraUpdate : UpdatePhase(Type.CAMERA_UPDATE)
 
-    @ConsistentCopyVisibility
-    data class DebugRender private constructor(
-        val viewProjectionMatrix: Matrix4f = Matrix4f(),
-        val cacheMatrix: Matrix4f = Matrix4f(),
-        private var _multiBufferSource: MultiBufferSource? = null,
+    data class DebugRender(
+        val viewProjectionMatrix: Matrix4fc,
+        val multiBufferSource: MultiBufferSource,
     ) : UpdatePhase(
         type = Type.DEBUG_RENDER,
-    ), AutoCloseable {
-        private var recycled = false
-
-        val multiBufferSource: MultiBufferSource
-            get() = _multiBufferSource!!
-
-        override fun close() {
-            if (recycled) {
-                return
-            }
-            recycled = true
-            POOL.release(this)
-        }
-
-        companion object {
-            private val POOL = ObjectPool(
-                identifier = "update_phase_debug_render",
-                create = ::DebugRender,
-                onAcquired = {
-                    recycled = false
-                },
-                onReleased = { _multiBufferSource = null },
-                onClosed = {},
-            )
-
-            fun acquire(
-                viewProjectionMatrix: Matrix4fc,
-                multiBufferSource: MultiBufferSource,
-            ) = POOL.acquire().apply {
-                this.viewProjectionMatrix.set(viewProjectionMatrix)
-                _multiBufferSource = multiBufferSource
-            }
-        }
-    }
+    )
 }

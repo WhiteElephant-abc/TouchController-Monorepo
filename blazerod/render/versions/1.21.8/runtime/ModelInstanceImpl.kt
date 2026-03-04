@@ -189,13 +189,13 @@ class ModelInstanceImpl(
         val localMatricesBuffer = run {
             val buffer = LocalMatricesBuffer(scene.primitiveComponents.size)
             buffer.clear()
-            CowBuffer.acquire(buffer).also { it.increaseReferenceCount() }
+            CowBuffer(buffer).also { it.increaseReferenceCount() }
         }
 
         val skinBuffers = scene.skins.mapIndexed { index, skin ->
             val skinBuffer = RenderSkinBuffer(skin.jointSize)
             skinBuffer.clear()
-            CowBuffer.acquire(skinBuffer).also { it.increaseReferenceCount() }
+            CowBuffer(skinBuffer).also { it.increaseReferenceCount() }
         }
 
         val targetBuffers = scene.morphedPrimitiveComponents.mapIndexed { index, component ->
@@ -215,7 +215,7 @@ class ModelInstanceImpl(
                 processGroup(targetGroup.color, targetBuffers.colorChannel, targetGroup.weight)
                 processGroup(targetGroup.texCoord, targetBuffers.texCoordChannel, targetGroup.weight)
             }
-            CowBuffer.acquire(targetBuffers).also { it.increaseReferenceCount() }
+            CowBuffer(targetBuffers).also { it.increaseReferenceCount() }
         }
 
         val cameraTransforms = scene.cameras.map { CameraTransformImpl.of(it) }
@@ -378,7 +378,7 @@ class ModelInstanceImpl(
         light: Int,
         overlay: Int,
     ): RenderTaskImpl {
-        return RenderTaskImpl.acquire(
+        return RenderTaskImpl(
             instance = this,
             modelMatrix = modelMatrix,
             light = light,

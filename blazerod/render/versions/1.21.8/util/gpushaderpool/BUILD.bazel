@@ -8,7 +8,6 @@ kt_merge_library(
     ],
     merge_deps = [
         "//blazerod/render/common/util/math",
-        "//blazerod/render/common/util/objectpool",
         "//blazerod/render/versions/1.21.8/extension",
     ],
     visibility = ["//blazerod/render:__subpackages__"],

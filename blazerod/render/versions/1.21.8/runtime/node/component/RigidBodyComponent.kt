@@ -133,7 +133,7 @@ class RigidBodyComponent(
                 val vertexBuffer = consumers.getBuffer(DEBUG_RENDER_LAYER)
 
                 val nodeTransformMatrix = instance.getWorldTransform(node)
-                val matrix = phase.viewProjectionMatrix.mul(nodeTransformMatrix, phase.cacheMatrix)
+                val matrix = phase.viewProjectionMatrix.mul(nodeTransformMatrix, Matrix4f())
 
                 val color = when (rigidBodyData.physicsMode) {
                     RigidBody.PhysicsMode.FOLLOW_BONE -> CommonColors.DARK_PURPLE

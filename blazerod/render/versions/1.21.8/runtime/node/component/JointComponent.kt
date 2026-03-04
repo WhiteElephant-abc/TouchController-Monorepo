@@ -49,9 +49,9 @@ class JointComponent(
                     val buffer = consumers.getBuffer(DEBUG_RENDER_LAYER)
 
                     val parent =
-                        phase.viewProjectionMatrix.mul(instance.getWorldTransform(parentJoint), phase.cacheMatrix)
+                        phase.viewProjectionMatrix.mul(instance.getWorldTransform(parentJoint), Matrix4f())
                     buffer.addVertex(parent, 0f, 0f, 0f).setColor(CommonColors.YELLOW).setNormal(0f, 1f, 0f)
-                    val self = phase.viewProjectionMatrix.mul(instance.getWorldTransform(node), phase.cacheMatrix)
+                    val self = phase.viewProjectionMatrix.mul(instance.getWorldTransform(node), Matrix4f())
                     buffer.addVertex(self, 0f, 0f, 0f).setColor(CommonColors.RED).setNormal(0f, 1f, 0f)
                 }
             }

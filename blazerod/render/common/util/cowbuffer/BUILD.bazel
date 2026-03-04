@@ -9,7 +9,6 @@ kt_merge_library(
     merge_deps = [
         "//blazerod/render/api/refcount",
         "//blazerod/render/common/util/refcount",
-        "//blazerod/render/common/util/objectpool",
     ],
     visibility = ["//blazerod/render:__subpackages__"],
 )

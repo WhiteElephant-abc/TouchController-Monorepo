@@ -358,35 +358,35 @@ class IkTargetComponent(
 
                 val boxBuffer = consumers.getBuffer(RenderType.debugQuads())
                 for (joint in chains) {
-                    val jointMatrix = phase.viewProjectionMatrix.mul(
-                        instance.getWorldTransform(joint.nodeIndex),
-                        phase.cacheMatrix
-                    )
+                    val jointMatrix =
+                        phase.viewProjectionMatrix.mul(instance.getWorldTransform(joint.nodeIndex), Matrix4f())
                     boxBuffer.drawBox(jointMatrix, 0.005f, CommonColors.BLUE)
                 }
 
                 val effectorMatrix =
-                    phase.viewProjectionMatrix.mul(instance.getWorldTransform(effectorNodeIndex), phase.cacheMatrix)
+                    phase.viewProjectionMatrix.mul(instance.getWorldTransform(effectorNodeIndex), Matrix4f())
                 boxBuffer.drawBox(effectorMatrix, 0.01f, CommonColors.RED)
 
-                val targetMatrix =
-                    phase.viewProjectionMatrix.mul(instance.getWorldTransform(node), phase.cacheMatrix)
+                val targetMatrix = phase.viewProjectionMatrix.mul(instance.getWorldTransform(node), Matrix4f())
                 boxBuffer.drawBox(targetMatrix, 0.01f, CommonColors.GREEN)
 
                 val lineBuffer = consumers.getBuffer(DEBUG_RENDER_LAYER)
                 for (joint in chains) {
-                    val jointMatrix = phase.viewProjectionMatrix.mul(
-                        instance.getWorldTransform(joint.nodeIndex),
-                        phase.cacheMatrix
-                    )
+                    val jointMatrix =
+                        phase.viewProjectionMatrix.mul(instance.getWorldTransform(joint.nodeIndex), Matrix4f())
                     val lineSize = .05f
-                    lineBuffer.addVertex(jointMatrix, 0.0f, 0.0f, 0.0f).setColor(CommonColors.RED).setNormal(0.0f, 1.0f, 0.0f)
-                    lineBuffer.addVertex(jointMatrix, lineSize, 0.0f, 0.0f).setColor(CommonColors.RED).setNormal(0.0f, 1.0f, 0.0f)
-                    lineBuffer.addVertex(jointMatrix, 0.0f, lineSize, 0.0f).setColor(CommonColors.GREEN).setNormal(0.0f, 1.0f, 0.0f)
+                    lineBuffer.addVertex(jointMatrix, 0.0f, 0.0f, 0.0f).setColor(CommonColors.RED)
+                        .setNormal(0.0f, 1.0f, 0.0f)
+                    lineBuffer.addVertex(jointMatrix, lineSize, 0.0f, 0.0f).setColor(CommonColors.RED)
+                        .setNormal(0.0f, 1.0f, 0.0f)
+                    lineBuffer.addVertex(jointMatrix, 0.0f, lineSize, 0.0f).setColor(CommonColors.GREEN)
+                        .setNormal(0.0f, 1.0f, 0.0f)
                     lineBuffer.addVertex(jointMatrix, 0.0f, lineSize, lineSize).setColor(CommonColors.GREEN)
                         .setNormal(0.0f, 1.0f, 0.0f)
-                    lineBuffer.addVertex(jointMatrix, lineSize, 0.0f, 0.0f).setColor(CommonColors.BLUE).setNormal(0.0f, 1.0f, 0.0f)
-                    lineBuffer.addVertex(jointMatrix, lineSize, 0.0f, lineSize).setColor(CommonColors.BLUE).setNormal(0.0f, 1.0f, 0.0f)
+                    lineBuffer.addVertex(jointMatrix, lineSize, 0.0f, 0.0f).setColor(CommonColors.BLUE)
+                        .setNormal(0.0f, 1.0f, 0.0f)
+                    lineBuffer.addVertex(jointMatrix, lineSize, 0.0f, lineSize).setColor(CommonColors.BLUE)
+                        .setNormal(0.0f, 1.0f, 0.0f)
                 }
             }
 

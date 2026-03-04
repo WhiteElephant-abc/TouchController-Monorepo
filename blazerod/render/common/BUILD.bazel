@@ -21,7 +21,6 @@ merge_library_group(
         "//blazerod/render/common/util/dispatchers",
         "//blazerod/render/common/util/iterator",
         "//blazerod/render/common/util/math",
-        "//blazerod/render/common/util/objectpool",
         "//blazerod/render/common/util/refcount",
     ],
 )

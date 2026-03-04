@@ -5,7 +5,6 @@ import com.mojang.blaze3d.buffers.GpuBufferSlice
 import com.mojang.blaze3d.buffers.GpuFence
 import com.mojang.blaze3d.systems.RenderSystem
 import it.unimi.dsi.fastutil.ints.Int2ReferenceOpenHashMap
-import top.fifthlight.blazerod.render.common.util.objectpool.ObjectPool
 import top.fifthlight.blazerod.render.common.util.math.lcm
 import top.fifthlight.blazerod.render.common.util.math.roundUpToMultiple
 import top.fifthlight.blazerod.render.version_1_21_8.extension.*
@@ -127,54 +126,33 @@ sealed class GpuShaderDataPool(
         override val supportSlicing: Boolean
             get() = false
 
-        private class BufferItem private constructor() : AutoCloseable {
-            private var _buffer: GpuBuffer? = null
-            val buffer
-                get() = _buffer ?: error("BufferItem without buffer")
-            var bufferSize: Int = -1
-                private set
-            var lastUsedFrame: Int = -1
-            var id: Long = -1
-                private set
-            private var recycled: Boolean = false
+        private class BufferItem(
+            val buffer: GpuBuffer? = null,
+            val bufferSize: Int,
+            var lastUsedFrame: Int,
+        ) : AutoCloseable {
+            constructor(
+                buffer: GpuBuffer,
+                lastUsedFrame: Int,
+            ): this(
+                buffer = buffer,
+                bufferSize = buffer.size,
+                lastUsedFrame = lastUsedFrame,
+            )
+
+            constructor(bufferSize: Int): this(
+                buffer = null,
+                bufferSize = bufferSize,
+                lastUsedFrame = -1,
+            )
 
             companion object {
-                private var nextId = 0L
-
-                private val POOL = ObjectPool(
-                    identifier = "shader_data_buffer_item",
-                    create = ::BufferItem,
-                    onAcquired = {
-                        recycled = false
-                        id = nextId++
-                    },
-                    onReleased = {
-                        _buffer = null
-                        bufferSize = -1
-                        lastUsedFrame = -1
-                        id = -1
-                    },
-                    onClosed = { },
-                )
-
-                fun acquire(buffer: GpuBuffer, lastUsedFrame: Int) = POOL.acquire().apply {
-                    this._buffer = buffer
-                    this.bufferSize = buffer.size()
-                    this.lastUsedFrame = lastUsedFrame
-                }
-
-                fun acquire(bufferSize: Int) = POOL.acquire().apply {
-                    this.bufferSize = bufferSize
-                }
+                private var nextId: Long = 0
             }
+            val id: Long = nextId++
 
             override fun close() {
-                if (recycled) {
-                    return
-                }
-                recycled = true
-                _buffer?.close()
-                POOL.release(this)
+                buffer?.close()
             }
         }
 
@@ -204,7 +182,7 @@ sealed class GpuShaderDataPool(
             val frameData =
                 allFrameData.get(currentFrame) ?: error("No frame data of frame $currentFrame, this should not happen!")
 
-            val foundBuffer = BufferItem.acquire(size).use {
+            val foundBuffer = BufferItem(size).use {
                 availableBuffers.ceiling(it)
             }
             val allocatedBuffer = if (foundBuffer != null) {
@@ -214,7 +192,7 @@ sealed class GpuShaderDataPool(
                 foundBuffer.lastUsedFrame = currentFrame
                 foundBuffer
             } else {
-                BufferItem.acquire(
+                BufferItem(
                     buffer = RenderSystem.getDevice().createBuffer(
                         labelGetter = { "Pooled GPU buffer" },
                         usage = usage or GpuBuffer.USAGE_MAP_WRITE,
@@ -226,7 +204,7 @@ sealed class GpuShaderDataPool(
             }
 
             frameData.buffers.add(allocatedBuffer)
-            return allocatedBuffer.buffer.slice()
+            return allocatedBuffer.buffer!!.slice()
         }
 
         override fun rotate() {

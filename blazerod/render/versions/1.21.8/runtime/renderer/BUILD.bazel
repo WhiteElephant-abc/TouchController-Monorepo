@@ -11,7 +11,6 @@ kt_merge_library(
         "//blazerod/render/common/util/cowbuffer",
         "//blazerod/render/common/util/iterator",
         "//blazerod/render/common/util/math",
-        "//blazerod/render/common/util/objectpool",
         "//blazerod/render/versions/1.21.8/api/render",
         "//blazerod/render/versions/1.21.8/expect",
         "//blazerod/render/versions/1.21.8/extension",

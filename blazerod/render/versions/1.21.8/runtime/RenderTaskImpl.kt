@@ -8,98 +8,35 @@ import top.fifthlight.blazerod.render.common.runtime.data.LocalMatricesBuffer
 import top.fifthlight.blazerod.render.common.runtime.data.MorphTargetBuffer
 import top.fifthlight.blazerod.render.common.runtime.data.RenderSkinBuffer
 import top.fifthlight.blazerod.render.common.util.cowbuffer.CowBuffer
-import top.fifthlight.blazerod.render.common.util.objectpool.ObjectPool
 
-class RenderTaskImpl private constructor(
-    private var _instance: ModelInstanceImpl? = null,
-    private var _light: Int = -1,
-    private var _overlay: Int = -1,
-    private var _modelMatrix: Matrix4f = Matrix4f(),
-    private var _localMatricesBuffer: CowBuffer<LocalMatricesBuffer>? = null,
-    private var _skinBuffer: List<CowBuffer<RenderSkinBuffer>>? = null,
-    private var _morphTargetBuffer: List<CowBuffer<MorphTargetBuffer>>? = null,
-    private var released: Boolean = true,
+class RenderTaskImpl(
+    val instance: ModelInstanceImpl,
+    val light: Int,
+    val overlay: Int,
+    modelMatrix: Matrix4fc,
+    val localMatricesBuffer: CowBuffer<LocalMatricesBuffer>,
+    val skinBuffer: List<CowBuffer<RenderSkinBuffer>>,
+    val morphTargetBuffer: List<CowBuffer<MorphTargetBuffer>>,
 ) : RenderTask {
-    val instance: ModelInstanceImpl
-        get() = checkNotNull(_instance) { "Bad RenderTask" }
-    val light: Int
-        get() = _light.also {
-            if (it < 0) {
-                throw IllegalStateException("Bad RenderTask")
-            }
-        }
-    val overlay: Int
-        get() = _overlay.also {
-            if (it < 0) {
-                throw IllegalStateException("Bad RenderTask")
-            }
-        }
-    val modelMatrix: Matrix4f
-        get() = _modelMatrix
-    val localMatricesBuffer: CowBuffer<LocalMatricesBuffer>
-        get() = checkNotNull(_localMatricesBuffer) { "Bad RenderTask" }
-    val skinBuffer: List<CowBuffer<RenderSkinBuffer>>
-        get() = checkNotNull(_skinBuffer) { "Bad RenderTask" }
-    val morphTargetBuffer: List<CowBuffer<MorphTargetBuffer>>
-        get() = checkNotNull(_morphTargetBuffer) { "Bad RenderTask" }
+    val modelMatrix: Matrix4f = Matrix4f(modelMatrix)
+    private var released: Boolean = false
 
-    private fun clear() {
-        _instance?.decreaseReferenceCount()
-        _localMatricesBuffer?.decreaseReferenceCount()
-        _skinBuffer?.forEach { it.decreaseReferenceCount() }
-        _morphTargetBuffer?.forEach { it.decreaseReferenceCount() }
-        _instance = null
-        _light = -1
-        _overlay = -1
-        _modelMatrix.identity()
-        _localMatricesBuffer = null
-        _skinBuffer = null
-        _morphTargetBuffer = null
+    init {
+        instance.increaseReferenceCount()
+        localMatricesBuffer.increaseReferenceCount()
+        skinBuffer.forEach { it.increaseReferenceCount() }
+        morphTargetBuffer.forEach { it.increaseReferenceCount() }
     }
 
     override fun release() {
         if (released) {
             return
         }
-        POOL.release(this)
         released = true
-    }
-
-    companion object {
-        private val POOL = ObjectPool(
-            identifier = "render_task",
-            create = ::RenderTaskImpl,
-            onReleased = {
-                clear()
-            },
-            onClosed = {
-                clear()
-            },
-        )
-
-        @JvmStatic
-        fun acquire(
-            instance: ModelInstanceImpl,
-            modelMatrix: Matrix4fc,
-            light: Int,
-            overlay: Int = 0,
-            localMatricesBuffer: CowBuffer<LocalMatricesBuffer>,
-            skinBuffer: List<CowBuffer<RenderSkinBuffer>>?,
-            morphTargetBuffer: List<CowBuffer<MorphTargetBuffer>>?,
-        ) = POOL.acquire().apply {
-            instance.increaseReferenceCount()
-            localMatricesBuffer.increaseReferenceCount()
-            skinBuffer?.forEach { it.increaseReferenceCount() }
-            morphTargetBuffer?.forEach { it.increaseReferenceCount() }
-            this._instance = instance
-            this._light = light
-            this._overlay = overlay
-            this._modelMatrix.set(modelMatrix)
-            this._localMatricesBuffer = localMatricesBuffer
-            this._skinBuffer = skinBuffer
-            this._morphTargetBuffer = morphTargetBuffer
-            released = false
-        }
+        instance.decreaseReferenceCount()
+        localMatricesBuffer.decreaseReferenceCount()
+        skinBuffer.forEach { it.decreaseReferenceCount() }
+        morphTargetBuffer.forEach { it.decreaseReferenceCount() }
     }
 }
 
