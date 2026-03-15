@@ -10,8 +10,8 @@ import net.minecraft.world.item.PlaceOnWaterBlockItem
 import net.minecraft.world.item.ProjectileItem
 import net.minecraft.world.item.ProjectileWeaponItem
 import net.minecraft.world.item.SpawnEggItem
-import top.fifthlight.combine.backend.minecraft.text.modern.TextImpl
-import top.fifthlight.combine.backend.minecraft.item.identifier.toVanilla
+import top.fifthlight.combine.backend.minecraft.text.v1_21_11.TextImpl
+import top.fifthlight.combine.backend.minecraft.item.v1_21_11.toVanilla
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.item.data.Item
 import top.fifthlight.mergetools.api.ActualConstructor

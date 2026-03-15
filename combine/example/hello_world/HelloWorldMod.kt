@@ -14,9 +14,6 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.resources.Identifier
 import org.lwjgl.glfw.GLFW
 import top.fifthlight.combine.data.TextFactoryFactory
-import top.fifthlight.combine.item.data.Item
-import top.fifthlight.combine.item.data.ItemFactory
-import top.fifthlight.combine.item.widget.Item
 import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
@@ -29,7 +26,6 @@ import top.fifthlight.combine.widget.layout.Column
 import top.fifthlight.combine.widget.layout.Row
 import top.fifthlight.combine.widget.ui.Button
 import top.fifthlight.combine.widget.ui.Text
-import top.fifthlight.combine.data.Identifier as CombineIdentifier
 
 class HelloWorldMod : ClientModInitializer, ModMenuApi {
     companion object {
@@ -60,15 +56,6 @@ class HelloWorldMod : ClientModInitializer, ModMenuApi {
                             i++
                         }) {
                             Text("+")
-                        }
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4),
-                    ) {
-                        val item: Item? = remember { ItemFactory.create(CombineIdentifier.ofVanilla("stone")) }
-                        repeat(i) {
-                            Item(item = item)
                         }
                     }
                 }

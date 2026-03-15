@@ -68,16 +68,8 @@ kt_merge_library(
         "//combine/theme/blackstone:vanilla_lib_unmerged",
     ],
     deps = [
-        "//combine/backend/minecraft/clipboard/keyboardhandler:keyboardhandler_26.1",
-        "//combine/backend/minecraft/dispatcher/blockableeventloop:blockableeventloop_26.1",
-        "//combine/backend/minecraft/drawable/identifier:identifier_26.1",
-        "//combine/backend/minecraft/identifier/identifier:identifier_26.1",
-        "//combine/backend/minecraft/item/identifier:identifier_26.1",
-        "//combine/backend/minecraft/keycode/glfw:glfw_26.1",
-        "//combine/backend/minecraft/render/post1211:post1211_26.1",
-        "//combine/backend/minecraft/screen/post1211:post1211_26.1",
-        "//combine/backend/minecraft/sound/modern:modern_26.1",
-        "//combine/backend/minecraft/text/modern:modern_26.1",
+        "//combine/backend/minecraft/identifier/26.1",
+        "//combine/backend/minecraft/render/26.1",
         "//combine/core/data",
         "//game/26.1:game_client",
         "@maven_fabric_26_1//:com_terraformersmc_modmenu",
@@ -103,7 +95,7 @@ fabric_merge_jij(
     input = ":fabric_merged",
     visibility = ["//visibility:public"],
     deps = {
-        "//combine/backend/minecraft/26.1/fabric:fabric_merged": "combine:=",
+        "//combine/backend/minecraft/fabric/26.1:fabric_merged": "combine:=",
     } | touchcontroller_fabric_libraries | combine_fabric_libraries,
 )
 
@@ -134,7 +126,7 @@ java_binary(
         "//game/26.1:game_client_libraries",
         # Classpath separator
         ":fabric_unmerged",
-        "//combine/backend/minecraft/26.1/fabric:fabric_merged",
+        "//combine/backend/minecraft/fabric/26.1:fabric_merged",
         "//rule/dev_launch_wrapper",
         "@maven_fabric_26_1//:io_github_llamalad7_mixinextras_fabric",
         "@maven_fabric_26_1//:net_fabricmc_fabric_language_kotlin",

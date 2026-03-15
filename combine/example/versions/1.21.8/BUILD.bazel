@@ -20,17 +20,3 @@ remap_jar(
     visibility = ["//combine/example:__subpackages__"],
 )
 
-extract_access_widener(
-    name = "access_widener_dep_named",
-    inputs = [
-        ":remapped_deps",
-        "//combine/backend/minecraft/1.21.8/fabric:fabric_unmapped_merged",
-    ],
-)
-
-apply_access_widener(
-    name = "remapped_client_access_widened_named",
-    srcs = [":access_widener_dep_named"],
-    input = "//game/1.21.8:game_client_named",
-    visibility = ["//combine/example:__subpackages__"],
-)

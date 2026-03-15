@@ -5,8 +5,8 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.*
-import top.fifthlight.combine.backend.minecraft.item.identifier.toVanilla
-import top.fifthlight.combine.backend.minecraft.text.modern.TextImpl
+import top.fifthlight.combine.backend.minecraft.item.v26_1.toVanilla
+import top.fifthlight.combine.backend.minecraft.text.v26_1.TextImpl
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.item.data.Item
 import top.fifthlight.mergetools.api.ActualConstructor

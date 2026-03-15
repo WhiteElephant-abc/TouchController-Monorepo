@@ -8,6 +8,7 @@ kt_jvm_library(
     resources = glob(["resources/**"]),
     deps = [
         "//:compose",
+        "//combine/backend/minecraft/game/26.1",
         "//combine/core/data",
         "//combine/core/layout",
         "//combine/core/modifier",
@@ -15,9 +16,6 @@ kt_jvm_library(
         "//combine/core/screen",
         "//combine/core/widget/layout",
         "//combine/data",
-        "//combine/example/versions/26.1:remapped_client_access_widened_named",
-        "//combine/item/data",
-        "//combine/item/widget",
         "//combine/theme/base",
         "//combine/theme/vanilla",
         "//combine/widget",
@@ -27,9 +25,6 @@ kt_jvm_library(
         "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_key_mapping_api_v1",
         "@maven_fabric_26_1//:net_fabricmc_fabric_api_fabric_lifecycle_events_v1",
         "@maven_fabric_26_1//:net_fabricmc_fabric_loader",
-    ],
-    runtime_deps = [
-        "//combine/backend/minecraft/26.1",
     ],
 )
 
@@ -60,7 +55,7 @@ java_binary(
         "//game/26.1:game_client_libraries",
         # Classpath separator
         ":hello_world",
-        "//combine/backend/minecraft/26.1/fabric:fabric_merged",
+        "//combine/backend/minecraft/fabric/26.1:fabric_merged",
         "//rule/dev_launch_wrapper",
         "@maven_fabric_26_1//:io_github_llamalad7_mixinextras_fabric",
         "@maven_fabric_26_1//:net_fabricmc_fabric_language_kotlin",
