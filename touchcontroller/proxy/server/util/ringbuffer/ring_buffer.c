@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <stdint.h>
 
 ring_buffer_t* ring_buffer_alloc(size_t capacity) {
     assert(capacity != 0);
