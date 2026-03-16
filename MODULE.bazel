@@ -5,21 +5,22 @@ module(
     version = "0.3.1-alpha",
 )
 
-bazel_dep(name = "rules_java", version = "9.5.0")
-bazel_dep(name = "rules_kotlin", version = "2.2.2")
+bazel_dep(name = "rules_java", version = "9.6.1")
+bazel_dep(name = "rules_kotlin", version = "2.3.10")
 bazel_dep(name = "rules_jvm_external", version = "6.10")
 bazel_dep(name = "bazel_skylib", version = "1.9.0")
-bazel_dep(name = "bazel_lib", version = "3.2.0")
+bazel_dep(name = "bazel_lib", version = "3.2.2")
 bazel_dep(name = "platforms", version = "1.0.0")
-bazel_dep(name = "rules_rust", version = "0.68.1")
-bazel_dep(name = "rules_rust_mdbook", version = "0.68.1")
-bazel_dep(name = "rules_python", version = "1.8.4")
+bazel_dep(name = "rules_rust", version = "0.69.0")
+bazel_dep(name = "rules_rust_mdbook", version = "0.69.0")
+bazel_dep(name = "rules_python", version = "1.9.0")
 bazel_dep(name = "rules_jni", version = "0.11.1")
-bazel_dep(name = "rules_cc", version = "0.2.16")
+bazel_dep(name = "rules_cc", version = "0.2.17")
 bazel_dep(name = "rules_shell", version = "0.6.1")
 bazel_dep(name = "hermetic_cc_toolchain", version = "4.1.0")
 bazel_dep(name = "bazel_worker_api", version = "0.0.10")
-bazel_dep(name = "with_cfg.bzl", version = "0.14.1")
+bazel_dep(name = "with_cfg.bzl", version = "0.14.4")
+bazel_dep(name = "protobuf", version = "34.0.bcr.1")
 
 # Our own rules
 bazel_dep(name = "rules_mc", version = "0.0.0")
@@ -37,17 +38,6 @@ archive_override(
     patches = ["//third_party/rules_android/patches:maven_pinning.patch"],
     strip_prefix = "rules_android-0.7.1",
     url = "https://github.com/bazelbuild/rules_android/releases/download/v0.7.1/rules_android-v0.7.1.tar.gz",
-)
-
-# Patch protobuf to avoid https://github.com/protocolbuffers/protobuf/issues/21755
-bazel_dep(name = "protobuf", version = "33.4")
-archive_override(
-    module_name = "protobuf",
-    integrity = "sha256-aH6YpHGXO1xf1xF1DEC4uCwK3jP2Sdtl4AspDyk0Wis=",
-    patch_strip = 1,
-    patches = ["//third_party/protobuf/patches:retain-linker-array.patch"],
-    strip_prefix = "protobuf-33.4",
-    url = "https://github.com/protocolbuffers/protobuf/releases/download/v33.4/protobuf-33.4.bazel.tar.gz",
 )
 
 # Patch rules_android_ndk to fix https://github.com/bazelbuild/rules_android_ndk/issues/107
@@ -87,7 +77,7 @@ git_override(
 )
 
 # libraries
-bazel_dep(name = "libffi", version = "3.4.7.bcr.3")
+bazel_dep(name = "libffi", version = "3.4.7.bcr.4")
 bazel_dep(name = "bullet", version = "3.26.0-rc0.bcr.1")
 bazel_dep(name = "glfw", version = "3.4.0.bcr.1")
 bazel_dep(name = "glm", version = "1.0.3")

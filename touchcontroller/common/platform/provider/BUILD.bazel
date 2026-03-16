@@ -36,7 +36,7 @@ cc_jni_library(
     platforms = select({
         "//:config_release": [
             "@//platforms:linux_x86_64",
-            # TODO: add arm64 after solving libffi issue
+            "@//platforms:linux_arm64",
         ],
         "//conditions:default": [
             "@//platforms:linux_x86_64",
