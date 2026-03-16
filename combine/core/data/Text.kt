@@ -4,10 +4,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import top.fifthlight.mergetools.api.ExpectFactory
 
+enum class TextColor {
+    BLACK,
+    DARK_BLUE,
+    DARK_GREEN,
+    DARK_AQUA,
+    DARK_RED,
+    DARK_PURPLE,
+    GOLD,
+    GRAY,
+    DARK_GRAY,
+    BLUE,
+    GREEN,
+    AQUA,
+    RED,
+    LIGHT_PURPLE,
+    YELLOW,
+    WHITE,
+}
+
 interface TextBuilder {
     fun bold(bold: Boolean = true, block: TextBuilder.() -> Unit)
     fun underline(underline: Boolean = true, block: TextBuilder.() -> Unit)
     fun italic(italic: Boolean = true, block: TextBuilder.() -> Unit)
+    fun color(color: TextColor, block: TextBuilder.() -> Unit)
     fun append(string: String)
     fun appendWithoutStyle(text: Text)
 }
@@ -37,6 +57,7 @@ interface Text {
     fun bold(): Text
     fun underline(): Text
     fun italic(): Text
+    fun color(color: TextColor): Text
     fun copy(): Text
     operator fun plus(other: Text): Text
 

@@ -5,8 +5,10 @@ import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
 import net.minecraft.network.chat.contents.PlainTextContents
 import top.fifthlight.combine.backend.minecraft.text.v26_1.TextImpl
+import top.fifthlight.combine.backend.minecraft.text.v26_1.toFormatting
 import top.fifthlight.combine.backend.minecraft.text.v26_1.toMinecraft
 import top.fifthlight.combine.data.TextBuilder
+import top.fifthlight.combine.data.TextColor
 import top.fifthlight.combine.data.Text as CombineText
 
 class TextBuilderImpl(
@@ -36,6 +38,15 @@ class TextBuilderImpl(
             TextBuilderImpl(
                 text = text,
                 style = style.withItalic(italic),
+            )
+        )
+    }
+
+    override fun color(color: TextColor, block: TextBuilder.() -> Unit) {
+        block(
+            TextBuilderImpl(
+                text = text,
+                style = style.withColor(color.toFormatting()),
             )
         )
     }

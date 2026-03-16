@@ -1,12 +1,33 @@
 package top.fifthlight.combine.backend.minecraft.text.v26_1
 
+import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
+import top.fifthlight.combine.data.TextColor
 import top.fifthlight.combine.data.Text as CombineText
 
+fun TextColor.toFormatting() = when (this) {
+    TextColor.BLACK -> ChatFormatting.BLACK
+    TextColor.DARK_BLUE -> ChatFormatting.DARK_BLUE
+    TextColor.DARK_GREEN -> ChatFormatting.DARK_GREEN
+    TextColor.DARK_AQUA -> ChatFormatting.DARK_AQUA
+    TextColor.DARK_RED -> ChatFormatting.DARK_RED
+    TextColor.DARK_PURPLE -> ChatFormatting.DARK_PURPLE
+    TextColor.GOLD -> ChatFormatting.GOLD
+    TextColor.GRAY -> ChatFormatting.GRAY
+    TextColor.DARK_GRAY -> ChatFormatting.DARK_GRAY
+    TextColor.BLUE -> ChatFormatting.BLUE
+    TextColor.GREEN -> ChatFormatting.GREEN
+    TextColor.AQUA -> ChatFormatting.AQUA
+    TextColor.RED -> ChatFormatting.RED
+    TextColor.LIGHT_PURPLE -> ChatFormatting.LIGHT_PURPLE
+    TextColor.YELLOW -> ChatFormatting.YELLOW
+    TextColor.WHITE -> ChatFormatting.WHITE
+}
+
 class TextImpl(
-    val inner: Component
+    val inner: Component,
 ) : CombineText {
     override val string: String
         get() = inner.string
@@ -16,6 +37,9 @@ class TextImpl(
     override fun underline(): CombineText = TextImpl(MutableComponent.create(inner.contents).setStyle(STYLE_UNDERLINE))
 
     override fun italic(): CombineText = TextImpl(MutableComponent.create(inner.contents).setStyle(STYLE_ITALIC))
+
+    override fun color(color: TextColor) =
+        TextImpl(MutableComponent.create(inner.contents).withStyle(color.toFormatting()))
 
     override fun copy(): CombineText = TextImpl(inner.copy())
 
