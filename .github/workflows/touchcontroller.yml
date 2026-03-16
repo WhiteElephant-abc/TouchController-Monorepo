@@ -4,6 +4,8 @@ on: [ pull_request, push ]
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    env:
+      MSYS_NO_PATHCONV: 1
     strategy:
       fail-fast: false
       matrix:
