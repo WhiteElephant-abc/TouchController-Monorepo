@@ -5,8 +5,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import top.fifthlight.combine.data.Text
+import top.fifthlight.combine.data.TextColor
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
+import top.fifthlight.combine.modifier.drawing.border
 import top.fifthlight.combine.modifier.placement.fillMaxSize
 import top.fifthlight.combine.modifier.placement.fillMaxWidth
 import top.fifthlight.combine.modifier.placement.padding
@@ -44,22 +46,26 @@ object StatusTab : Tab() {
                     Text.format(
                         Texts.SCREEN_CONFIG_STATUS_PLATFORM,
                         Text.translatable(Texts.SCREEN_CONFIG_STATUS_PLATFORM_UNAVAILABLE)
-                    )
+                    ).color(TextColor.RED)
                 )
             }
 
-            uiState.systemInfo?.let { systemInfo ->
+            uiState.warningMessage?.let { systemInfo ->
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(LocalTouchControllerTheme.current.listButtonDrawablesUnchecked.normal),
                     verticalArrangement = Arrangement.spacedBy(8),
                 ) {
-                    Text(Text.translatable(Texts.SCREEN_CONFIG_STATUS_DEBUG_INFO_TITLE))
-
-                    Text(Text.format(Texts.SCREEN_CONFIG_STATUS_DEBUG_INFO_SYSTEM, systemInfo.system))
-                    Text(Text.format(Texts.SCREEN_CONFIG_STATUS_DEBUG_INFO_ARCHITECTURE, systemInfo.arch))
-
                     uiState.warningMessage?.let { Text(it) }
                 }
+            }
+
+            uiState.systemInfo?.let { systemInfo ->
+                Text(Text.translatable(Texts.SCREEN_CONFIG_STATUS_DEBUG_INFO_TITLE))
+
+                Text(Text.format(Texts.SCREEN_CONFIG_STATUS_DEBUG_INFO_SYSTEM, systemInfo.system))
+                Text(Text.format(Texts.SCREEN_CONFIG_STATUS_DEBUG_INFO_ARCHITECTURE, systemInfo.arch))
             }
         }
     }
