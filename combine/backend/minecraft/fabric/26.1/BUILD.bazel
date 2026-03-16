@@ -28,6 +28,7 @@ merge_library_jar(
     deps = [
         "//combine",
         "//combine/backend/minecraft/versions:26.1",
+        "//combine/item",
     ],
 )
 
