@@ -1,5 +1,9 @@
 # TouchController NEWS - User visible changes.
 
+## 0.3.1-alpha02
+
+- Fixed crash when rendering items
+
 ## 0.3.1-alpha01
 
 - Added status page in config screen
