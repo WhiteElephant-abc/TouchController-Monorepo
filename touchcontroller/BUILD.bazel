@@ -1,0 +1,12 @@
+load("//rule:extract_update_log.bzl", "extract_update_log")
+load("//touchcontroller:properties.bzl", "touchcontroller_version")
+
+extract_update_log(
+    name = "update_log",
+    inputs = [
+        "NEWS-zh.md",
+        "NEWS-en.md",
+    ],
+    version = touchcontroller_version,
+    visibility = ["//touchcontroller:__subpackages__"],
+)
