@@ -24,6 +24,9 @@ def do_merge_fabric_jij(ctx, input_jar, output_jar, deps, executable, label):
         args.add(name)
         args.add(jar)
 
+    args.use_param_file("@%s")
+    args.set_param_file_format("multiline")
+
     ctx.actions.run(
         inputs = depset(dep_files + [input_jar]),
         outputs = [output_jar],

@@ -9,6 +9,9 @@ def _update_log_extractor_impl(ctx):
     args.add(output_file.path)
     args.add_all(input_files.to_list())
 
+    args.use_param_file("@%s")
+    args.set_param_file_format("multiline")
+
     ctx.actions.run(
         executable = ctx.executable._extractor_tool,
         inputs = depset(

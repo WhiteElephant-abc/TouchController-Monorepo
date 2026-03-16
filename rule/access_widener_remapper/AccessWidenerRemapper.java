@@ -1,15 +1,13 @@
 package top.fifthlight.armorstand;
 
-import net.fabricmc.classtweaker.api.ClassTweaker;
 import net.fabricmc.classtweaker.api.ClassTweakerReader;
 import net.fabricmc.classtweaker.api.ClassTweakerWriter;
 import net.fabricmc.classtweaker.visitors.ClassTweakerRemapperVisitor;
 import net.fabricmc.mappingio.extras.MappingTreeRemapper;
 import net.fabricmc.mappingio.format.tiny.Tiny2FileReader;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
-import top.fifthlight.bazel.worker.api.Worker;
+import org.jspecify.annotations.NonNull;import top.fifthlight.bazel.worker.api.Worker;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,7 +18,7 @@ public class AccessWidenerRemapper extends Worker {
     }
 
     @Override
-    protected int handleRequest(PrintWriter out, Path sandboxDir, String... args) {
+    protected int handleRequest(@NonNull PrintWriter out, @NonNull Path sandboxDir, String... args) {
         try {
             if (args.length < 5) {
                 out.println("Usage: AccessWidenerRemapper <input> <output> <mapping> <fromNamespace> <toNamespace>");

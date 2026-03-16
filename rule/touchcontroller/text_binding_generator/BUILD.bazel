@@ -5,6 +5,7 @@ kt_jvm_library(
     name = "text_binding_generator_lib",
     srcs = ["TextsBinding.kt"],
     deps = [
+        "//rule/worker_api",
         "@maven//:com_squareup_kotlinpoet_jvm",
         "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_core_jvm",
         "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_json_jvm",
@@ -16,6 +17,6 @@ java_binary(
     main_class = "top.fifthlight.touchcontroller.resources.generator.TextsBindingKt",
     visibility = ["//visibility:public"],
     runtime_deps = [
-        ":text_binding_generator_lib"
+        ":text_binding_generator_lib",
     ],
 )

@@ -6,6 +6,7 @@ kt_jvm_library(
     srcs = ["EmptyTextureGenerator.kt"],
     deps = [
         "//:kotlin_serialization",
+        "//rule/worker_api",
         "@maven//:com_squareup_kotlinpoet_jvm",
     ],
 )
@@ -15,6 +16,6 @@ java_binary(
     main_class = "top.fifthlight.touchcontroller.resources.generator.EmptyTextureGeneratorKt",
     visibility = ["//visibility:public"],
     runtime_deps = [
-        ":empty_texture_generator_lib"
+        ":empty_texture_generator_lib",
     ],
 )

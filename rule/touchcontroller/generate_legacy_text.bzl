@@ -10,6 +10,9 @@ def _generate_legacy_text_impl(ctx):
         args.add(file)
         args.add(output_file)
 
+        args.use_param_file("@%s")
+        args.set_param_file_format("multiline")
+
         ctx.actions.run(
             inputs = [file],
             outputs = [output_file],

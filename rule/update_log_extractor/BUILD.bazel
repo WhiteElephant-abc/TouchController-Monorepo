@@ -5,4 +5,8 @@ java_binary(
     srcs = ["UpdateLogExtractor.java"],
     main_class = "top.fifthlight.armorstand.updatelogextractor.UpdateLogExtractor",
     visibility = ["//visibility:public"],
+    deps = [
+        "//rule/worker_api",
+        "@maven//:org_jspecify_jspecify",
+    ],
 )

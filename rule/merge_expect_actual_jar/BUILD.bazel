@@ -8,7 +8,7 @@ java_library(
         "//rule/merge_expect_actual_jar/api",
         "//rule/merge_expect_actual_jar/impl",
         "//rule/worker_api",
-        "@maven//:org_jetbrains_annotations",
+        "@maven//:org_jspecify_jspecify",
     ],
 )
 

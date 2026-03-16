@@ -12,6 +12,9 @@ def _text_binding_source_impl(ctx):
     args.add(ctx.attr.class_name)
     args.add(ctx.attr.package_name)
 
+    args.use_param_file("@%s")
+    args.set_param_file_format("multiline")
+
     ctx.actions.run(
         inputs = [input_file],
         outputs = [output_file],

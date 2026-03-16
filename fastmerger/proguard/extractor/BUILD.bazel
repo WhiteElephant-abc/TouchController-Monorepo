@@ -7,5 +7,6 @@ java_binary(
     visibility = ["//fastmerger:__subpackages__"],
     deps = [
         "//rule/worker_api",
+        "@maven//:org_jspecify_jspecify",
     ],
 )

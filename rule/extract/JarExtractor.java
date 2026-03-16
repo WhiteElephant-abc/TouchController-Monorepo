@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.jar.JarFile;
+import org.jspecify.annotations.NonNull;
 import top.fifthlight.bazel.worker.api.Worker;
 
 public class JarExtractor extends Worker {
@@ -14,7 +15,7 @@ public class JarExtractor extends Worker {
     }
 
     @Override
-    protected int handleRequest(PrintWriter out, Path sandboxDir, String... args) {
+    protected int handleRequest(@NonNull PrintWriter out, @NonNull Path sandboxDir, String... args) {
         try {
             if (args.length != 3) {
                 out.println("Bad count of arguments: " + args.length + ", expected 3");

@@ -7,5 +7,6 @@ java_library(
     deps = [
         "@bazel_worker_java//:worker_protocol_java_proto",
         "@bazel_worker_java//src/main/java/com/google/devtools/build/lib/worker:work_request_handlers",
+        "@maven//:org_jspecify_jspecify",
     ],
 )

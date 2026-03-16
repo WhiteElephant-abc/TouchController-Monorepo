@@ -5,5 +5,8 @@ java_binary(
     srcs = ["JarExtractor.java"],
     main_class = "top.fifthlight.fabazel.jarextractor.JarExtractor",
     visibility = ["//visibility:public"],
-    deps = ["//rule/worker_api"],
+    deps = [
+        "//rule/worker_api",
+        "@maven//:org_jspecify_jspecify",
+    ],
 )

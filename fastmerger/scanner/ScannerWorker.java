@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.jspecify.annotations.NonNull;
 import picocli.CommandLine;
 import top.fifthlight.bazel.worker.api.Worker;
 import top.fifthlight.fastmerger.bindeps.BindepsConstants;
@@ -364,7 +365,7 @@ public class ScannerWorker extends Worker {
     }
 
     @Override
-    protected int handleRequest(PrintWriter out, Path sandboxDir, String... args) {
+    protected int handleRequest(@NonNull PrintWriter out, @NonNull Path sandboxDir, String... args) {
         var wrapper = new Handler(sandboxDir);
         var commandLine = new CommandLine(wrapper);
         commandLine.setOut(out);

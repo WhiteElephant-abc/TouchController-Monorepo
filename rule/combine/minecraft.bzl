@@ -30,6 +30,9 @@ def _atlas_pack_impl(ctx):
     args.add_all(texture_info.textures, map_each = _texture_to_arg)
     args.add_all(texture_info.ninepatch_textures, map_each = _nine_patch_texture_to_arg)
 
+    args.use_param_file("@%s")
+    args.set_param_file_format("multiline")
+
     ctx.actions.run(
         inputs = texture_info.files,
         outputs = [output_file, metadata_file],
@@ -89,6 +92,9 @@ def _vanilla_pack_impl(ctx):
     args.add_all(texture_info.textures, map_each = _texture_to_arg)
     args.add_all(texture_info.ninepatch_textures, map_each = _nine_patch_texture_to_arg)
 
+    args.use_param_file("@%s")
+    args.set_param_file_format("multiline")
+
     ctx.actions.run(
         inputs = texture_info.files,
         outputs = [output_file],
@@ -136,6 +142,9 @@ def _kt_vanilla_source_impl(ctx):
     args.add(pack_info.namespace)
     args.add_all(texture_info.textures, map_each = _texture_to_arg)
     args.add_all(texture_info.ninepatch_textures, map_each = _nine_patch_texture_to_arg)
+
+    args.use_param_file("@%s")
+    args.set_param_file_format("multiline")
 
     ctx.actions.run(
         inputs = texture_info.files,

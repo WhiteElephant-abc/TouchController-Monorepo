@@ -5,6 +5,8 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import top.fifthlight.bazel.worker.api.Worker
+import java.io.PrintWriter
 import java.nio.file.Path
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -295,67 +297,77 @@ private fun run(
     output.writeText(buildString { fileSpec.writeTo(this) })
 }
 
-fun main(vararg args: String) {
-    var output: Path? = null
-    var packageName: String? = null
-    var className: String? = null
-    var texturePackage: String? = null
-    var textureClass: String? = null
-    var textPackage: String? = null
-    var textClass: String? = null
-    val textureSets = mutableListOf<TextureSetInput>()
+fun main(vararg args: String) = object : Worker() {
+    override fun handleRequest(
+        out: PrintWriter,
+        sandboxDir: Path,
+        vararg args: String
+    ): Int {
+        var output: Path? = null
+        var packageName: String? = null
+        var className: String? = null
+        var texturePackage: String? = null
+        var textureClass: String? = null
+        var textPackage: String? = null
+        var textClass: String? = null
+        val textureSets = mutableListOf<TextureSetInput>()
 
-    var currentSet: Pair<String, Path>? = null
-    val currentTextures = mutableListOf<TextureInput>()
+        var currentSet: Pair<String, Path>? = null
+        val currentTextures = mutableListOf<TextureInput>()
 
-    fun flushCurrentSet() {
-        val set = currentSet ?: return
-        textureSets.add(
-            TextureSetInput(
-                set.first,
-                set.second,
-                currentTextures.toList()
+        fun flushCurrentSet() {
+            val set = currentSet ?: return
+            textureSets.add(
+                TextureSetInput(
+                    set.first,
+                    set.second,
+                    currentTextures.toList()
+                )
             )
-        )
-        currentTextures.clear()
-        currentSet = null
-    }
-
-    var i = 0
-
-    fun nextArg() = args[i++]
-    while (i in args.indices) {
-        when (val arg = nextArg()) {
-            "--output" -> output = Path.of(nextArg())
-            "--package" -> packageName = nextArg()
-            "--class_name" -> className = nextArg()
-            "--texture_package" -> texturePackage = nextArg()
-            "--texture_class" -> textureClass = nextArg()
-            "--text_package" -> textPackage = nextArg()
-            "--text_class" -> textClass = nextArg()
-            "--set" -> {
-                flushCurrentSet()
-                currentSet = Pair(nextArg(), Path.of(nextArg()))
-            }
-
-            "--texture" -> {
-                val (name, identifier) = nextArg().split(':', limit = 2)
-                currentTextures.add(TextureInput(name, identifier))
-            }
-
-            else -> throw IllegalArgumentException("Bad argument: $arg")
+            currentTextures.clear()
+            currentSet = null
         }
-    }
 
-    flushCurrentSet()
-    run(
-        output = requireNotNull(output) { "No output" },
-        packageName = requireNotNull(packageName) { "No package name" },
-        className = requireNotNull(className) { "No class name" },
-        textPackage = requireNotNull(textPackage) { "No text package name" },
-        textClass = requireNotNull(textClass) { "No text class" },
-        texturePackage = requireNotNull(texturePackage) { "No texture package name" },
-        textureClass = requireNotNull(textureClass) { "No texture class" },
-        textureSets = textureSets,
-    )
-}
+        var i = 0
+
+        fun nextArg() = args[i++]
+        while (i in args.indices) {
+            when (val arg = nextArg()) {
+                "--output" -> output = sandboxDir.resolve(Path.of(nextArg()))
+                "--package" -> packageName = nextArg()
+                "--class_name" -> className = nextArg()
+                "--texture_package" -> texturePackage = nextArg()
+                "--texture_class" -> textureClass = nextArg()
+                "--text_package" -> textPackage = nextArg()
+                "--text_class" -> textClass = nextArg()
+                "--set" -> {
+                    flushCurrentSet()
+                    currentSet = Pair(nextArg(), sandboxDir.resolve(Path.of(nextArg())))
+                }
+
+                "--texture" -> {
+                    val (name, identifier) = nextArg().split(':', limit = 2)
+                    currentTextures.add(TextureInput(name, identifier))
+                }
+
+                else -> {
+                    out.println("Bad argument: $arg")
+                    return 1
+                }
+            }
+        }
+
+        flushCurrentSet()
+        run(
+            output = requireNotNull(output) { "No output" },
+            packageName = requireNotNull(packageName) { "No package name" },
+            className = requireNotNull(className) { "No class name" },
+            textPackage = requireNotNull(textPackage) { "No text package name" },
+            textClass = requireNotNull(textClass) { "No text class" },
+            texturePackage = requireNotNull(texturePackage) { "No texture package name" },
+            textureClass = requireNotNull(textureClass) { "No texture class" },
+            textureSets = textureSets,
+        )
+        return 0
+    }
+}.run(*args)

@@ -10,5 +10,6 @@ java_binary(
         "//fastmerger/bindeps",
         "//rule/worker_api",
         "@maven//:it_unimi_dsi_fastutil",
+        "@maven//:org_jspecify_jspecify",
     ],
 )

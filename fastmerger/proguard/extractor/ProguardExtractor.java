@@ -1,5 +1,6 @@
 package top.fifthlight.fastmerger.proguard.extractor;
 
+import org.jspecify.annotations.NonNull;
 import top.fifthlight.bazel.worker.api.Worker;
 
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.jar.JarInputStream;
 
 public class ProguardExtractor extends Worker {
     @Override
-    protected int handleRequest(PrintWriter out, Path sandboxDir, String... args) throws IOException {
+    protected int handleRequest(@NonNull PrintWriter out, @NonNull Path sandboxDir, String... args) throws IOException {
         if (args.length != 2) {
             out.println("Usage: <jar-path> <output-pro>");
             return 1;

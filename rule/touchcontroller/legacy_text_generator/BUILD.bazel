@@ -5,6 +5,7 @@ kt_jvm_library(
     name = "legacy_text_generator_lib",
     srcs = ["LegacyTextGenerator.kt"],
     deps = [
+        "//rule/worker_api",
         "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_core_jvm",
         "@maven//:org_jetbrains_kotlinx_kotlinx_serialization_json_jvm",
     ],

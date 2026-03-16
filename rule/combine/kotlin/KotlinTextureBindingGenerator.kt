@@ -1,12 +1,15 @@
 package top.fifthlight.combine.resources.kotlin
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.main
+import com.github.ajalt.clikt.core.CliktError
 import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.path
+import com.github.ajalt.clikt.parsers.CommandLineParser
 import com.squareup.kotlinpoet.*
+import top.fifthlight.bazel.worker.api.Worker
+import java.io.PrintWriter
 import java.nio.file.Path
 import kotlin.io.path.writeText
 
@@ -80,4 +83,21 @@ private class Generator : CliktCommand() {
     }
 }
 
-fun main(vararg args: String) = Generator().main(args)
+fun main(vararg args: String) = object : Worker() {
+    override fun handleRequest(
+        out: PrintWriter,
+        sandboxDir: Path,
+        vararg args: String
+    ): Int {
+        CommandLineParser.parseAndRun(Generator(), args.toList()) { command ->
+            try {
+                command.run()
+                return 0
+            } catch (e: CliktError) {
+                command.echoFormattedHelp(e)
+                return e.statusCode
+            }
+        }
+        return 0
+    }
+}.run(*args)

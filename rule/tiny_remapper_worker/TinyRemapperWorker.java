@@ -6,6 +6,7 @@ import net.fabricmc.tinyremapper.NonClassCopyMode;
 import net.fabricmc.tinyremapper.OutputConsumerPath;
 import net.fabricmc.tinyremapper.TinyRemapper;
 import net.fabricmc.tinyremapper.extension.mixin.MixinExtension;
+import org.jspecify.annotations.NonNull;
 import top.fifthlight.bazel.worker.api.Worker;
 
 import java.io.IOException;
@@ -67,7 +68,7 @@ public class TinyRemapperWorker extends Worker implements AutoCloseable {
     }
 
     @Override
-    protected int handleRequest(PrintWriter out, Path sandboxDir, String... args) {
+    protected int handleRequest(@NonNull PrintWriter out, @NonNull Path sandboxDir, String... args) {
         try {
             List<String> parameters = new ArrayList<>();
             List<String> arguments = new ArrayList<>();

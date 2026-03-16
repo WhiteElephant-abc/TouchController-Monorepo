@@ -1,21 +1,29 @@
 package top.fifthlight.armorstand.updatelogextractor;
 
-import java.io.IOException;
+import org.jspecify.annotations.NonNull;
+import top.fifthlight.bazel.worker.api.Worker;
+
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class UpdateLogExtractor {
-    public static void main(String[] args) throws IOException {
+public class UpdateLogExtractor extends Worker {
+    public static void main(String[] args) throws Exception {
+        new UpdateLogExtractor().run(args);
+    }
+
+    @Override
+    protected int handleRequest(@NonNull PrintWriter out, @NonNull Path sandboxDir, @NonNull String... args) throws Exception {
         if (args.length < 3) {
-            System.out.println("Usage: UpdateLogExtractor <version name> <output file> <input file>...");
-            return;
+            out.println("Usage: UpdateLogExtractor <version name> <output file> <input file>...");
+            return 1;
         }
         var versionName = args[0];
-        var outputPath = Path.of(args[1]);
+        var outputPath = sandboxDir.resolve(Path.of(args[1]));
 
         try (var writer = Files.newBufferedWriter(outputPath)) {
             for (var i = 2; i < args.length; i++) {
-                var updateLogPath = Path.of(args[i]);
+                var updateLogPath = sandboxDir.resolve(Path.of(args[i]));
 
                 try (var reader = Files.newBufferedReader(updateLogPath)) {
                     var logContentBuilder = new StringBuilder();
@@ -49,5 +57,6 @@ public class UpdateLogExtractor {
                 }
             }
         }
+        return 0;
     }
 }

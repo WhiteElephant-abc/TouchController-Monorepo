@@ -2,6 +2,7 @@ package top.fifthlight.fabazel.mappingmerger;
 
 import net.fabricmc.mappingio.format.tiny.Tiny2FileWriter;
 import net.fabricmc.mappingio.tree.MemoryMappingTree;
+import org.jspecify.annotations.NonNull;
 import top.fifthlight.bazel.worker.api.Worker;
 import top.fifthlight.fabazel.mappingmerger.context.InputEntry;
 import top.fifthlight.fabazel.mappingmerger.context.MappingFormat;
@@ -14,7 +15,6 @@ import top.fifthlight.fabazel.mappingmerger.operation.Operation;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -117,7 +117,7 @@ public class MappingMerger extends Worker {
     }
 
     @Override
-    protected int handleRequest(PrintWriter out, Path sandboxDir, String... args) {
+    protected int handleRequest(@NonNull PrintWriter out, @NonNull Path sandboxDir, String... args) {
         try {
             var context = new CliContext();
             var enterOperation = false;

@@ -14,5 +14,6 @@ java_binary(
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:net_fabricmc_mapping_io",
         "@maven//:org_jetbrains_annotations",
+        "@maven//:org_jspecify_jspecify",
     ],
 )

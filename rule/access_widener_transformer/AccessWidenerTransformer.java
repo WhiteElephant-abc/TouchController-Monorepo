@@ -3,7 +3,7 @@ package top.fifthlight.fabazel.accesswidenertransformer;
 import net.fabricmc.classtweaker.api.ClassTweaker;
 import net.fabricmc.classtweaker.api.ClassTweakerReader;
 import net.fabricmc.classtweaker.classvisitor.AccessWidenerClassVisitor;
-import org.objectweb.asm.ClassReader;
+import org.jspecify.annotations.NonNull;import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import top.fifthlight.bazel.worker.api.Worker;
@@ -33,7 +33,7 @@ public class AccessWidenerTransformer extends Worker {
     }
 
     @Override
-    protected int handleRequest(PrintWriter out, Path sandboxDir, String... args) {
+    protected int handleRequest(@NonNull PrintWriter out, @NonNull Path sandboxDir, String... args) {
         try {
             if (args.length < 2) {
                 out.println("Usage: AccessWidenerTransformer <input> <output> [accessWidenerFiles...]");

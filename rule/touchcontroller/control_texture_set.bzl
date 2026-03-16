@@ -148,6 +148,9 @@ def _kt_control_texture_set_source_impl(ctx):
         transitive = [control_files],
     )
 
+    args.use_param_file("@%s")
+    args.set_param_file_format("multiline")
+
     ctx.actions.run(
         inputs = input_files,
         outputs = [output_file],
@@ -358,6 +361,9 @@ def _empty_texture_source_impl(ctx):
     for identifier in empty_texture_info.identifiers:
         args.add("--identifier")
         args.add(identifier)
+
+    args.use_param_file("@%s")
+    args.set_param_file_format("multiline")
 
     ctx.actions.run(
         inputs = [],

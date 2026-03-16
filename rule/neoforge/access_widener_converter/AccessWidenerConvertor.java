@@ -4,7 +4,7 @@ import net.fabricmc.classtweaker.api.ClassTweakerReader;
 import net.fabricmc.classtweaker.api.visitor.AccessWidenerVisitor;
 import net.fabricmc.classtweaker.api.visitor.ClassTweakerVisitor;
 import org.jetbrains.annotations.NotNull;
-import top.fifthlight.bazel.worker.api.Worker;
+import org.jspecify.annotations.NonNull;import top.fifthlight.bazel.worker.api.Worker;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -85,7 +85,7 @@ public class AccessWidenerConvertor extends Worker {
     }
 
     @Override
-    protected int handleRequest(PrintWriter out, Path sandboxDir, String... args) {
+    protected int handleRequest(@NonNull PrintWriter out, @NonNull Path sandboxDir, String... args) {
         try {
             if (args.length < 2) {
                 out.println("Usage: AccessWidenerConvertor <input> <output>");

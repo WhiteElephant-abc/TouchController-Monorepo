@@ -10,6 +10,7 @@ java_binary(
         "//:picocli",
         "//rule/worker_api",
         "@fabric_loom//:vineflower_tiny_javadoc_provider",
+        "@maven//:org_jspecify_jspecify",
         "@maven//:org_vineflower_vineflower",
     ],
 )
