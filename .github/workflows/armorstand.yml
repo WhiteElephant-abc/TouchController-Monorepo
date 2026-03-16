@@ -27,6 +27,7 @@ jobs:
       - name: Setup Bazel
         uses: bazel-contrib/setup-bazel@0.14.0
       - name: Build
+        shell: bash
         run: |
           bazel build \
             --config=opt --verbose_failures \
@@ -45,6 +46,7 @@ jobs:
             //blazerod/render/versions/1.21.8/neoforge \
             //blazerod/example/ball_block
       - name: Test
+        shell: bash
         run: |
           bazel test \
             --verbose_failures \
