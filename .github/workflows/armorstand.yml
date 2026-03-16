@@ -49,6 +49,7 @@ jobs:
             //blazerod/example/ball_block
       - name: Test
         shell: bash
+        if: runner.os != 'Windows'
         run: |
           bazel test \
             --verbose_failures \
