@@ -8,7 +8,7 @@ kt_merge_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//combine/backend/minecraft/game/1.21.8",
+        "//combine/backend/minecraft/game/26.1",
         "//game/26.1:game_client_libraries",
     ],
 )

@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
 import org.joml.Matrix3x2f
 import top.fifthlight.combine.backend.minecraft.item.v1_21_8.toVanilla
-import top.fifthlight.combine.backend.minecraft.render.extension.v1_21_8.SubmittableGuiGraphics
+import top.fifthlight.combine.backend.minecraft.render.v1_21_8.extension.SubmittableGuiGraphics
 import top.fifthlight.combine.backend.minecraft.text.v1_21_8.toMinecraft
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.item.data.ItemStack

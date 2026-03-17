@@ -3,15 +3,15 @@ package top.fifthlight.blazesdl.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.platform.*;
+import com.mojang.blaze3d.systems.BackendCreationException;
+import com.mojang.blaze3d.systems.GpuBackend;
 import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.sdl.SDLInit;
 import org.lwjgl.sdl.SDLPlatform;
 import org.lwjgl.sdl.SDLVideo;
 import org.lwjgl.system.MemoryStack;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -27,6 +27,27 @@ public abstract class WindowMixin {
         } else {
             return null;
         }
+    }
+
+    @Inject(method = "createGlfwWindow", at = @At("HEAD"), cancellable = true)
+    private static void createWindow(int width, int height, String title, long monitor, GpuBackend backend, CallbackInfoReturnable<Long> cir) throws BackendCreationException {
+        if (!SDLVideo.SDL_GL_LoadLibrary((String) null)) {
+            throw SDLGlBackend.handleError("SDL_GL_LoadLibrary");
+        }
+
+        backend.setWindowHints();
+
+        var window = SDLVideo.SDL_CreateWindow(title, width, height, SDLVideo.SDL_WINDOW_OPENGL | SDLVideo.SDL_WINDOW_RESIZABLE | SDLVideo.SDL_WINDOW_HIGH_PIXEL_DENSITY);
+        if (window == 0L) {
+            throw SDLGlBackend.handleError("SDL_CreateWindow");
+        }
+
+        var context = SDLVideo.SDL_GL_CreateContext(window);
+        if (context == 0L) {
+            throw SDLGlBackend.handleError("SDL_GL_CreateContext");
+        }
+        
+        cir.setReturnValue(window);
     }
 
     @WrapOperation(method = "<init>", at = @At(value = "NEW", target = "Lcom/mojang/blaze3d/platform/ScreenManager;"))

@@ -6,6 +6,7 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.platform.WindowEventHandler;
 import com.mojang.blaze3d.shaders.GpuDebugOptions;
 import com.mojang.blaze3d.shaders.ShaderSource;
+import com.mojang.blaze3d.systems.BackendCreationException;
 import com.mojang.blaze3d.systems.GpuBackend;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.main.GameConfig;
@@ -37,10 +38,8 @@ public abstract class MinecraftMixin {
                                 DisplayData displayData,
                                 String fullscreenVideoModeString,
                                 String title,
-                                GpuBackend[] backends,
-                                ShaderSource defaultShaderSource,
-                                GpuDebugOptions debugOptions) {
-        return new SDLWindow(eventHandler, displayData, fullscreenVideoModeString, title, backends, defaultShaderSource, debugOptions);
+                                GpuBackend backend) throws BackendCreationException {
+        return new SDLWindow(eventHandler, displayData, fullscreenVideoModeString, title, backend);
     }
 
     @Redirect(method = "<init>", at = @At(value = "NEW", target = "Lcom/mojang/blaze3d/opengl/GlBackend;"))

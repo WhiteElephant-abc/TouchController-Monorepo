@@ -67,7 +67,7 @@ upload_modrinth(
     name = "upload_modrinth",
     file = ":blazesdl",
     file_name = "blazesdl-%s.jar" % blazesdl_version,
-    game_versions = ["26.1-snapshot-10"],
+    game_versions = ["26.1-snapshot-11"],
     loaders = ["fabric"],
     project_id = "QDgSARKw",
     token_secret_id = "modrinth_token",
@@ -89,7 +89,7 @@ java_binary(
     jvm_flags = [
         "-Dkotlinx.coroutines.debug=on",
         "-Dfabric.development=true",
-        "-Ddev.launch.version=26.1-snapshot-10",
+        "-Ddev.launch.version=26.1-snapshot-11",
         "-Ddev.launch.type=client",
         "-Ddev.launch.assetsVersion=$(rlocationpath //game/26.1:game_client_assets_version)",
         "-Ddev.launch.mainClass=net.fabricmc.loader.impl.launch.knot.KnotClient",

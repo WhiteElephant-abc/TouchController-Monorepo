@@ -195,15 +195,15 @@ neoforge_versions = {
     },
     "26.1": {
         "java_target": 25,
-        "version": "26.1-snapshot-10",
+        "version": "26.1-snapshot-11",
         "mapping": False,
-        # TODO: Update to 26.1 snapshot 9
-        "neoform_version": "26.1-snapshot-6-1",
-        "neoform_sha256": "49f6a00758c38a6e16393f2407124887dd74a0b87963640969b4548ac8b14e95",
-        "neoforge_version": "26.1.0.0-alpha.10+snapshot-6",
-        "neoforge_userdev_sha256": "f268d44212718098ae506fcb25b0247c6d31564e0e0fbb9da46aa54dc9308a1e",
-        "neoforge_sources_sha256": "457ea373c9d29e8554815990fca767d373d12012c9853fdeea6e3c0f45184626",
-        "neoforge_universal_sha256": "f8129e71177c4495de9d7e9febaaf14a8f0188e7aff110702127dc9d4b351b79",
+        # TODO: Update to 26.1 snapshot 11
+        "neoform_version": "26.1-snapshot-11-1",
+        "neoform_sha256": "8895cc8be6d8b60e595769bacc9a53c60cb923b932166e741c336d847812e719",
+        "neoforge_version": "26.1.0.0-alpha.14+snapshot-11",
+        "neoforge_userdev_sha256": "ee54beb6d106b1d81a46909670e1bbdda36b6fca16d7b9ed7688eea6555093dc",
+        "neoforge_sources_sha256": "d82fd3e86fc1bbfc1e54f16c61789125773d3aa2d68a7d4f8cab3ade4c99042f",
+        "neoforge_universal_sha256": "d7c3dc99e9fdf4c375e34c246b48926da7a7d880addfe19e9c252760ec07e5be",
     },
 }
 
@@ -238,12 +238,12 @@ neoforge = use_extension("//repo:neoforge.bzl", "neoforge")
         ),
         neoforge.version(
             java_target = data["java_target"],
-            version = data["forge_version"],
             joined_patched_sources = "@mcp_%s//tasks/joined_patch" % version.replace(".", "_"),
             legacy = True,
             sources_sha256 = data["forge_sources_sha256"],
             universal_sha256 = data["forge_universal_sha256"],
             userdev_sha256 = data["forge_userdev_sha256"],
+            version = data["forge_version"],
         ),
         use_repo(
             neoforge,
@@ -280,11 +280,11 @@ neoforge = use_extension("//repo:neoforge.bzl", "neoforge")
         ),
         neoforge.version(
             java_target = data["java_target"],
-            version = data["neoforge_version"],
             joined_patched_sources = "@neoform_%s//tasks/joined_patch" % version.replace(".", "_"),
             sources_sha256 = data["neoforge_sources_sha256"],
             universal_sha256 = data["neoforge_universal_sha256"],
             userdev_sha256 = data["neoforge_userdev_sha256"],
+            version = data["neoforge_version"],
         ),
         use_repo(
             neoforge,

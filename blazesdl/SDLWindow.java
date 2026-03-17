@@ -3,6 +3,7 @@ package top.fifthlight.blazesdl;
 import com.mojang.blaze3d.platform.*;
 import com.mojang.blaze3d.shaders.GpuDebugOptions;
 import com.mojang.blaze3d.shaders.ShaderSource;
+import com.mojang.blaze3d.systems.BackendCreationException;
 import com.mojang.blaze3d.systems.GpuBackend;
 import net.minecraft.server.packs.PackResources;
 import org.jspecify.annotations.NonNull;
@@ -19,10 +20,8 @@ public class SDLWindow extends Window {
                      DisplayData displayData,
                      @Nullable String fullscreenVideoModeString,
                      String title,
-                     GpuBackend[] backends,
-                     ShaderSource defaultShaderSource,
-                     GpuDebugOptions debugOptions) {
-        super(eventHandler, displayData, fullscreenVideoModeString, title, backends, defaultShaderSource, debugOptions);
+                     GpuBackend backend) throws BackendCreationException {
+        super(eventHandler, displayData, fullscreenVideoModeString, title, backend);
     }
 
     private SDL_Surface createSDLSurface(NativeImage image) {

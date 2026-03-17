@@ -10,8 +10,8 @@ import net.minecraft.client.gui.render.state.GuiElementRenderState
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.resources.ResourceLocation
 import org.joml.Matrix3x2f
-import top.fifthlight.combine.backend.minecraft.render.extension.v1_21_8.SpriteAccessibleGuiGraphics
-import top.fifthlight.combine.backend.minecraft.render.extension.v1_21_8.SubmittableGuiGraphics
+import top.fifthlight.combine.backend.minecraft.render.v1_21_8.extension.SpriteAccessibleGuiGraphics
+import top.fifthlight.combine.backend.minecraft.render.v1_21_8.extension.SubmittableGuiGraphics
 import top.fifthlight.combine.paint.BackgroundTexture
 import top.fifthlight.combine.paint.Canvas
 import top.fifthlight.combine.paint.Color

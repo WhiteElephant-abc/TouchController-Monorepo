@@ -1,7 +1,7 @@
-package top.fifthlight.combine.backend.minecraft.render.extension.v26_1;
+package top.fifthlight.combine.backend.minecraft.render.v26_1.extension;
 
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.gui.render.state.GuiElementRenderState;
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 
 public interface SubmittableGuiGraphics {
     void combine$submitElement(GuiElementRenderState guiElementRenderState);

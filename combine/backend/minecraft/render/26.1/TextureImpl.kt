@@ -6,12 +6,12 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.gui.render.TextureSetup
-import net.minecraft.client.gui.render.state.GuiElementRenderState
 import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState
 import net.minecraft.resources.Identifier
 import org.joml.Matrix3x2f
-import top.fifthlight.combine.backend.minecraft.render.extension.v26_1.SpriteAccessibleGuiGraphics
-import top.fifthlight.combine.backend.minecraft.render.extension.v26_1.SubmittableGuiGraphics
+import top.fifthlight.combine.backend.minecraft.render.v26_1.extension.SpriteAccessibleGuiGraphics
+import top.fifthlight.combine.backend.minecraft.render.v26_1.extension.SubmittableGuiGraphics
 import top.fifthlight.combine.paint.BackgroundTexture
 import top.fifthlight.combine.paint.Canvas
 import top.fifthlight.combine.paint.Color

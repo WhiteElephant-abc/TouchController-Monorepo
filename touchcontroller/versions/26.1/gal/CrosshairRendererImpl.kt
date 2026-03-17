@@ -3,8 +3,6 @@ package top.fifthlight.touchcontroller.version_26_1.gal
 import com.mojang.blaze3d.pipeline.BlendFunction
 import com.mojang.blaze3d.pipeline.ColorTargetState
 import com.mojang.blaze3d.pipeline.RenderPipeline
-import com.mojang.blaze3d.platform.DestFactor
-import com.mojang.blaze3d.platform.SourceFactor
 import com.mojang.blaze3d.shaders.UniformType
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexConsumer
@@ -12,11 +10,11 @@ import com.mojang.blaze3d.vertex.VertexFormat
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.gui.render.TextureSetup
-import net.minecraft.client.gui.render.state.GuiElementRenderState
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState
 import org.joml.Matrix3x2f
 import top.fifthlight.combine.backend.minecraft.render.v26_1.CanvasImpl
-import top.fifthlight.combine.backend.minecraft.render.extension.v26_1.SubmittableGuiGraphics
 import top.fifthlight.combine.backend.minecraft.identifier.v26_1.toMinecraft
+import top.fifthlight.combine.backend.minecraft.render.v26_1.extension.SubmittableGuiGraphics
 import top.fifthlight.combine.data.Identifier
 import top.fifthlight.combine.paint.Canvas
 import top.fifthlight.combine.paint.Colors

@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import top.fifthlight.combine.backend.minecraft.render.extension.v1_21_11.SpriteAccessibleGuiGraphics;
-import top.fifthlight.combine.backend.minecraft.render.extension.v1_21_11.SubmittableGuiGraphics;
+import top.fifthlight.combine.backend.minecraft.render.v1_21_11.extension.SpriteAccessibleGuiGraphics;
+import top.fifthlight.combine.backend.minecraft.render.v1_21_11.extension.SubmittableGuiGraphics;
 
 @Mixin(GuiGraphics.class)
 public abstract class GuiGraphicsMixin implements SubmittableGuiGraphics, SpriteAccessibleGuiGraphics {

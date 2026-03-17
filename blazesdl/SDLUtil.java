@@ -1,14 +1,12 @@
 package top.fifthlight.blazesdl;
 
 import com.mojang.blaze3d.platform.Window;
-import net.minecraft.client.Minecraft;
+import java.nio.ByteBuffer;
 import org.jspecify.annotations.Nullable;
 import org.lwjgl.sdl.SDLKeyboard;
 import org.lwjgl.sdl.SDLVideo;
 import org.lwjgl.sdl.SDL_Rect;
 import org.lwjgl.system.MemoryStack;
-
-import java.nio.ByteBuffer;
 
 public class SDLUtil {
     public static final boolean IS_WAYLAND = "wayland".equalsIgnoreCase(SDLVideo.SDL_GetCurrentVideoDriver());
@@ -41,5 +39,10 @@ public class SDLUtil {
     public static void updateTextInputAreaScaled(Window window, int x, int y, int w, int h, int cursor) {
         var scale = window.getGuiScale();
         updateTextInputArea(window, x * scale, y * scale, w * scale, h * scale, cursor * scale);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Throwable> void throwAny(Throwable throwable) throws T {
+        throw (T) throwable;
     }
 }

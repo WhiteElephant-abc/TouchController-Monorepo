@@ -1,4 +1,4 @@
-package top.fifthlight.combine.backend.minecraft.render.extension.v1_21_11;
+package top.fifthlight.combine.backend.minecraft.render.v1_21_11.extension;
 
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.state.GuiElementRenderState;
