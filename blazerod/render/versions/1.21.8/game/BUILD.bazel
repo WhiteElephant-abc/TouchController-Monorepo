@@ -19,6 +19,17 @@ apply_access_widener(
     visibility = ["//blazerod/render:__subpackages__"],
 )
 
+apply_access_widener(
+    name = "remapped_client_access_widened_neoforge",
+    srcs = [
+        "blazerod.accesswidener",
+        ":access_widener_dep_named",
+    ],
+    input = "//game/1.21.8:game_client_neoforge",
+    neverlink = True,
+    visibility = ["//blazerod/render:__subpackages__"],
+)
+
 convert_access_widener(
     name = "access_transformer_file",
     src = "blazerod.accesswidener",
