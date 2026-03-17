@@ -1,6 +1,6 @@
 package top.fifthlight.combine.backend.minecraft.render.v26_1.mixin;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
@@ -15,11 +15,11 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import top.fifthlight.combine.backend.minecraft.render.v26_1.extension.SpriteAccessibleGuiGraphics;
 import top.fifthlight.combine.backend.minecraft.render.v26_1.extension.SubmittableGuiGraphics;
 
-@Mixin(GuiGraphics.class)
+@Mixin(GuiGraphicsExtractor.class)
 public abstract class GuiGraphicsMixin implements SubmittableGuiGraphics, SpriteAccessibleGuiGraphics {
     @Shadow @Final private GuiRenderState guiRenderState;
 
-    @Shadow @Final private GuiGraphics.ScissorStack scissorStack;
+    @Shadow @Final private GuiGraphicsExtractor.ScissorStack scissorStack;
 
     @Shadow @Final private TextureAtlas guiSprites;
 
@@ -32,8 +32,8 @@ public abstract class GuiGraphicsMixin implements SubmittableGuiGraphics, Sprite
     }
 
     @Override
-    public void combine$submitElement(GuiElementRenderState guiElementRenderState) {
-        guiRenderState.submitGuiElement(guiElementRenderState);
+    public void combine$addGuiElement(GuiElementRenderState guiElementRenderState) {
+        guiRenderState.addGuiElement(guiElementRenderState);
     }
 
     @Override

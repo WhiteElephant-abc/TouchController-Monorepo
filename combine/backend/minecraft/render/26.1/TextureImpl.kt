@@ -3,7 +3,7 @@ package top.fifthlight.combine.backend.minecraft.render.v26_1
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.client.renderer.RenderPipelines
@@ -23,13 +23,13 @@ import top.fifthlight.data.Rect
 import top.fifthlight.mergetools.api.ActualConstructor
 import top.fifthlight.mergetools.api.ActualImpl
 
-private fun GuiGraphics.getSprite(identifier: Identifier) =
+private fun GuiGraphicsExtractor.getSprite(identifier: Identifier) =
     (this as SpriteAccessibleGuiGraphics).`combine$getSprite`(identifier)
 
-private fun GuiGraphics.submitElement(guiElementRenderState: GuiElementRenderState) =
-    (this as SubmittableGuiGraphics).`combine$submitElement`(guiElementRenderState)
+private fun GuiGraphicsExtractor.submitElement(guiElementRenderState: GuiElementRenderState) =
+    (this as SubmittableGuiGraphics).`combine$addGuiElement`(guiElementRenderState)
 
-private fun GuiGraphics.peekScissorStack() =
+private fun GuiGraphicsExtractor.peekScissorStack() =
     (this as SubmittableGuiGraphics).`combine$peekScissorStack`()
 
 private data class BlitRenderState(

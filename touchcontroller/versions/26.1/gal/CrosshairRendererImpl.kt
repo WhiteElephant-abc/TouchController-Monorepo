@@ -7,7 +7,7 @@ import com.mojang.blaze3d.shaders.UniformType
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.VertexConsumer
 import com.mojang.blaze3d.vertex.VertexFormat
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.client.renderer.state.gui.GuiElementRenderState
@@ -133,12 +133,12 @@ object CrosshairRendererImpl : CrosshairRenderer {
     @ActualConstructor
     fun of(): CrosshairRenderer = this
 
-    private fun GuiGraphics.submitElement(guiElementRenderState: GuiElementRenderState) =
-        (this as SubmittableGuiGraphics).`combine$submitElement`(guiElementRenderState)
+    private fun GuiGraphicsExtractor.addGuiElement(guiElementRenderState: GuiElementRenderState) =
+        (this as SubmittableGuiGraphics).`combine$addGuiElement`(guiElementRenderState)
 
     override fun renderOuter(canvas: Canvas, radius: Int, outerRadius: Int) {
         val drawContext = (canvas as CanvasImpl).guiGraphics
-        drawContext.submitElement(
+        drawContext.addGuiElement(
             CrosshairOuterGuiElementRenderState(
                 pose = Matrix3x2f(drawContext.pose()),
                 radius = radius,
@@ -149,6 +149,6 @@ object CrosshairRendererImpl : CrosshairRenderer {
 
     override fun renderInner(canvas: Canvas, radius: Int, outerRadius: Int, initialProgress: Float, progress: Float) {
         val drawContext = (canvas as CanvasImpl).guiGraphics
-        drawContext.submitElement(CrosshairInnerGuiElementRenderState(Matrix3x2f(drawContext.pose()), radius, progress))
+        drawContext.addGuiElement(CrosshairInnerGuiElementRenderState(Matrix3x2f(drawContext.pose()), radius, progress))
     }
 }

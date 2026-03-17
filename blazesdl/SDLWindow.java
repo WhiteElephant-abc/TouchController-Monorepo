@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class SDLWindow extends Window {
+    public static boolean useExclusiveFullscreen = false;
+
     public SDLWindow(WindowEventHandler eventHandler,
                      DisplayData displayData,
                      @Nullable String fullscreenVideoModeString,
@@ -90,23 +92,14 @@ public class SDLWindow extends Window {
         SDLVideo.SDL_SetWindowTitle(handle, title);
     }
 
-    @Override
-    protected void setMode() {
-        var wasFullscreen = (SDLVideo.SDL_GetWindowFlags(this.handle) & SDLVideo.SDL_WINDOW_FULLSCREEN) != 0;
-
-        if (this.fullscreen) {
+    private boolean setupFullscreenVideoMode() {
+        if (useExclusiveFullscreen || SDLUtil.IS_WAYLAND) { // Wayland doesn't have real exclusive fullscreen
             var monitor = this.screenManager.findBestMonitor(this);
             if (monitor == null) {
                 LOGGER.warn("Failed to find suitable monitor for fullscreen mode");
-                this.fullscreen = false;
+                return false;
             } else {
                 var videomode = monitor.getPreferredVidMode(this.preferredFullscreenVideoMode);
-                if (!wasFullscreen) {
-                    this.windowedX = this.x;
-                    this.windowedY = this.y;
-                    this.windowedWidth = this.width;
-                    this.windowedHeight = this.height;
-                }
 
                 this.x = 0;
                 this.y = 0;
@@ -119,9 +112,33 @@ public class SDLWindow extends Window {
                 if (!JNI.invokePPZ(this.handle, displayMode.address(), SDL_SetWindowFullscreenMode)) {
                     throw SDLError.handleError("SDL_SetWindowFullscreenMode");
                 }
-                if (!SDLVideo.SDL_SetWindowFullscreen(this.handle, true)) {
-                    throw SDLError.handleError("SDL_SetWindowFullscreen");
-                }
+
+                return true;
+            }
+        } else {
+            LOGGER.warn("BlazeSDL: Can't set resolution without exclusive fullscreen");
+            return true;
+        }
+    }
+
+    @Override
+    protected void setMode() {
+        var wasFullscreen = (SDLVideo.SDL_GetWindowFlags(this.handle) & SDLVideo.SDL_WINDOW_FULLSCREEN) != 0;
+
+        if (this.fullscreen) {
+            if (!setupFullscreenVideoMode()) {
+                return;
+            }
+
+            if (!wasFullscreen) {
+                this.windowedX = this.x;
+                this.windowedY = this.y;
+                this.windowedWidth = this.width;
+                this.windowedHeight = this.height;
+            }
+
+            if (!SDLVideo.SDL_SetWindowFullscreen(this.handle, true)) {
+                throw SDLError.handleError("SDL_SetWindowFullscreen");
             }
         } else {
             this.x = this.windowedX;
@@ -143,25 +160,6 @@ public class SDLWindow extends Window {
         }
     }
 
-    private boolean imeEnabled = false;
-
-    @Override
-    public void toggleIME(boolean enabled) {
-        if (enabled == imeEnabled) {
-            return;
-        }
-        imeEnabled = enabled;
-        refreshIME();
-    }
-
-    public void refreshIME() {
-        if (imeEnabled) {
-            SDLKeyboard.SDL_StartTextInput(handle);
-        } else {
-            SDLKeyboard.SDL_StopTextInput(handle);
-        }
-    }
-
     @Override
     protected void setBootErrorCallback() {
         // no-op
@@ -170,11 +168,6 @@ public class SDLWindow extends Window {
     @Override
     public void setDefaultErrorCallback() {
         // no-op
-    }
-
-    @Override
-    public void setIMEPreeditArea(int x0, int y0, int x1, int y1) {
-        SDLUtil.updateTextInputAreaScaled(this, x0, y0, x1 - x0, y1 - y0, 0);
     }
 
     public boolean shouldClose = false;

@@ -195,10 +195,10 @@ neoforge_versions = {
     },
     "26.1": {
         "java_target": 25,
-        "version": "26.1-snapshot-11",
+        "version": "26.1-pre-2",
         "mapping": False,
-        # TODO: Update to 26.1 snapshot 11
-        "neoform_version": "26.1-snapshot-11-1",
+        # TODO: Update to 26.1-pre-2 when NeoForge updates
+        "neoform_version": "26.1-pre-2-1",
         "neoform_sha256": "8895cc8be6d8b60e595769bacc9a53c60cb923b932166e741c336d847812e719",
         "neoforge_version": "26.1.0.0-alpha.14+snapshot-11",
         "neoforge_userdev_sha256": "ee54beb6d106b1d81a46909670e1bbdda36b6fca16d7b9ed7688eea6555093dc",

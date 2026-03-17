@@ -39,3 +39,7 @@ accessible method com/mojang/blaze3d/opengl/GlDevice <init> (JLcom/mojang/blaze3
 accessible field com/mojang/blaze3d/opengl/GlDevice windowHandle J
 
 accessible field net/minecraft/client/gui/components/EditBox preeditOverlay Lnet/minecraft/client/gui/components/IMEPreeditOverlay;
+
+extendable method com/mojang/blaze3d/platform/TextInputManager setIMEInputMode (Z)V
+extendable method com/mojang/blaze3d/platform/TextInputManager getIMEStatus ()Z
+accessible field com/mojang/blaze3d/platform/TextInputManager textInputEnabled Z

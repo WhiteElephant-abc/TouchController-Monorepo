@@ -1,7 +1,10 @@
 package top.fifthlight.blazesdl.mixin;
 
+import com.mojang.blaze3d.platform.BackendOptions;
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.util.function.LongSupplier;
+
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallbackI;
@@ -20,14 +23,13 @@ import top.fifthlight.blazesdl.SDLError;
 
 @Mixin(RenderSystem.class)
 public class RenderSystemMixin {
-    @Redirect(method = "initBackendSystem",
-        at = @At(
-            value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/GLX;_initGlfw()Ljava/util/function/LongSupplier;"))
-    private static LongSupplier
-    redirectInitGlfw() {
+    @Redirect(method = "initBackendSystem", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/GLX;_initGlfw(Lcom/mojang/blaze3d/platform/BackendOptions;)Ljava/util/function/LongSupplier;"))
+    private static LongSupplier redirectInitGlfw(BackendOptions backendOptions) {
         if (SDLInit.SDL_WasInit(SDLInit.SDL_INIT_VIDEO) == 0) {
             SDLInit.SDL_Init(SDLInit.SDL_INIT_VIDEO);
         }
+
+        SDLWindow.useExclusiveFullscreen = backendOptions.exclusiveFullScreen();
 
         final var freq = SDLTimer.SDL_GetPerformanceFrequency();
         var multiplier = 1_000_000_000.0 / freq;
@@ -62,13 +64,13 @@ public class RenderSystemMixin {
                 var eventType = event.type();
                 switch (eventType) {
                     case SDLEvents.SDL_EVENT_DISPLAY_ADDED, SDLEvents.SDL_EVENT_DISPLAY_REMOVED ->
-                        sdlWindow.getScreenManager().onMonitorChange(event.display().displayID(), eventType);
+                            sdlWindow.getScreenManager().onMonitorChange(event.display().displayID(), eventType);
 
                     case SDLEvents.SDL_EVENT_WINDOW_MOVED -> {
                         var callback = EventCallback.onWindowMove;
                         if (callback != null) {
                             callback.invoke(windowIdToHandle(event.window().windowID()), event.window().data1(),
-                                event.window().data2());
+                                    event.window().data2());
                         }
                     }
                     case SDLEvents.SDL_EVENT_WINDOW_RESIZED -> {
@@ -117,7 +119,7 @@ public class RenderSystemMixin {
                             var keyCode = SDLKeyMapping.toGlfwKey(key.key());
                             var modifier = SDLKeyMapping.getGlfwModifiers(key.mod());
                             callback.invoke(
-                                windowIdToHandle(key.windowID()), keyCode, key.scancode(), action, modifier);
+                                    windowIdToHandle(key.windowID()), keyCode, key.scancode(), action, modifier);
                         }
                     }
                     case SDLEvents.SDL_EVENT_TEXT_INPUT -> {
@@ -196,12 +198,12 @@ public class RenderSystemMixin {
 
                         var caretPosition = codePointStart + codePointLength;
                         callback.invoke(windowIdToHandle(edit.windowID()),
-                            codePoints.limit(), // preedit_count
-                            MemoryUtil.memAddress(codePoints), // preedit_string
-                            blockCount, // block_count
-                            MemoryUtil.memAddress(blockSizes), // block_sizes
-                            focusedBlock, // focused_block
-                            caretPosition // caret
+                                codePoints.limit(), // preedit_count
+                                MemoryUtil.memAddress(codePoints), // preedit_string
+                                blockCount, // block_count
+                                MemoryUtil.memAddress(blockSizes), // block_sizes
+                                focusedBlock, // focused_block
+                                caretPosition // caret
                         );
                     }
 
@@ -215,10 +217,10 @@ public class RenderSystemMixin {
                                 SDLUtil.virtualMouseX += motion.xrel();
                                 SDLUtil.virtualMouseY += motion.yrel();
                                 callback.invoke(
-                                    windowIdToHandle(motion.windowID()), SDLUtil.virtualMouseX, SDLUtil.virtualMouseY);
+                                        windowIdToHandle(motion.windowID()), SDLUtil.virtualMouseX, SDLUtil.virtualMouseY);
                             } else {
                                 callback.invoke(
-                                    windowIdToHandle(motion.windowID()), SDLUtil.realMouseX, SDLUtil.realMouseY);
+                                        windowIdToHandle(motion.windowID()), SDLUtil.realMouseX, SDLUtil.realMouseY);
                             }
                         }
                     }
@@ -227,7 +229,7 @@ public class RenderSystemMixin {
                         var callback = EventCallback.onPressCallback;
                         if (callback != null) {
                             var action = (eventType == SDLEvents.SDL_EVENT_MOUSE_BUTTON_DOWN) ? GLFW.GLFW_PRESS
-                                                                                              : GLFW.GLFW_RELEASE;
+                                    : GLFW.GLFW_RELEASE;
                             var button = event.button();
                             int sdlButton = button.button();
                             var buttonId = switch (sdlButton) {
@@ -245,7 +247,7 @@ public class RenderSystemMixin {
                         var callback = EventCallback.onScrollCallback;
                         if (callback != null) {
                             callback.invoke(
-                                windowIdToHandle(event.button().windowID()), event.wheel().x(), event.wheel().y());
+                                    windowIdToHandle(event.button().windowID()), event.wheel().x(), event.wheel().y());
                         }
                     }
                 }

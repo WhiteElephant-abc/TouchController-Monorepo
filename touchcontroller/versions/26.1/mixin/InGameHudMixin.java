@@ -4,7 +4,7 @@ import net.minecraft.client.AttackIndicatorStatus;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,15 +33,15 @@ public abstract class InGameHudMixin {
     private Minecraft minecraft;
 
     @Inject(
-            method = "renderCrosshair",
+            method = "extractCrosshair",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V",
+                    target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V",
                     ordinal = 0
             ),
             cancellable = true
     )
-    public void renderCrosshair(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo callbackInfo) {
+    public void renderCrosshair(GuiGraphicsExtractor graphics, DeltaTracker tickCounter, CallbackInfo callbackInfo) {
         var shouldRender = RenderEvents.INSTANCE.shouldRenderCrosshair();
         if (!shouldRender) {
             if (this.minecraft.options.attackIndicator().get() == AttackIndicatorStatus.CROSSHAIR) {
@@ -50,14 +50,14 @@ public abstract class InGameHudMixin {
                 if (this.minecraft.crosshairPickEntity != null && this.minecraft.crosshairPickEntity instanceof LivingEntity && attackCooldownProgress >= 1.0f) {
                     renderFullTexture = this.minecraft.player.getCurrentItemAttackStrengthDelay() > 5.0f && this.minecraft.crosshairPickEntity.isAlive();
                 }
-                var x = context.guiWidth() / 2;
-                var y = context.guiHeight() / 2;
+                var x = graphics.guiWidth() / 2;
+                var y = graphics.guiHeight() / 2;
                 if (renderFullTexture) {
-                    context.blitSprite(RenderPipelines.CROSSHAIR, CROSSHAIR_ATTACK_INDICATOR_FULL_SPRITE, x - 8, y - 8, 16, 16);
+                    graphics.blitSprite(RenderPipelines.CROSSHAIR, CROSSHAIR_ATTACK_INDICATOR_FULL_SPRITE, x - 8, y - 8, 16, 16);
                 } else if (attackCooldownProgress < 1.0f) {
                     var progress = (int) (attackCooldownProgress * 17.0f);
-                    context.blitSprite(RenderPipelines.CROSSHAIR, CROSSHAIR_ATTACK_INDICATOR_BACKGROUND_SPRITE, x - 8, y - 2, 16, 4);
-                    context.blitSprite(RenderPipelines.CROSSHAIR, CROSSHAIR_ATTACK_INDICATOR_PROGRESS_SPRITE, 16, 4, 0, 0, x - 8, y - 2, progress, 4);
+                    graphics.blitSprite(RenderPipelines.CROSSHAIR, CROSSHAIR_ATTACK_INDICATOR_BACKGROUND_SPRITE, x - 8, y - 2, 16, 4);
+                    graphics.blitSprite(RenderPipelines.CROSSHAIR, CROSSHAIR_ATTACK_INDICATOR_PROGRESS_SPRITE, 16, 4, 0, 0, x - 8, y - 2, progress, 4);
                 }
             }
             callbackInfo.cancel();
@@ -65,15 +65,15 @@ public abstract class InGameHudMixin {
     }
 
     @Inject(
-            method = "renderItemHotbar",
+            method = "extractItemHotbar",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V",
+                    target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V",
                     ordinal = 1,
                     shift = At.Shift.AFTER
             )
     )
-    private void renderHotbar(GuiGraphics context, DeltaTracker deltaTracker, CallbackInfo ci) {
+    private void renderHotbar(GuiGraphicsExtractor context, DeltaTracker deltaTracker, CallbackInfo ci) {
         var player = minecraft.player;
         if (player != null) {
             var controllerHudModel = ControllerHudModel.Global;

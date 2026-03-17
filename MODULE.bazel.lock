@@ -783,7 +783,7 @@
           "REPO_MAPPING:,neoform_1_21_7 +neoform+neoform_1_21_7_20250711_194848",
           "REPO_MAPPING:,neoform_1_21_8 +neoform+neoform_1_21_8_20250717_133445",
           "REPO_MAPPING:,neoform_1_21_9 +neoform+neoform_1_21_9_20250930_151910",
-          "REPO_MAPPING:,neoform_26_1 +neoform+neoform_26_1_snapshot_11_1",
+          "REPO_MAPPING:,neoform_26_1 +neoform+neoform_26_1_pre_2_1",
           "FILE:@@//neoforge_pin.txt 84c9d1c76cd4796b9a68ec93219caa83ea64bb8d8a6c7f9b79c87685dc298e0e"
         ],
         "generatedRepoSpecs": {
@@ -1036,7 +1036,7 @@
               "userdev_sha256": "ee54beb6d106b1d81a46909670e1bbdda36b6fca16d7b9ed7688eea6555093dc",
               "universal_sha256": "d7c3dc99e9fdf4c375e34c246b48926da7a7d880addfe19e9c252760ec07e5be",
               "sources_sha256": "d82fd3e86fc1bbfc1e54f16c61789125773d3aa2d68a7d4f8cab3ade4c99042f",
-              "joined_patched_sources": "@@+neoform+neoform_26_1_snapshot_11_1//tasks/joined_patch:joined_patch"
+              "joined_patched_sources": "@@+neoform+neoform_26_1_pre_2_1//tasks/joined_patch:joined_patch"
             }
           },
           "forge_org_ow2_asm_asm_6_2": {
@@ -3804,7 +3804,7 @@
     "//repo:neoform.bzl%neoform": {
       "general": {
         "bzlTransitiveDigest": "1Ztoz+yk0PGGmpRVqkfoo4Ya/fYWH+y2ryure1cAwas=",
-        "usagesDigest": "7re0nn+BsmyNovjKqlqteXpn7m8b6dvcPmGMCOkPdZ4=",
+        "usagesDigest": "lyUx59JmBdrpEzquKBjVBvAH7az+A+uKQhpt+pcrFDU=",
         "recordedInputs": [
           "REPO_MAPPING:, ",
           "REPO_MAPPING:,bazel_tools bazel_tools",
@@ -4111,17 +4111,17 @@
               "pin_file": "@@//:neoform_pin.txt"
             }
           },
-          "neoform_26_1_snapshot_11_1": {
+          "neoform_26_1_pre_2_1": {
             "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
             "attributes": {
-              "version": "26.1-snapshot-11-1",
+              "version": "26.1-pre-2-1",
               "legacy": false,
               "sha256": "8895cc8be6d8b60e595769bacc9a53c60cb923b932166e741c336d847812e719",
-              "client_jar": "@@rules_mc++minecraft+minecraft//26.1-snapshot-11:client",
-              "server_jar": "@@rules_mc++minecraft+minecraft//26.1-snapshot-11:server",
-              "client_mapping": "@@rules_mc++minecraft+minecraft//26.1-snapshot-11:client_mappings",
-              "server_mapping": "@@rules_mc++minecraft+minecraft//26.1-snapshot-11:server_mappings",
-              "client_libraries": "@@rules_mc++minecraft+minecraft//26.1-snapshot-11:client_libraries",
+              "client_jar": "@@rules_mc++minecraft+minecraft//26.1-pre-2:client",
+              "server_jar": "@@rules_mc++minecraft+minecraft//26.1-pre-2:server",
+              "client_mapping": "@@rules_mc++minecraft+minecraft//26.1-pre-2:client_mappings",
+              "server_mapping": "@@rules_mc++minecraft+minecraft//26.1-pre-2:server_mappings",
+              "client_libraries": "@@rules_mc++minecraft+minecraft//26.1-pre-2:client_libraries",
               "pin_file": "@@//:neoform_pin.txt"
             }
           },
@@ -4901,7 +4901,7 @@
     "@@rules_mc+//:extensions.bzl%minecraft": {
       "general": {
         "bzlTransitiveDigest": "Epfd8fTLCsK7vmUjvyawn/rXPsVm6VVMar99EO1RiBA=",
-        "usagesDigest": "tY9/37eh+VT8FqjazIyQHjM1hlgSnjy7lnhErtOxzSQ=",
+        "usagesDigest": "Oit5fZS8hk9iCPnpy48rFq8HdR41FsCT1h95max8Mb0=",
         "recordedInputs": [
           "REPO_MAPPING:rules_mc+,bazel_tools bazel_tools"
         ],
@@ -5650,19 +5650,19 @@
               "downloaded_file_path": "server.txt"
             }
           },
-          "minecraft_26_1-snapshot-11_client": {
+          "minecraft_26_1-pre-2_client": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
             "attributes": {
-              "url": "https://piston-data.mojang.com/v1/objects/632526298395b8483b608e9488d4787bfed9e3f6/client.jar",
-              "integrity": "sha1-YyUmKYOVuEg7YI6UiNR4e/7Z4/Y=",
+              "url": "https://piston-data.mojang.com/v1/objects/93079d0d5608af9e10283be6be89b67a772d0c8f/client.jar",
+              "integrity": "sha1-kwedDVYIr54QKDvmvom2enctDI8=",
               "downloaded_file_path": "client.jar"
             }
           },
-          "minecraft_26_1-snapshot-11_server": {
+          "minecraft_26_1-pre-2_server": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
             "attributes": {
-              "url": "https://piston-data.mojang.com/v1/objects/075b586f5d15168558250232227d6e65eb5f57b8/server.jar",
-              "integrity": "sha1-B1tYb10VFoVYJQIyIn1uZetfV7g=",
+              "url": "https://piston-data.mojang.com/v1/objects/f48ed6831e21ca9a94c508d7fef3e80d2fc7836e/server.jar",
+              "integrity": "sha1-9I7Wgx4hypqUxQjX/vPoDS/Hg24=",
               "downloaded_file_path": "server.jar"
             }
           },
@@ -10485,7 +10485,7 @@
                   "client_mappings#file",
                   "server_mappings#file"
                 ],
-                "26.1-snapshot-11": [
+                "26.1-pre-2": [
                   "client#file",
                   "server#file"
                 ]
@@ -12498,7 +12498,7 @@
                   "org.lwjgl:lwjgl:3.3.3:natives-windows-x86",
                   "org.slf4j:slf4j-api:2.0.17"
                 ],
-                "26.1-snapshot-11": [
+                "26.1-pre-2": [
                   "at.yawk.lz4:lz4-java:1.10.1",
                   "ca.weblite:java-objc-bridge:1.1",
                   "com.azure:azure-json:1.4.0",
@@ -16078,7 +16078,7 @@
                 "1.21.9": "27",
                 "1.21.10": "27",
                 "1.21.11": "29",
-                "26.1-snapshot-11": "30"
+                "26.1-pre-2": "30"
               }
             }
           }

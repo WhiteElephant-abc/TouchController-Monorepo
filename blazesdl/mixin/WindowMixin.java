@@ -6,7 +6,6 @@ import com.mojang.blaze3d.platform.*;
 import com.mojang.blaze3d.systems.BackendCreationException;
 import com.mojang.blaze3d.systems.GpuBackend;
 import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.sdl.SDLInit;
 import org.lwjgl.sdl.SDLPlatform;
 import org.lwjgl.sdl.SDLVideo;
@@ -14,7 +13,6 @@ import org.lwjgl.system.MemoryStack;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import top.fifthlight.blazesdl.*;
 
@@ -46,7 +44,7 @@ public abstract class WindowMixin {
         if (context == 0L) {
             throw SDLGlBackend.handleError("SDL_GL_CreateContext");
         }
-        
+
         cir.setReturnValue(window);
     }
 
@@ -176,14 +174,5 @@ public abstract class WindowMixin {
     @Inject(method = "getPlatform", at = @At(value = "INVOKE", target = "Lorg/lwjgl/glfw/GLFW;glfwGetPlatform()I"), cancellable = true)
     private static void overrideGetPlatform(CallbackInfoReturnable<String> cir) {
         cir.setReturnValue(SDLPlatform.SDL_GetPlatform());
-    }
-
-    @Inject(method = "onFocus", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/WindowEventHandler;setWindowActive(Z)V"))
-    private void refreshImeWhenFocus(long handle, boolean focused, CallbackInfo ci) {
-        var window = blazesdl$getSdlWindow();
-        if (window != null) {
-            return;
-        }
-        window.refreshIME();
     }
 }

@@ -17,8 +17,5 @@
         "RenderSystemMixin",
         "ScreenManagerMixin",
         "WindowMixin"
-    ],
-    "mixins": [
-        "GLFWMixin"
     ]
 }

@@ -3,7 +3,7 @@ package top.fifthlight.combine.backend.minecraft.screen.v26_1
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.input.CharacterEvent
 import net.minecraft.client.input.KeyEvent
@@ -192,15 +192,15 @@ class CombineScreen(
         owner.onTextInput(string)
     }
 
-    override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
+    override fun extractRenderState(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, delta: Float) {
         if (renderBackground) {
-            super.render(guiGraphics, mouseX, mouseY, delta)
+            super.extractBackground(graphics, mouseX, mouseY, delta)
         }
 
         owner.render(
             size = IntSize(width, height),
             cursorPos = Offset(mouseX.toFloat(), mouseY.toFloat()),
-            canvas = CanvasImpl(guiGraphics),
+            canvas = CanvasImpl(graphics),
         )
     }
 

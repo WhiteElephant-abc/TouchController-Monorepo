@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.cursor.CursorType
 import com.mojang.blaze3d.platform.cursor.CursorTypes
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
-import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.render.TextureSetup
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.client.renderer.state.gui.GuiElementRenderState
@@ -20,11 +20,11 @@ import top.fifthlight.combine.item.paint.ItemCanvas
 import top.fifthlight.combine.paint.Color
 import top.fifthlight.data.*
 
-class CanvasImpl(val guiGraphics: GuiGraphics) : ItemCanvas {
-    private fun GuiGraphics.submitElement(guiElementRenderState: GuiElementRenderState) =
-        (this as SubmittableGuiGraphics).`combine$submitElement`(guiElementRenderState)
+class CanvasImpl(val guiGraphics: GuiGraphicsExtractor) : ItemCanvas {
+    private fun GuiGraphicsExtractor.addGuiElement(guiElementRenderState: GuiElementRenderState) =
+        (this as SubmittableGuiGraphics).`combine$addGuiElement`(guiElementRenderState)
 
-    private fun GuiGraphics.peekScissorStack() =
+    private fun GuiGraphicsExtractor.peekScissorStack() =
         (this as SubmittableGuiGraphics).`combine$peekScissorStack`()
 
     val client: Minecraft
@@ -72,7 +72,7 @@ class CanvasImpl(val guiGraphics: GuiGraphics) : ItemCanvas {
         rightTopColor: Color,
         rightBottomColor: Color,
     ) {
-        guiGraphics.submitElement(
+        guiGraphics.addGuiElement(
             GradientRectangleRenderState(
                 pipeline = RenderPipelines.GUI,
                 textureSetup = TextureSetup.noTexture(),
@@ -95,7 +95,7 @@ class CanvasImpl(val guiGraphics: GuiGraphics) : ItemCanvas {
         size: IntSize,
         color: Color,
     ) {
-        guiGraphics.renderOutline(offset.x, offset.y, size.width, size.height, color.value)
+        guiGraphics.outline(offset.x, offset.y, size.width, size.height, color.value)
     }
 
     override fun drawText(
@@ -103,7 +103,7 @@ class CanvasImpl(val guiGraphics: GuiGraphics) : ItemCanvas {
         text: String,
         color: Color,
     ) {
-        guiGraphics.drawString(font, text, offset.x, offset.y, color.value, false)
+        guiGraphics.text(font, text, offset.x, offset.y, color.value, false)
     }
 
     override fun drawText(
@@ -112,7 +112,7 @@ class CanvasImpl(val guiGraphics: GuiGraphics) : ItemCanvas {
         text: String,
         color: Color,
     ) {
-        guiGraphics.drawWordWrap(font, Component.literal(text), offset.x, offset.y, width, color.value, false)
+        guiGraphics.textWithWordWrap(font, Component.literal(text), offset.x, offset.y, width, color.value, false)
     }
 
     override fun drawText(
@@ -120,7 +120,7 @@ class CanvasImpl(val guiGraphics: GuiGraphics) : ItemCanvas {
         text: Text,
         color: Color,
     ) {
-        guiGraphics.drawString(font, text.toMinecraft(), offset.x, offset.y, color.value, false)
+        guiGraphics.text(font, text.toMinecraft(), offset.x, offset.y, color.value, false)
     }
 
     override fun drawText(
@@ -129,7 +129,7 @@ class CanvasImpl(val guiGraphics: GuiGraphics) : ItemCanvas {
         text: Text,
         color: Color,
     ) {
-        guiGraphics.drawWordWrap(font, text.toMinecraft(), offset.x, offset.y, width, color.value, false)
+        guiGraphics.textWithWordWrap(font, text.toMinecraft(), offset.x, offset.y, width, color.value, false)
     }
 
     override fun pushClip(absoluteArea: IntRect, relativeArea: IntRect) {
@@ -148,7 +148,7 @@ class CanvasImpl(val guiGraphics: GuiGraphics) : ItemCanvas {
         val minecraftStack = stack.toVanilla()
         pushState()
         guiGraphics.pose().scale(size.width.toFloat() / 16f, size.height.toFloat() / 16f)
-        guiGraphics.renderItem(minecraftStack, offset.x, offset.y)
+        guiGraphics.item(minecraftStack, offset.x, offset.y)
         popState()
     }
 

@@ -2,7 +2,7 @@ package top.fifthlight.blazesdl.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.IMEPreeditOverlay;
 import net.minecraft.client.gui.components.MultiLineEditBox;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,8 +17,8 @@ public abstract class MultiLineEditBoxMixin {
     @Shadow
     private IMEPreeditOverlay preeditOverlay;
 
-    @Inject(method = "renderContents", at = @At(value = "TAIL"))
-    private void updateTextPos(GuiGraphics graphics, int mouseX, int mouseY, float a, CallbackInfo ci, @Local(name = "cursorX") int cursorX, @Local(name = "hasDrawnCursor") boolean hasDrawnCursor) {
+    @Inject(method = "extractContents", at = @At(value = "TAIL"))
+    private void updateTextPos(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci, @Local(name = "cursorX") int cursorX, @Local(name = "hasDrawnCursor") boolean hasDrawnCursor) {
         var editBox = (MultiLineEditBox) (Object) this;
         if (!editBox.visible) {
             return;

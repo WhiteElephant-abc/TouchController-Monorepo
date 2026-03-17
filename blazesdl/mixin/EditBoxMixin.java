@@ -2,7 +2,7 @@ package top.fifthlight.blazesdl.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,8 +12,9 @@ import top.fifthlight.blazesdl.SDLUtil;
 
 @Mixin(EditBox.class)
 public class EditBoxMixin {
-    @Inject(method = "renderWidget", at = @At(value = "TAIL"))
-    private void updateTextPos(GuiGraphics graphics, int mouseX, int mouseY, float a, CallbackInfo ci, @Local(name = "cursorX") int cursorX) {
+    @Inject(method = "extractWidgetRenderState", at = @At(value = "TAIL"))
+    private void updateTextPos(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci,
+                               @Local(name = "cursorX") int cursorX) {
         var editBox = (EditBox) (Object) this;
         if (!editBox.isVisible()) {
             return;
@@ -23,7 +24,8 @@ public class EditBoxMixin {
         }
         if (editBox.preeditOverlay == null) {
             var window = Minecraft.getInstance().getWindow();
-            SDLUtil.updateTextInputAreaScaled(window, editBox.getX(), editBox.getY(), editBox.getWidth(), editBox.getHeight(), cursorX - editBox.getX());
+            SDLUtil.updateTextInputAreaScaled(window, editBox.getX(), editBox.getY(), editBox.getWidth(),
+                    editBox.getHeight(), cursorX - editBox.getX());
         }
     }
 }
