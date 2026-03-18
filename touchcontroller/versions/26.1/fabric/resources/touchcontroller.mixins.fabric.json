@@ -1,6 +1,6 @@
 {
     "required": true,
-    "package": "top.fifthlight.touchcontroller.version_26_1.fabric.mixin",
+    "package": "top.fifthlight.touchcontroller.fabric.v26_1.mixin",
     "compatibilityLevel": "JAVA_25",
     "injectors": {
         "defaultRequire": 1

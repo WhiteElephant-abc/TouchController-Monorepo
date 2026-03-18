@@ -1,11 +1,11 @@
-package top.fifthlight.touchcontroller.version_1_21_11.mixin;
+package top.fifthlight.touchcontroller.mixin.v1_21_11;
 
 import net.minecraft.client.player.KeyboardInput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import top.fifthlight.touchcontroller.version_1_21_11.event.KeyboardInputEvents;
+import top.fifthlight.touchcontroller.event.v1_21_11.KeyboardInputEvents;
 
 @Mixin(KeyboardInput.class)
 public abstract class KeyboardInputMixin {

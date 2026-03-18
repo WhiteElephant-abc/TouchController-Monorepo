@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.version_1_21_11.mixin;
+package top.fifthlight.touchcontroller.mixin.v1_21_11;
 
 import net.minecraft.client.KeyMapping;
 import org.spongepowered.asm.mixin.Mixin;

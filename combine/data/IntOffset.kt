@@ -49,7 +49,7 @@ value class IntOffset(private val packed: Long) {
     }
 }
 
-private class IntOffsetSerializer : KSerializer<IntOffset> {
+class IntOffsetSerializer : KSerializer<IntOffset> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("top.fifthlight.data.IntOffset") {
         element<Int>("x")
         element<Int>("y")

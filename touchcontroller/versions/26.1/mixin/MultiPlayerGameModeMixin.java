@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.version_26_1.mixin;
+package top.fifthlight.touchcontroller.mixin.v26_1;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -21,8 +21,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import top.fifthlight.combine.backend.minecraft.item.v26_1.ItemImpl;
 import top.fifthlight.touchcontroller.common.config.holder.GlobalConfigHolder;
 import top.fifthlight.touchcontroller.common.util.crosshair.CrosshairTargetHelper;
-import top.fifthlight.touchcontroller.version_26_1.extensions.GameModeWithBreakingProgress;
-import top.fifthlight.touchcontroller.version_26_1.extensions.SyncableGameMode;
+import top.fifthlight.touchcontroller.extension.v26_1.GameModeWithBreakingProgress;
+import top.fifthlight.touchcontroller.extension.v26_1.SyncableGameMode;
 
 @Mixin(MultiPlayerGameMode.class)
 public abstract class MultiPlayerGameModeMixin implements GameModeWithBreakingProgress, SyncableGameMode {

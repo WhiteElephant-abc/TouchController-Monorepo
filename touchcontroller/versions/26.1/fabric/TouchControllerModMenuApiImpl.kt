@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.version_26_1.fabric
+package top.fifthlight.touchcontroller.fabric.v26_1
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory
 import com.terraformersmc.modmenu.api.ModMenuApi

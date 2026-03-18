@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.version_1_21_11.extensions;
+package top.fifthlight.touchcontroller.extension.v1_21_11;
 
 import net.minecraft.client.GuiMessage;
 

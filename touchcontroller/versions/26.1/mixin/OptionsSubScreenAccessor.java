@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.version_26_1.mixin;
+package top.fifthlight.touchcontroller.mixin.v26_1;
 
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;

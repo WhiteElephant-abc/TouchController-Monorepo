@@ -54,7 +54,7 @@ value class Size(private val packed: Long) {
     }
 }
 
-private class SizeSerializer : KSerializer<Size> {
+class SizeSerializer : KSerializer<Size> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("top.fifthlight.data.Size") {
         element<Int>("width")
         element<Int>("height")

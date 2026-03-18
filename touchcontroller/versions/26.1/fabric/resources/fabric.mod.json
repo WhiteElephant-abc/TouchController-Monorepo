@@ -16,10 +16,10 @@
     "environment": "client",
     "entrypoints": {
         "client": [
-            "top.fifthlight.touchcontroller.version_26_1.fabric.TouchController"
+            "top.fifthlight.touchcontroller.fabric.v26_1.TouchController"
         ],
         "modmenu": [
-            "top.fifthlight.touchcontroller.version_26_1.fabric.TouchControllerModMenuApiImpl"
+            "top.fifthlight.touchcontroller.fabric.v26_1.TouchControllerModMenuApiImpl"
         ]
     },
     "mixins": [

@@ -59,7 +59,7 @@ data class IntPadding(
     }
 }
 
-private class IntPaddingSerializer : KSerializer<IntPadding> {
+class IntPaddingSerializer : KSerializer<IntPadding> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("top.fifthlight.data.IntPadding") {
         element<Int>("left")
         element<Int>("top")

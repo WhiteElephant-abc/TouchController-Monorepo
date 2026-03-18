@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.version_1_21_11.fabric
+package top.fifthlight.touchcontroller.fabric.v1_21_11
 
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
@@ -24,9 +24,8 @@ import top.fifthlight.touchcontroller.common.event.tick.TickEvents
 import top.fifthlight.touchcontroller.common.event.window.WindowEvents
 import top.fifthlight.touchcontroller.common.model.ControllerHudModel
 import top.fifthlight.touchcontroller.common.model.TouchControllerLoadStatus
-import top.fifthlight.touchcontroller.version_1_21_11.gal.GameConfigEditorImpl
-import top.fifthlight.touchcontroller.version_1_21_11.gal.KeyBindingStateImpl
-import top.fifthlight.touchcontroller.version_1_21_11.gal.PlatformWindowProviderImpl
+import top.fifthlight.touchcontroller.gal.gameconfig.v1_21_11.GameConfigEditorImpl
+import top.fifthlight.touchcontroller.gal.key.v1_21_11.KeyBindingStateImpl
 
 class TouchController : ClientModInitializer {
     private val logger = LoggerFactory.getLogger(TouchController::class.java)
@@ -76,7 +75,6 @@ class TouchController : ClientModInitializer {
             ConnectionEvents.onJoinedWorld()
         }
         ClientLifecycleEvents.CLIENT_STARTED.register {
-            val client = Minecraft.getInstance()
             GlobalConfigHolder.load()
             WindowEvents.onWindowCreated()
             GameConfigEditorImpl.executePendingCallback()

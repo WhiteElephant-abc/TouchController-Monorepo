@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.version_1_21_11.fabric.mixin;
+package top.fifthlight.touchcontroller.fabric.v1_21_11.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -12,9 +12,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import top.fifthlight.touchcontroller.common.config.holder.GlobalConfigHolder;
-import top.fifthlight.touchcontroller.version_1_21_11.extensions.ClickableKeyBinding;
-import top.fifthlight.touchcontroller.version_1_21_11.fabric.TouchController;
-import top.fifthlight.touchcontroller.version_1_21_11.fabric.gal.KeyBindingHandlerImpl;
+import top.fifthlight.touchcontroller.extension.v1_21_11.ClickableKeyBinding;
+import top.fifthlight.touchcontroller.fabric.v1_21_11.TouchController;
+import top.fifthlight.touchcontroller.fabric.v1_21_11.gal.key.KeyBindingHandlerImpl;
 
 import java.util.function.Consumer;
 

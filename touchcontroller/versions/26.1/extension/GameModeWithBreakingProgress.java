@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.version_26_1.extensions;
+package top.fifthlight.touchcontroller.extension.v26_1;
 
 public interface GameModeWithBreakingProgress {
     float touchcontroller$getBreakingProgress();

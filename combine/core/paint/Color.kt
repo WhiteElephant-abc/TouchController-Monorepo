@@ -196,7 +196,7 @@ data class HsvColor(
 
 fun HsvColor(h: Float, s: Float, v: Float) = HsvColor(255, h, s, v)
 
-private class ColorSerializer : KSerializer<Color> {
+class ColorSerializer : KSerializer<Color> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("top.fifthlight.combine.paint.Color", PrimitiveKind.INT)
 

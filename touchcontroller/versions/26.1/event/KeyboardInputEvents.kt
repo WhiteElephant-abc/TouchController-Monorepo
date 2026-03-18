@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.version_26_1.event
+package top.fifthlight.touchcontroller.event.v26_1
 
 import net.minecraft.client.Minecraft
 import net.minecraft.client.player.KeyboardInput

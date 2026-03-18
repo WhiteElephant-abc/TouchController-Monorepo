@@ -1,0 +1,10 @@
+load("//rule:merge_library.bzl", "merge_library_group")
+
+merge_library_group(
+    name = "gal",
+    deps = [
+        "//touchcontroller/versions/26.1/fabric/gal/config",
+        "//touchcontroller/versions/26.1/fabric/gal/key",
+    ],
+    visibility = ["//touchcontroller:__subpackages__"],
+)

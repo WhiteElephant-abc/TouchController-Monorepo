@@ -1,0 +1,22 @@
+load("//rule:merge_library.bzl", "kt_merge_library")
+
+kt_merge_library(
+    name = "creativetab",
+    srcs = glob(["*.kt"]),
+    actual = True,
+    merge_deps = [
+        "//touchcontroller/common/gal/creativetab",
+        "//touchcontroller/common/gal/player",
+        "//touchcontroller/versions/26.1/gal/player",
+    ],
+    visibility = ["//touchcontroller:__subpackages__"],
+    deps = [
+        "//combine/backend/minecraft/item/26.1",
+        "//combine/backend/minecraft/text/26.1",
+        "//combine/core/data",
+        "//combine/item/data",
+        "//game/26.1:game_client",
+        "//game/26.1:game_client_libraries",
+        "@maven//:org_jetbrains_kotlinx_kotlinx_collections_immutable_jvm",
+    ],
+)

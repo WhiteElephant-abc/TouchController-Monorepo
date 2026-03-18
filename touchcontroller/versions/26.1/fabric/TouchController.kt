@@ -1,4 +1,4 @@
-package top.fifthlight.touchcontroller.version_26_1.fabric
+package top.fifthlight.touchcontroller.fabric.v26_1
 
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
@@ -24,9 +24,8 @@ import top.fifthlight.touchcontroller.common.event.tick.TickEvents
 import top.fifthlight.touchcontroller.common.event.window.WindowEvents
 import top.fifthlight.touchcontroller.common.model.ControllerHudModel
 import top.fifthlight.touchcontroller.common.model.TouchControllerLoadStatus
-import top.fifthlight.touchcontroller.version_26_1.gal.GameConfigEditorImpl
-import top.fifthlight.touchcontroller.version_26_1.gal.KeyBindingStateImpl
-import top.fifthlight.touchcontroller.version_26_1.gal.PlatformWindowProviderImpl
+import top.fifthlight.touchcontroller.gal.gameconfig.v26_1.GameConfigEditorImpl
+import top.fifthlight.touchcontroller.gal.key.v26_1.KeyBindingStateImpl
 
 class TouchController : ClientModInitializer {
     private val logger = LoggerFactory.getLogger(TouchController::class.java)

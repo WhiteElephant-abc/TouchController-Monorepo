@@ -43,6 +43,8 @@ def _merge_library_group_impl(ctx):
         output_jar = ctx.file._empty_jar,
         compile_jar = ctx.file._empty_jar,
         runtime_deps = [dep[_JavaInfo] for dep in ctx.attr.deps],
+    ), DefaultInfo(
+        files = depset(transitive = [dep[DefaultInfo].files for dep in ctx.attr.deps]),
     )]
 
 merge_library_group = rule(

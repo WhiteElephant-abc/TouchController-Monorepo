@@ -1,11 +1,11 @@
-package top.fifthlight.touchcontroller.version_1_21_11.mixin;
+package top.fifthlight.touchcontroller.mixin.v1_21_11;
 
 import net.minecraft.client.GuiMessage;
 import net.minecraft.client.gui.components.ChatComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import top.fifthlight.touchcontroller.version_1_21_11.extensions.ChatComponentWithMessages;
+import top.fifthlight.touchcontroller.extension.v1_21_11.ChatComponentWithMessages;
 
 import java.util.List;
 
