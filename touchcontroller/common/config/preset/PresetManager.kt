@@ -4,9 +4,6 @@ import kotlinx.collections.immutable.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.updateAndGet
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.decodeFromStream
-import kotlinx.serialization.json.encodeToStream
 import org.slf4j.LoggerFactory
 import top.fifthlight.touchcontroller.common.gal.config.ConfigDirectoryProvider
 import top.fifthlight.touchcontroller.common.gal.config.ConfigDirectoryProviderFactory
@@ -25,20 +22,20 @@ object PresetManager {
     private val _presets = MutableStateFlow(PresetsContainer())
     val presets = _presets.asStateFlow()
 
-    @OptIn(ExperimentalSerializationApi::class)
     fun load() {
         try {
             logger.info("Reading TouchController preset file")
             val order = runCatching<PresetManager, List<Uuid>> {
-                orderFile.inputStream().use(jsonFormat::decodeFromStream)
+                jsonFormat.decodeFromString(orderFile.readText())
             }.getOrNull()?.toPersistentList() ?: persistentListOf()
             val presets = buildMap {
                 for (entry in presetDir.listDirectoryEntries("*.json")) {
                     val uuidStr = entry.fileName.toString().lowercase().removeSuffix(".json")
+                    val uuid = runCatching {
+                        Uuid.parse(uuidStr)
+                    }.getOrNull() ?: continue
                     try {
-                        val uuid = Uuid.parse(uuidStr)
-                        val preset: LayoutPreset = entry.inputStream().use(jsonFormat::decodeFromStream)
-                        put(uuid, preset)
+                        put(uuid, jsonFormat.decodeFromString<LayoutPreset>(entry.readText()))
                     } catch (ex: Exception) {
                         logger.warn("Failed to load preset $uuidStr", ex)
                         continue
@@ -56,24 +53,23 @@ object PresetManager {
 
     private fun getPresetFile(uuid: Uuid) = presetDir.resolve("$uuid.json")
 
-    @OptIn(ExperimentalSerializationApi::class)
     private fun saveOrder(order: ImmutableList<Uuid>) {
         logger.info("Saving TouchController preset order file")
-        orderFile.outputStream().use { jsonFormat.encodeToStream<List<Uuid>>(order, it) }
+        orderFile.writeText(jsonFormat.encodeToString<List<Uuid>>(order))
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     fun savePreset(uuid: Uuid, preset: LayoutPreset, create: Boolean = true) {
         logger.info("Saving TouchController preset ${preset.name}($uuid)")
         presetDir.createDirectories()
         try {
-            getPresetFile(uuid).outputStream(
-                *if (create) {
+            getPresetFile(uuid).writeText(
+                text = jsonFormat.encodeToString(preset),
+                options = if (create) {
                     arrayOf(StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE, StandardOpenOption.CREATE)
                 } else {
                     arrayOf(StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE)
-                }
-            ).use { jsonFormat.encodeToStream(preset, it) }
+                },
+            )
             var addedPresets = false
             val newPresets = _presets.updateAndGet {
                 if (it.containsKey(uuid)) {
