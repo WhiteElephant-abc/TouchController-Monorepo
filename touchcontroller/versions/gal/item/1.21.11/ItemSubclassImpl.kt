@@ -26,7 +26,7 @@ class ItemSubclassImpl<Clazz>(
 ) : ItemSubclass {
     override val id: String = clazz.simpleName
 
-    override fun contains(item: Item) = clazz.isInstance(item)
+    override fun contains(item: Item) = clazz.isInstance(item.toVanilla())
 
     override val items: PersistentList<Item> by lazy {
         ItemProviderImpl.allItems.filter { it in this }.toPersistentList()
