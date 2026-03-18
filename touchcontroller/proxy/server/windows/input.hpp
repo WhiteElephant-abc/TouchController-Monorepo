@@ -16,7 +16,4 @@ struct EventError : public std::runtime_error {
     using std::runtime_error::runtime_error;
 };
 
-extern std::mutex g_event_queue_mutex;
-extern std::deque<ProxyMessage> g_event_queue;
-
 void init(HWND handle);

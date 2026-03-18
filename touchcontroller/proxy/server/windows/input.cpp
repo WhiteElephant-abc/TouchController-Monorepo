@@ -6,15 +6,11 @@
 
 #include "touchcontroller/proxy/server/common/event.hpp"
 
-std::mutex g_event_queue_mutex;
-std::deque<ProxyMessage> g_event_queue;
-
 namespace {
 #if WINVER >= 0x0602
 void disable_feedback(HWND handle, FEEDBACK_TYPE feedback) {
     BOOL enabled = FALSE;
-    if (!SetWindowFeedbackSetting(handle, feedback, 0, sizeof(BOOL),
-                                  &enabled)) {
+    if (!SetWindowFeedbackSetting(handle, feedback, 0, sizeof(BOOL), &enabled)) {
         throw InitializeError("SetWindowFeedbackSetting failed");
     }
 }
@@ -39,8 +35,7 @@ void handle_touch_event(CWPSTRUCT* msg) {
     HTOUCHINPUT handle = reinterpret_cast<HTOUCHINPUT>(msg->lParam);
 
     std::vector<TOUCHINPUT> pointers(count);
-    if (!GetTouchInputInfo(handle, count, pointers.data(),
-                           sizeof(TOUCHINPUT))) {
+    if (!GetTouchInputInfo(handle, count, pointers.data(), sizeof(TOUCHINPUT))) {
         throw EventError("GetTouchInputInfo failed");
     }
 
@@ -58,10 +53,8 @@ void handle_touch_event(CWPSTRUCT* msg) {
 
     const float scaled_origin_left = static_cast<float>(origin.x) * 100;
     const float scaled_origin_top = static_cast<float>(origin.y) * 100;
-    const float scaled_client_width =
-        static_cast<float>(client_rect.right - client_rect.left) * 100;
-    const float scaled_client_height =
-        static_cast<float>(client_rect.bottom - client_rect.top) * 100;
+    const float scaled_client_width = static_cast<float>(client_rect.right - client_rect.left) * 100;
+    const float scaled_client_height = static_cast<float>(client_rect.bottom - client_rect.top) * 100;
 
     std::lock_guard<std::mutex> pointer_state_lock(g_pointer_state_mutex);
 
@@ -79,17 +72,15 @@ void handle_touch_event(CWPSTRUCT* msg) {
             it->second.prev_tick = state.tick;
         } else {
             pointer_id = state.next_id++;
-            state.id_map.emplace(pointer.dwID,
-                                 PointerData{pointer_id, state.tick});
+            state.id_map.emplace(pointer.dwID, PointerData{pointer_id, state.tick});
         }
 
-        if (pointer.dwFlags & TOUCHEVENTF_DOWN ||
-            pointer.dwFlags & TOUCHEVENTF_MOVE) {
-            touchcontroller::event::push_event(ProxyMessage{
-                ProxyMessage::Type::Add, {.add = {pointer_id, x, y}}});
+        if (pointer.dwFlags & TOUCHEVENTF_DOWN || pointer.dwFlags & TOUCHEVENTF_MOVE) {
+            touchcontroller::protocol::ProxyMessage msg = touchcontroller::protocol::AddData{pointer_id, x, y};
+            touchcontroller::event::push_event(msg);
         } else if (pointer.dwFlags & TOUCHEVENTF_UP) {
-            touchcontroller::event::push_event(ProxyMessage{
-                ProxyMessage::Type::Remove, {.remove = {pointer_id}}});
+            touchcontroller::protocol::ProxyMessage msg = touchcontroller::protocol::RemoveData{pointer_id};
+            touchcontroller::event::push_event(msg);
             state.id_map.erase(pointer.dwID);
         }
     }
@@ -97,9 +88,8 @@ void handle_touch_event(CWPSTRUCT* msg) {
     auto it = state.id_map.begin();
     while (it != state.id_map.end()) {
         if (it->second.prev_tick != state.tick) {
-            touchcontroller::event::push_event(
-                ProxyMessage{ProxyMessage::Type::Remove,
-                             {.remove = {it->second.pointer_id}}});
+            touchcontroller::protocol::ProxyMessage msg = touchcontroller::protocol::RemoveData{it->second.pointer_id};
+            touchcontroller::event::push_event(msg);
             it = state.id_map.erase(it);
         } else {
             ++it;
@@ -128,12 +118,9 @@ void init(HWND handle) {
     }
 
 #if WINVER >= 0x0602
-    const FEEDBACK_TYPE feedbacks[] = {FEEDBACK_TOUCH_CONTACTVISUALIZATION,
-                                       FEEDBACK_TOUCH_TAP,
-                                       FEEDBACK_TOUCH_DOUBLETAP,
-                                       FEEDBACK_TOUCH_PRESSANDHOLD,
-                                       FEEDBACK_TOUCH_RIGHTTAP,
-                                       FEEDBACK_GESTURE_PRESSANDTAP};
+    const FEEDBACK_TYPE feedbacks[] = {
+        FEEDBACK_TOUCH_CONTACTVISUALIZATION, FEEDBACK_TOUCH_TAP,      FEEDBACK_TOUCH_DOUBLETAP,
+        FEEDBACK_TOUCH_PRESSANDHOLD,         FEEDBACK_TOUCH_RIGHTTAP, FEEDBACK_GESTURE_PRESSANDTAP};
 
     for (auto feedback : feedbacks) {
         disable_feedback(handle, feedback);

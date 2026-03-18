@@ -36,7 +36,7 @@ class TextInputStatus {
     int selection_length;
     bool selection_left;
 
-    TextInputStatus(InputStatusData& data)
+    TextInputStatus(touchcontroller::protocol::InputStatusData& data)
         : has_status(data.has_status),
           text(data.text),
           composition_start(data.composition_start),
@@ -53,33 +53,25 @@ class WaylandTouchHandler {
     std::unordered_map<int32_t, uint32_t> pointer_map;
 
     static void touch_handle_frame(void* data, wl_touch* touch) {
-        WaylandTouchHandler* self =
-            reinterpret_cast<WaylandTouchHandler*>(data);
+        WaylandTouchHandler* self = reinterpret_cast<WaylandTouchHandler*>(data);
         self->handle_frame();
     }
-    static void touch_handle_down(void* data, wl_touch* touch, uint32_t serial,
-                                  uint32_t time, wl_surface* surface,
+    static void touch_handle_down(void* data, wl_touch* touch, uint32_t serial, uint32_t time, wl_surface* surface,
                                   int32_t id, wl_fixed_t x, wl_fixed_t y) {
-        WaylandTouchHandler* self =
-            reinterpret_cast<WaylandTouchHandler*>(data);
+        WaylandTouchHandler* self = reinterpret_cast<WaylandTouchHandler*>(data);
         self->handle_down(serial, time, surface, id, x, y);
     }
-    static void touch_handle_up(void* data, wl_touch* wl_touch, uint32_t serial,
-                                uint32_t time, int32_t id) {
-        WaylandTouchHandler* self =
-            reinterpret_cast<WaylandTouchHandler*>(data);
+    static void touch_handle_up(void* data, wl_touch* wl_touch, uint32_t serial, uint32_t time, int32_t id) {
+        WaylandTouchHandler* self = reinterpret_cast<WaylandTouchHandler*>(data);
         self->handle_up(serial, time, id);
     }
-    static void touch_handle_motion(void* data, wl_touch* wl_touch,
-                                    uint32_t time, int32_t id, wl_fixed_t x,
+    static void touch_handle_motion(void* data, wl_touch* wl_touch, uint32_t time, int32_t id, wl_fixed_t x,
                                     wl_fixed_t y) {
-        WaylandTouchHandler* self =
-            reinterpret_cast<WaylandTouchHandler*>(data);
+        WaylandTouchHandler* self = reinterpret_cast<WaylandTouchHandler*>(data);
         self->handle_motion(time, id, x, y);
     }
     static void touch_handle_cancel(void* data, wl_touch* wl_touch) {
-        WaylandTouchHandler* self =
-            reinterpret_cast<WaylandTouchHandler*>(data);
+        WaylandTouchHandler* self = reinterpret_cast<WaylandTouchHandler*>(data);
         self->handle_cancel();
     }
     static uint32_t allocate_new_id() {
@@ -102,17 +94,16 @@ class WaylandTouchHandler {
     }
 
     void handle_frame() {}
-    void handle_down(uint32_t serial, uint32_t time, wl_surface* surface,
-                     int32_t id, wl_fixed_t x, wl_fixed_t y) {
+    void handle_down(uint32_t serial, uint32_t time, wl_surface* surface, int32_t id, wl_fixed_t x, wl_fixed_t y) {
         if (surface != this->surface) {
             return;
         }
         uint32_t mapped_id = allocate_new_id();
         std::pair<float, float> pos = map_pos(x, y);
         pointer_map[id] = mapped_id;
-        touchcontroller::event::push_event(
-            ProxyMessage{ProxyMessage::Type::Add,
-                         {.add = {mapped_id, pos.first, pos.second}}});
+        touchcontroller::protocol::ProxyMessage msg =
+            touchcontroller::protocol::AddData{mapped_id, pos.first, pos.second};
+        touchcontroller::event::push_event(msg);
     }
     void handle_up(uint32_t serial, uint32_t time, int32_t id) {
         uint32_t mapped_id = map_id(id);
@@ -120,8 +111,8 @@ class WaylandTouchHandler {
             return;
         }
         pointer_map.erase(id);
-        touchcontroller::event::push_event(
-            ProxyMessage{ProxyMessage::Type::Remove, {.remove = {mapped_id}}});
+        touchcontroller::protocol::ProxyMessage msg = touchcontroller::protocol::RemoveData{mapped_id};
+        touchcontroller::event::push_event(msg);
     }
     void handle_motion(uint32_t time, int32_t id, wl_fixed_t x, wl_fixed_t y) {
         uint32_t mapped_id = pointer_map.at(id);
@@ -129,14 +120,14 @@ class WaylandTouchHandler {
             return;
         }
         std::pair<float, float> pos = map_pos(x, y);
-        touchcontroller::event::push_event(
-            ProxyMessage{ProxyMessage::Type::Add,
-                         {.add = {mapped_id, pos.first, pos.second}}});
+        touchcontroller::protocol::ProxyMessage msg =
+            touchcontroller::protocol::AddData{mapped_id, pos.first, pos.second};
+        touchcontroller::event::push_event(msg);
     }
     void handle_cancel() {
         for (auto it : pointer_map) {
-            touchcontroller::event::push_event(ProxyMessage{
-                ProxyMessage::Type::Remove, {.remove = {it.second}}});
+            touchcontroller::protocol::ProxyMessage msg = touchcontroller::protocol::RemoveData{it.second};
+            touchcontroller::event::push_event(msg);
         }
         pointer_map.clear();
     }
@@ -175,48 +166,30 @@ class WaylandTextInputHandler {
     };
     PendingEvents pending_events;
 
-    static void text_input_handle_enter(void* data,
-                                        zwp_text_input_v3* text_input,
-                                        wl_surface* surface) {
-        WaylandTextInputHandler* self =
-            reinterpret_cast<WaylandTextInputHandler*>(data);
+    static void text_input_handle_enter(void* data, zwp_text_input_v3* text_input, wl_surface* surface) {
+        WaylandTextInputHandler* self = reinterpret_cast<WaylandTextInputHandler*>(data);
         self->handle_enter(surface);
     }
-    static void text_input_handle_leave(void* data,
-                                        zwp_text_input_v3* text_input,
-                                        wl_surface* surface) {
-        WaylandTextInputHandler* self =
-            reinterpret_cast<WaylandTextInputHandler*>(data);
+    static void text_input_handle_leave(void* data, zwp_text_input_v3* text_input, wl_surface* surface) {
+        WaylandTextInputHandler* self = reinterpret_cast<WaylandTextInputHandler*>(data);
         self->handle_leave(surface);
     }
-    static void text_input_handle_preedit_string(void* data,
-                                                 zwp_text_input_v3* text_input,
-                                                 const char* text,
-                                                 int32_t cursor_begin,
-                                                 int32_t cursor_end) {
-        WaylandTextInputHandler* self =
-            reinterpret_cast<WaylandTextInputHandler*>(data);
+    static void text_input_handle_preedit_string(void* data, zwp_text_input_v3* text_input, const char* text,
+                                                 int32_t cursor_begin, int32_t cursor_end) {
+        WaylandTextInputHandler* self = reinterpret_cast<WaylandTextInputHandler*>(data);
         self->handle_preedit_string(text, cursor_begin, cursor_end);
     }
-    static void text_input_handle_commit_string(void* data,
-                                                zwp_text_input_v3* text_input,
-                                                const char* text) {
-        WaylandTextInputHandler* self =
-            reinterpret_cast<WaylandTextInputHandler*>(data);
+    static void text_input_handle_commit_string(void* data, zwp_text_input_v3* text_input, const char* text) {
+        WaylandTextInputHandler* self = reinterpret_cast<WaylandTextInputHandler*>(data);
         self->handle_commit_string(text);
     }
-    static void text_input_handle_delete_surrounding_text(
-        void* data, zwp_text_input_v3* text_input, uint32_t before_length,
-        uint32_t after_length) {
-        WaylandTextInputHandler* self =
-            reinterpret_cast<WaylandTextInputHandler*>(data);
+    static void text_input_handle_delete_surrounding_text(void* data, zwp_text_input_v3* text_input,
+                                                          uint32_t before_length, uint32_t after_length) {
+        WaylandTextInputHandler* self = reinterpret_cast<WaylandTextInputHandler*>(data);
         self->handle_delete_surrounding_text(before_length, after_length);
     }
-    static void text_input_handle_done(void* data,
-                                       zwp_text_input_v3* text_input,
-                                       uint32_t serial) {
-        WaylandTextInputHandler* self =
-            reinterpret_cast<WaylandTextInputHandler*>(data);
+    static void text_input_handle_done(void* data, zwp_text_input_v3* text_input, uint32_t serial) {
+        WaylandTextInputHandler* self = reinterpret_cast<WaylandTextInputHandler*>(data);
         self->handle_done(serial);
     }
 
@@ -242,21 +215,18 @@ class WaylandTextInputHandler {
             return;
         }
         TextInputStatus new_status = *status;
-        new_status.text = status->text.substr(
-            0, status->text.size() - status->composition_length);
+        new_status.text = status->text.substr(0, status->text.size() - status->composition_length);
         new_status.composition_start = 0;
         new_status.composition_length = 0;
         sync_to_application(new_status);
         this->status = std::make_unique<TextInputStatus>(new_status);
     }
-    void handle_preedit_string(const char* text, int32_t cursor_begin,
-                               int32_t cursor_end) {
+    void handle_preedit_string(const char* text, int32_t cursor_begin, int32_t cursor_end) {
         if (!focused) {
             return;
         }
 
-        pending_events.preedit = std::make_tuple(text ? std::string(text) : "",
-                                                 cursor_begin, cursor_end);
+        pending_events.preedit = std::make_tuple(text ? std::string(text) : "", cursor_begin, cursor_end);
     }
     void handle_commit_string(const char* text) {
         if (!focused) {
@@ -267,8 +237,7 @@ class WaylandTextInputHandler {
             pending_events.commits.push_back(std::string(text));
         }
     }
-    void handle_delete_surrounding_text(uint32_t before_length,
-                                        uint32_t after_length) {
+    void handle_delete_surrounding_text(uint32_t before_length, uint32_t after_length) {
         if (!focused) {
             return;
         }
@@ -286,15 +255,11 @@ class WaylandTextInputHandler {
         TextInputStatus new_status = *status;
 
         // 步骤0：如果有预编辑文本，则移除选中文本
-        if (pending_events.preedit &&
-            !std::get<0>(*pending_events.preedit).empty()) {
-            new_status.text.erase(new_status.selection_start,
-                                  new_status.selection_length);
-            if (new_status.composition_start >=
-                new_status.selection_start + new_status.selection_length) {
+        if (pending_events.preedit && !std::get<0>(*pending_events.preedit).empty()) {
+            new_status.text.erase(new_status.selection_start, new_status.selection_length);
+            if (new_status.composition_start >= new_status.selection_start + new_status.selection_length) {
                 new_status.composition_start -= new_status.selection_length;
-            } else if (new_status.composition_start >
-                       new_status.selection_start) {
+            } else if (new_status.composition_start > new_status.selection_start) {
                 new_status.composition_start = new_status.selection_start;
             }
             new_status.selection_length = 0;
@@ -304,8 +269,7 @@ class WaylandTextInputHandler {
         if (new_status.composition_length > 0) {
             std::string& text = new_status.text;
             text = text.substr(0, new_status.composition_start) +
-                   text.substr(new_status.composition_start +
-                               new_status.composition_length);
+                   text.substr(new_status.composition_start + new_status.composition_length);
 
             // 更新光标位置（原组合文本开始处）
             new_status.selection_start = new_status.composition_start;
@@ -323,13 +287,11 @@ class WaylandTextInputHandler {
         for (const auto& [before, after] : pending_events.deletes) {
             // 计算删除范围
             size_t del_start = (before > cursor_pos) ? 0 : cursor_pos - before;
-            size_t del_end =
-                std::min(cursor_pos + after, new_status.text.length());
+            size_t del_end = std::min(cursor_pos + after, new_status.text.length());
 
             if (del_end > del_start) {
                 // 执行删除
-                new_status.text = new_status.text.substr(0, del_start) +
-                                  new_status.text.substr(del_end);
+                new_status.text = new_status.text.substr(0, del_start) + new_status.text.substr(del_end);
                 // 更新光标位置
                 cursor_pos = del_start;
             }
@@ -338,20 +300,16 @@ class WaylandTextInputHandler {
         // 步骤3: 应用提交操作
         for (const auto& commit : pending_events.commits) {
             // 在光标位置插入文本
-            new_status.text = new_status.text.substr(0, cursor_pos) + commit +
-                              new_status.text.substr(cursor_pos);
+            new_status.text = new_status.text.substr(0, cursor_pos) + commit + new_status.text.substr(cursor_pos);
             // 更新光标位置（到插入文本之后）
             cursor_pos += commit.length();
         }
 
         // 步骤4-6: 应用新的预编辑文本
-        if (pending_events.preedit &&
-            !std::get<0>(*pending_events.preedit).empty()) {
-            const auto& [preedit_text, cursor_begin, cursor_end] =
-                *pending_events.preedit;
+        if (pending_events.preedit && !std::get<0>(*pending_events.preedit).empty()) {
+            const auto& [preedit_text, cursor_begin, cursor_end] = *pending_events.preedit;
             // 插入预编辑文本
-            new_status.text = new_status.text.substr(0, cursor_pos) +
-                              preedit_text + new_status.text.substr(cursor_pos);
+            new_status.text = new_status.text.substr(0, cursor_pos) + preedit_text + new_status.text.substr(cursor_pos);
 
             // 设置组合文本信息
             new_status.composition_start = cursor_pos;
@@ -395,20 +353,15 @@ class WaylandTextInputHandler {
 
     // 同步文本状态到Java侧
     void sync_to_application(const TextInputStatus& status) {
-        char* text_buffer =
-            static_cast<char*>(std::malloc(status.text.size() + 1));
-        std::memcpy(text_buffer, status.text.c_str(), status.text.size());
-        text_buffer[status.text.size()] = '\0';
-
-        touchcontroller::event::push_event(ProxyMessage{
-            ProxyMessage::InputStatus,
-            {.input_status = {.has_status = true,
-                              .text = text_buffer,
-                              .composition_start = status.composition_start,
-                              .composition_length = status.composition_length,
-                              .selection_start = status.selection_start,
-                              .selection_length = status.selection_length,
-                              .selection_left = status.selection_left}}});
+        touchcontroller::protocol::ProxyMessage msg =
+            touchcontroller::protocol::InputStatusData{.has_status = true,
+                                                       .text = status.text,
+                                                       .composition_start = status.composition_start,
+                                                       .composition_length = status.composition_length,
+                                                       .selection_start = status.selection_start,
+                                                       .selection_length = status.selection_length,
+                                                       .selection_left = status.selection_left};
+        touchcontroller::event::push_event(msg);
 
         this->status = std::make_unique<TextInputStatus>(status);
     }
@@ -416,10 +369,8 @@ class WaylandTextInputHandler {
     // 发送文本状态到Wayland合成器
     void sync_to_composer(const TextInputStatus& status) {
         // 移除组合文本后的文本（用于surrounding_text）
-        std::string base_text =
-            status.text.substr(0, status.composition_start) +
-            status.text.substr(status.composition_start +
-                               status.composition_length);
+        std::string base_text = status.text.substr(0, status.composition_start) +
+                                status.text.substr(status.composition_start + status.composition_length);
 
         // 计算光标和锚点位置
         int32_t cursor, anchor;
@@ -431,8 +382,7 @@ class WaylandTextInputHandler {
             anchor = status.selection_start + status.selection_length;
         }
 
-        zwp_text_input_v3_set_surrounding_text(text_input, base_text.c_str(),
-                                               cursor, anchor);
+        zwp_text_input_v3_set_surrounding_text(text_input, base_text.c_str(), cursor, anchor);
     }
 
    public:
@@ -445,8 +395,7 @@ class WaylandTextInputHandler {
             .leave = text_input_handle_leave,
             .preedit_string = text_input_handle_preedit_string,
             .commit_string = text_input_handle_commit_string,
-            .delete_surrounding_text =
-                text_input_handle_delete_surrounding_text,
+            .delete_surrounding_text = text_input_handle_delete_surrounding_text,
             .done = text_input_handle_done,
         };
         zwp_text_input_v3_add_listener(text_input, &text_input_listener, this);
@@ -467,9 +416,8 @@ class WaylandTextInputHandler {
         if (!enabled) {
             return;
         }
-        zwp_text_input_v3_set_cursor_rectangle(
-            text_input, left * surface_width, top * surface_height,
-            width * surface_width, height * surface_height);
+        zwp_text_input_v3_set_cursor_rectangle(text_input, left * surface_width, top * surface_height,
+                                               width * surface_width, height * surface_height);
         zwp_text_input_v3_commit(text_input);
     }
 
@@ -500,8 +448,7 @@ class WaylandSeatHandler {
     std::string name;
     std::unique_ptr<WaylandTextInputHandler> text_input;
 
-    static void seat_handle_capabilities(void* data, wl_seat* seat,
-                                         uint32_t capabilities) {
+    static void seat_handle_capabilities(void* data, wl_seat* seat, uint32_t capabilities) {
         WaylandSeatHandler* self = reinterpret_cast<WaylandSeatHandler*>(data);
         self->on_capabilities(capabilities);
     }
@@ -515,8 +462,7 @@ class WaylandSeatHandler {
         bool have_touch = capabilities & WL_SEAT_CAPABILITY_TOUCH;
         if (have_touch) {
             wl_touch* touch = wl_seat_get_touch(this->seat);
-            this->touch = std::unique_ptr<WaylandTouchHandler>(
-                new WaylandTouchHandler(touch, this->surface));
+            this->touch = std::unique_ptr<WaylandTouchHandler>(new WaylandTouchHandler(touch, this->surface));
         } else if (!have_touch) {
             this->touch = nullptr;
         }
@@ -548,10 +494,8 @@ class WaylandSeatHandler {
         if (this->text_input) {
             return;
         }
-        zwp_text_input_v3* text_input =
-            zwp_text_input_manager_v3_get_text_input(manager, this->seat);
-        this->text_input = std::unique_ptr<WaylandTextInputHandler>(
-            new WaylandTextInputHandler(text_input));
+        zwp_text_input_v3* text_input = zwp_text_input_manager_v3_get_text_input(manager, this->seat);
+        this->text_input = std::unique_ptr<WaylandTextInputHandler>(new WaylandTextInputHandler(text_input));
     }
     void detach_text_input_manager() {
         if (!this->text_input) {
@@ -560,9 +504,7 @@ class WaylandSeatHandler {
         this->text_input = nullptr;
     }
 
-    void handle_input_status(const TextInputStatus& status) {
-        this->text_input->handle_input_status(status);
-    }
+    void handle_input_status(const TextInputStatus& status) { this->text_input->handle_input_status(status); }
 
     void handle_input_cursor(float left, float top, float width, float height) {
         this->text_input->handle_input_cursor(left, top, width, height);
@@ -578,23 +520,18 @@ class WaylandRegistryHandler {
     wl_display* display;
     wl_surface* surface;
     wl_registry* registry;
-    std::unordered_map<uint32_t, std::unique_ptr<WaylandSeatHandler>>
-        seat_handlers;
+    std::unordered_map<uint32_t, std::unique_ptr<WaylandSeatHandler>> seat_handlers;
     zwp_text_input_manager_v3* text_input_manager = nullptr;
     uint32_t zwp_text_input_manager_id = 0;
 
-    static void registry_handle_global(void* data, wl_registry* registry,
-                                       uint32_t id, const char* interface,
+    static void registry_handle_global(void* data, wl_registry* registry, uint32_t id, const char* interface,
                                        uint32_t version) {
-        WaylandRegistryHandler* self =
-            reinterpret_cast<WaylandRegistryHandler*>(data);
+        WaylandRegistryHandler* self = reinterpret_cast<WaylandRegistryHandler*>(data);
         self->handle_global(id, interface, version);
     }
 
-    static void registry_handle_global_remove(void* data, wl_registry* registry,
-                                              uint32_t id) {
-        WaylandRegistryHandler* self =
-            reinterpret_cast<WaylandRegistryHandler*>(data);
+    static void registry_handle_global_remove(void* data, wl_registry* registry, uint32_t id) {
+        WaylandRegistryHandler* self = reinterpret_cast<WaylandRegistryHandler*>(data);
         if (self->seat_handlers.erase(id)) {
             return;
         } else if (id == self->zwp_text_input_manager_id) {
@@ -605,34 +542,28 @@ class WaylandRegistryHandler {
         }
     }
 
-    void handle_global(uint32_t id, const std::string& interface,
-                       uint32_t version) {
+    void handle_global(uint32_t id, const std::string& interface, uint32_t version) {
         std::string interface_name = interface;
         if (interface_name == "wl_seat" && version >= 7) {
-            wl_seat* seat = reinterpret_cast<wl_seat*>(
-                wl_registry_bind(registry, id, &wl_seat_interface, 7));
-            std::unique_ptr<WaylandSeatHandler> handler(
-                new WaylandSeatHandler(seat, this->surface));
+            wl_seat* seat = reinterpret_cast<wl_seat*>(wl_registry_bind(registry, id, &wl_seat_interface, 7));
+            std::unique_ptr<WaylandSeatHandler> handler(new WaylandSeatHandler(seat, this->surface));
             if (this->text_input_manager) {
                 handler->attach_text_input_manager(this->text_input_manager);
             }
             this->seat_handlers.insert(std::pair(id, std::move(handler)));
         } else if (interface_name == "zwp_text_input_manager_v3") {
             this->zwp_text_input_manager_id = id;
-            this->text_input_manager =
-                reinterpret_cast<zwp_text_input_manager_v3*>(wl_registry_bind(
-                    registry, id, &zwp_text_input_manager_v3_interface, 1));
+            this->text_input_manager = reinterpret_cast<zwp_text_input_manager_v3*>(
+                wl_registry_bind(registry, id, &zwp_text_input_manager_v3_interface, 1));
             for (const auto& entry : this->seat_handlers) {
-                entry.second->attach_text_input_manager(
-                    this->text_input_manager);
+                entry.second->attach_text_input_manager(this->text_input_manager);
             }
         }
     }
 
    public:
     WaylandRegistryHandler(const WaylandRegistryHandler& ptr) = delete;
-    WaylandRegistryHandler& operator=(const WaylandRegistryHandler& ptr) =
-        delete;
+    WaylandRegistryHandler& operator=(const WaylandRegistryHandler& ptr) = delete;
     WaylandRegistryHandler(wl_display* display, wl_surface* surface) {
         this->display = display;
         this->surface = surface;
@@ -689,26 +620,24 @@ void init(wl_display* display, wl_surface* surface) {
 }  // namespace
 
 extern "C" {
-JNIEXPORT void JNICALL
-Java_top_fifthlight_touchcontroller_common_platform_wayland_Interface_init(
+JNIEXPORT void JNICALL Java_top_fifthlight_touchcontroller_common_platform_wayland_Interface_init(
     JNIEnv* env, jclass clazz, jlong display_handle, jlong surface_handle) {
     wl_display* display = reinterpret_cast<wl_display*>(display_handle);
     wl_surface* surface = reinterpret_cast<wl_surface*>(surface_handle);
     init(display, surface);
 }
 
-JNIEXPORT void JNICALL
-Java_top_fifthlight_touchcontroller_common_platform_wayland_Interface_resize(
-    JNIEnv* env, jclass clazz, jint width, jint height) {
+JNIEXPORT void JNICALL Java_top_fifthlight_touchcontroller_common_platform_wayland_Interface_resize(JNIEnv* env,
+                                                                                                    jclass clazz,
+                                                                                                    jint width,
+                                                                                                    jint height) {
     surface_width = static_cast<uint32_t>(width);
     surface_height = static_cast<uint32_t>(height);
 }
 
-JNIEXPORT jint JNICALL
-Java_top_fifthlight_touchcontroller_common_platform_wayland_Interface_pollEvent(
+JNIEXPORT jint JNICALL Java_top_fifthlight_touchcontroller_common_platform_wayland_Interface_pollEvent(
     JNIEnv* env, jclass clazz, jbyteArray buffer) {
-    std::optional<std::vector<uint8_t>> event =
-        touchcontroller::event::poll_event();
+    std::optional<std::vector<uint8_t>> event = touchcontroller::event::poll_event();
     if (!event.has_value()) {
         return 0;
     }
@@ -726,61 +655,51 @@ Java_top_fifthlight_touchcontroller_common_platform_wayland_Interface_pollEvent(
     return static_cast<jint>(msg_buffer.size());
 }
 
-JNIEXPORT void JNICALL
-Java_top_fifthlight_touchcontroller_common_platform_wayland_Interface_pushEvent(
+JNIEXPORT void JNICALL Java_top_fifthlight_touchcontroller_common_platform_wayland_Interface_pushEvent(
     JNIEnv* env, jclass clazz, jbyteArray buffer, jint length) {
     std::vector<uint8_t> data;
     data.resize(length);
-    env->GetByteArrayRegion(buffer, 0, length,
-                            reinterpret_cast<jbyte*>(data.data()));
+    env->GetByteArrayRegion(buffer, 0, length, reinterpret_cast<jbyte*>(data.data()));
 
-    ProxyMessage message;
-    if (touchcontroller::protocol::deserialize_event(message, data)) {
-        switch (message.type) {
-            case ProxyMessage::Vibrate: {
-                break;
-            }
-            case ProxyMessage::KeyboardShow: {
-                if (message.keyboard_show.show) {
+    std::optional<touchcontroller::protocol::ProxyMessage> message_opt =
+        touchcontroller::protocol::deserialize_event(data);
+
+    if (!message_opt.has_value()) {
+        return;
+    }
+
+    std::visit(
+        [&](auto&& message) {
+            using T = std::decay_t<decltype(message)>;
+
+            if constexpr (std::is_same_v<T, touchcontroller::protocol::KeyboardShowData>) {
+                if (message.show) {
                     registry_handler->show_soft_keyboard();
                 }
-                break;
-            }
-            case ProxyMessage::InputStatus: {
-                if (message.input_status.has_status) {
-                    const TextInputStatus status = message.input_status;
+            } else if constexpr (std::is_same_v<T, touchcontroller::protocol::InputStatusData>) {
+                if (message.has_status) {
+                    TextInputStatus status(message);
                     if (registry_handler) {
                         registry_handler->handle_input_status(status);
                     }
-                    std::free((void*)message.input_status.text);
                 } else {
                     if (registry_handler) {
                         registry_handler->clear_input_status();
                     }
                 }
-                break;
-            }
-            case ProxyMessage::InputCursor: {
-                if (message.input_cursor.has_cursor_rect && registry_handler) {
-                    registry_handler->handle_input_cursor(
-                        message.input_cursor.left, message.input_cursor.top,
-                        message.input_cursor.width,
-                        message.input_cursor.height);
+            } else if constexpr (std::is_same_v<T, touchcontroller::protocol::InputCursorData>) {
+                if (message.has_cursor_rect && registry_handler) {
+                    registry_handler->handle_input_cursor(message.left, message.top, message.width, message.height);
                 }
-                break;
+            } else if constexpr (std::is_same_v<T, touchcontroller::protocol::InitializeData>) {
+                touchcontroller::protocol::ProxyMessage msg1 =
+                    touchcontroller::protocol::CapabilityData{"text_status", true};
+                touchcontroller::event::push_event(msg1);
+                touchcontroller::protocol::ProxyMessage msg2 =
+                    touchcontroller::protocol::CapabilityData{"keyboard_show", true};
+                touchcontroller::event::push_event(msg2);
             }
-            case ProxyMessage::Initialize: {
-                touchcontroller::event::push_event(
-                    ProxyMessage{ProxyMessage::Capability,
-                                 {.capability = {"text_status", true}}});
-                touchcontroller::event::push_event(
-                    ProxyMessage{ProxyMessage::Capability,
-                                 {.capability = {"keyboard_show", true}}});
-                break;
-            }
-            default:
-                break;
-        }
-    }
+        },
+        message_opt.value());
 }
 }

@@ -17,9 +17,6 @@
 #include "touchcontroller/proxy/server/common/event.hpp"
 #include "touchcontroller/proxy/server/common/protocol.hpp"
 
-extern std::mutex g_event_queue_mutex;
-extern std::deque<ProxyMessage> g_event_queue;
-
 namespace {
 
 static const wchar_t* osk_reg_path =
@@ -30,31 +27,26 @@ static const wchar_t* osk_window_class = L"IPTip_Main_Window";
 // https://github.com/chromium/chromium/blob/1508d938a36d8b4e75e929e614731163542610a3/ui/base/ime/win/on_screen_keyboard_display_manager_tab_tip.cc#L304
 static bool get_tab_tip_path(std::wstring& out_path) {
     HKEY hKey = nullptr;
-    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, osk_reg_path, 0,
-                      KEY_READ | KEY_WOW64_64KEY, &hKey) != ERROR_SUCCESS)
+    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, osk_reg_path, 0, KEY_READ | KEY_WOW64_64KEY, &hKey) != ERROR_SUCCESS)
         return false;
 
     wchar_t path_buf[1024];
     DWORD path_len = sizeof(path_buf);
-    LONG result = RegQueryValueExW(hKey, nullptr, nullptr, nullptr,
-                                   (LPBYTE)path_buf, &path_len);
+    LONG result = RegQueryValueExW(hKey, nullptr, nullptr, nullptr, (LPBYTE)path_buf, &path_len);
     RegCloseKey(hKey);
     if (result != ERROR_SUCCESS) return false;
 
     std::wstring raw_path(path_buf);
-    std::transform(raw_path.begin(), raw_path.end(), raw_path.begin(),
-                   towlower);
+    std::transform(raw_path.begin(), raw_path.end(), raw_path.begin(), towlower);
 
     const std::wstring var = L"%commonprogramfiles%";
     size_t pos = raw_path.find(var);
     if (pos != std::wstring::npos) {
         wchar_t common_program_files_path[MAX_PATH] = {0};
-        DWORD len = GetEnvironmentVariableW(
-            L"CommonProgramW6432", common_program_files_path, MAX_PATH);
+        DWORD len = GetEnvironmentVariableW(L"CommonProgramW6432", common_program_files_path, MAX_PATH);
         if (len == 0) {
             PWSTR known_path = nullptr;
-            if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_ProgramFilesCommon, 0,
-                                               nullptr, &known_path))) {
+            if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_ProgramFilesCommon, 0, nullptr, &known_path))) {
                 wcsncpy_s(common_program_files_path, known_path, MAX_PATH);
                 CoTaskMemFree(known_path);
             } else {
@@ -84,8 +76,7 @@ static void show_keyboard() {
         found_tab_tip_path = true;
     }
 
-    ShellExecuteW(nullptr, L"open", tab_tip_path.c_str(), nullptr, nullptr,
-                  SW_SHOW);
+    ShellExecuteW(nullptr, L"open", tab_tip_path.c_str(), nullptr, nullptr, SW_SHOW);
 }
 
 static void hide_keyboard() {
@@ -98,9 +89,9 @@ static void hide_keyboard() {
 }  // namespace
 
 extern "C" {
-JNIEXPORT void JNICALL
-Java_top_fifthlight_touchcontroller_common_platform_win32_Interface_init(
-    JNIEnv* env, jclass clazz, jlong window_handle) {
+JNIEXPORT void JNICALL Java_top_fifthlight_touchcontroller_common_platform_win32_Interface_init(JNIEnv* env,
+                                                                                                jclass clazz,
+                                                                                                jlong window_handle) {
     CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
     try {
         init(reinterpret_cast<HWND>(window_handle));
@@ -109,11 +100,9 @@ Java_top_fifthlight_touchcontroller_common_platform_win32_Interface_init(
     }
 }
 
-JNIEXPORT jint JNICALL
-Java_top_fifthlight_touchcontroller_common_platform_win32_Interface_pollEvent(
+JNIEXPORT jint JNICALL Java_top_fifthlight_touchcontroller_common_platform_win32_Interface_pollEvent(
     JNIEnv* env, jclass clazz, jbyteArray buffer) {
-    std::optional<std::vector<uint8_t>> event =
-        touchcontroller::event::poll_event();
+    std::optional<std::vector<uint8_t>> event = touchcontroller::event::poll_event();
     if (!event.has_value()) {
         return 0;
     }
@@ -131,37 +120,37 @@ Java_top_fifthlight_touchcontroller_common_platform_win32_Interface_pollEvent(
     return static_cast<jint>(msg_buffer.size());
 }
 
-JNIEXPORT void JNICALL
-Java_top_fifthlight_touchcontroller_common_platform_win32_Interface_pushEvent(
-    JNIEnv* env, jclass clazz, jbyteArray buffer, jint length) {
+JNIEXPORT void JNICALL Java_top_fifthlight_touchcontroller_common_platform_win32_Interface_pushEvent(JNIEnv* env,
+                                                                                                     jclass clazz,
+                                                                                                     jbyteArray buffer,
+                                                                                                     jint length) {
     std::vector<uint8_t> data;
     data.resize(length);
-    env->GetByteArrayRegion(buffer, 0, length,
-                            reinterpret_cast<jbyte*>(data.data()));
+    env->GetByteArrayRegion(buffer, 0, length, reinterpret_cast<jbyte*>(data.data()));
 
-    ProxyMessage message;
-    if (touchcontroller::protocol::deserialize_event(message, data)) {
-        switch (message.type) {
-            case ProxyMessage::Vibrate: {
-                break;
-            }
-            case ProxyMessage::KeyboardShow: {
-                if (message.keyboard_show.show) {
+    std::optional<touchcontroller::protocol::ProxyMessage> message_opt =
+        touchcontroller::protocol::deserialize_event(data);
+
+    if (!message_opt.has_value()) {
+        return;
+    }
+
+    std::visit(
+        [&](auto&& message) {
+            using T = std::decay_t<decltype(message)>;
+
+            if constexpr (std::is_same_v<T, touchcontroller::protocol::KeyboardShowData>) {
+                if (message.show) {
                     show_keyboard();
                 } else {
                     hide_keyboard();
                 }
-                break;
+            } else if constexpr (std::is_same_v<T, touchcontroller::protocol::InitializeData>) {
+                touchcontroller::protocol::ProxyMessage msg =
+                    touchcontroller::protocol::CapabilityData{"keyboard_show", true};
+                touchcontroller::event::push_event(msg);
             }
-            case ProxyMessage::Initialize: {
-                touchcontroller::event::push_event(
-                    ProxyMessage{ProxyMessage::Capability,
-                                 {.capability = {"keyboard_show", true}}});
-                break;
-            }
-            default:
-                break;
-        }
-    }
+        },
+        message_opt.value());
 }
 }
