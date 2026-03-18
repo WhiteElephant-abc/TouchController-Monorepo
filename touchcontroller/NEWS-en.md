@@ -1,5 +1,9 @@
 # TouchController NEWS - User visible changes.
 
+## 0.3.1-alpha03
+
+- Fixed the problem that item subclass not working
+
 ## 0.3.1-alpha02
 
 - Fixed crash when rendering items
