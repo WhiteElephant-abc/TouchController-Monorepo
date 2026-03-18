@@ -43,7 +43,7 @@ https://maven.neoforged.net/releases/net/neoforged/AutoRenamingTool/2.0.5/AutoRe
 https://maven.neoforged.net/releases/net/neoforged/AutoRenamingTool/2.0.8/AutoRenamingTool-2.0.8-all.jar ff883fd677273d68ff92d8db6402f9f6b2d62814d8b09af8f1ca8839404a141c
 https://maven.neoforged.net/releases/net/neoforged/installertools/installertools/2.1.2/installertools-2.1.2-fatjar.jar 9fe7c6df17299f661b9cd07fc1c4e85493b63efae6bb9da0255a97d9d0a87c60
 https://maven.neoforged.net/releases/net/neoforged/installertools/installertools/3.0.13/installertools-3.0.13-fatjar.jar 0266b19d63cd88a735186c37a41fe3db2c0223411358422b04841feafb446099
-https://maven.neoforged.net/releases/net/neoforged/installertools/installertools/4.0.14/installertools-4.0.14-fatjar.jar 93bb7f506f082b77d80607ac86e264d1f5f1a5b4a25dbd1ce0ef83e6039d97ba
+https://maven.neoforged.net/releases/net/neoforged/installertools/installertools/4.0.16/installertools-4.0.16-fatjar.jar f8e5d76e3a388a106cf8a77cb34c604cb03517806b9f5f20e8e2201b9ec671e4
 https://maven.neoforged.net/releases/net/neoforged/installertools/installertools/4.0.7/installertools-4.0.7-fatjar.jar 3d371ba82e89d25df90ba086cd08ab38490d3099fd05318046177e3678b2cfb3
 https://maven.neoforged.net/releases/net/neoforged/mergetool/2.0.2/mergetool-2.0.2-api.jar 568e4bf03a0da636d7908305d6d9e226acbd58f3865fe4a29a0344201c77e34e
 https://maven.neoforged.net/releases/net/neoforged/mergetool/2.0.2/mergetool-2.0.2-fatjar.jar b5768cfe7d8a70d854f2e53901396514d5087fa77ed63d2737af56d7bf833134

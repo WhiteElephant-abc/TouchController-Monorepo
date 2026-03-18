@@ -759,7 +759,7 @@
     "//repo:neoforge.bzl%neoforge": {
       "general": {
         "bzlTransitiveDigest": "MVvS6XLPegLUyy/en3Vb6N/FQPf9TF+58zYSmBbQCpE=",
-        "usagesDigest": "B2HtDSKIrie9q8F5b/6KahXZj1Gh3JwhBkxcGgUAa9A=",
+        "usagesDigest": "ZiXThrjwfRTkx55Vfztvdfh55OBWmN360i+ArcWjTo8=",
         "recordedInputs": [
           "REPO_MAPPING:, ",
           "REPO_MAPPING:,bazel_tools bazel_tools",
@@ -783,7 +783,7 @@
           "REPO_MAPPING:,neoform_1_21_7 +neoform+neoform_1_21_7_20250711_194848",
           "REPO_MAPPING:,neoform_1_21_8 +neoform+neoform_1_21_8_20250717_133445",
           "REPO_MAPPING:,neoform_1_21_9 +neoform+neoform_1_21_9_20250930_151910",
-          "REPO_MAPPING:,neoform_26_1 +neoform+neoform_26_1_pre_2_1",
+          "REPO_MAPPING:,neoform_26_1 +neoform+neoform_26_1_pre_3_1",
           "FILE:@@//neoforge_pin.txt 84c9d1c76cd4796b9a68ec93219caa83ea64bb8d8a6c7f9b79c87685dc298e0e"
         ],
         "generatedRepoSpecs": {
@@ -1027,16 +1027,16 @@
               "joined_patched_sources": "@@+neoform+neoform_1_21_11_20251209_172050//tasks/joined_patch:joined_patch"
             }
           },
-          "neoforge_26_1_0_0_alpha_14_snapshot_11": {
+          "neoforge_26_1_0_0_alpha_15_pre_3": {
             "repoRuleId": "@@//repo:neoforge.bzl%_neoforge_repo",
             "attributes": {
-              "version": "26.1.0.0-alpha.14+snapshot-11",
+              "version": "26.1.0.0-alpha.15+pre-3",
               "java_target": 25,
               "legacy": false,
-              "userdev_sha256": "ee54beb6d106b1d81a46909670e1bbdda36b6fca16d7b9ed7688eea6555093dc",
-              "universal_sha256": "d7c3dc99e9fdf4c375e34c246b48926da7a7d880addfe19e9c252760ec07e5be",
-              "sources_sha256": "d82fd3e86fc1bbfc1e54f16c61789125773d3aa2d68a7d4f8cab3ade4c99042f",
-              "joined_patched_sources": "@@+neoform+neoform_26_1_pre_2_1//tasks/joined_patch:joined_patch"
+              "userdev_sha256": "fd6607195f6bfaefbf44779ee57a2d6cd783b1cf4b912e4b1a213d99f89724c3",
+              "universal_sha256": "33a5da6f254d1e81b323903339773cea0fbc4a9ee1c91f9634f7c0e20f836ca7",
+              "sources_sha256": "54cbdf409d4952da94479ea8997aa471cfef338a90d2b2354b9f9deb4319aebb",
+              "joined_patched_sources": "@@+neoform+neoform_26_1_pre_3_1//tasks/joined_patch:joined_patch"
             }
           },
           "forge_org_ow2_asm_asm_6_2": {
@@ -3804,7 +3804,7 @@
     "//repo:neoform.bzl%neoform": {
       "general": {
         "bzlTransitiveDigest": "1Ztoz+yk0PGGmpRVqkfoo4Ya/fYWH+y2ryure1cAwas=",
-        "usagesDigest": "lyUx59JmBdrpEzquKBjVBvAH7az+A+uKQhpt+pcrFDU=",
+        "usagesDigest": "4Ftvu00CmXTqOdCbPRckYl/8e1v77fxMgWORSrRAyJY=",
         "recordedInputs": [
           "REPO_MAPPING:, ",
           "REPO_MAPPING:,bazel_tools bazel_tools",
@@ -4111,17 +4111,17 @@
               "pin_file": "@@//:neoform_pin.txt"
             }
           },
-          "neoform_26_1_pre_2_1": {
+          "neoform_26_1_pre_3_1": {
             "repoRuleId": "@@//repo:neoform.bzl%_neoform_repo",
             "attributes": {
-              "version": "26.1-pre-2-1",
+              "version": "26.1-pre-3-1",
               "legacy": false,
-              "sha256": "8895cc8be6d8b60e595769bacc9a53c60cb923b932166e741c336d847812e719",
-              "client_jar": "@@rules_mc++minecraft+minecraft//26.1-pre-2:client",
-              "server_jar": "@@rules_mc++minecraft+minecraft//26.1-pre-2:server",
-              "client_mapping": "@@rules_mc++minecraft+minecraft//26.1-pre-2:client_mappings",
-              "server_mapping": "@@rules_mc++minecraft+minecraft//26.1-pre-2:server_mappings",
-              "client_libraries": "@@rules_mc++minecraft+minecraft//26.1-pre-2:client_libraries",
+              "sha256": "a932a547db9bfbc0358ff79f1addd71d266858cea4771b5cd4abbbd1c9b7aae1",
+              "client_jar": "@@rules_mc++minecraft+minecraft//26.1-pre-3:client",
+              "server_jar": "@@rules_mc++minecraft+minecraft//26.1-pre-3:server",
+              "client_mapping": "@@rules_mc++minecraft+minecraft//26.1-pre-3:client_mappings",
+              "server_mapping": "@@rules_mc++minecraft+minecraft//26.1-pre-3:server_mappings",
+              "client_libraries": "@@rules_mc++minecraft+minecraft//26.1-pre-3:client_libraries",
               "pin_file": "@@//:neoform_pin.txt"
             }
           },
@@ -4901,7 +4901,7 @@
     "@@rules_mc+//:extensions.bzl%minecraft": {
       "general": {
         "bzlTransitiveDigest": "Epfd8fTLCsK7vmUjvyawn/rXPsVm6VVMar99EO1RiBA=",
-        "usagesDigest": "Oit5fZS8hk9iCPnpy48rFq8HdR41FsCT1h95max8Mb0=",
+        "usagesDigest": "W/N/RseUeiaZ+c5kiigkMvi2OBGLyGf3zYjO3OPyX0I=",
         "recordedInputs": [
           "REPO_MAPPING:rules_mc+,bazel_tools bazel_tools"
         ],
@@ -5650,19 +5650,19 @@
               "downloaded_file_path": "server.txt"
             }
           },
-          "minecraft_26_1-pre-2_client": {
+          "minecraft_26_1-pre-3_client": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
             "attributes": {
-              "url": "https://piston-data.mojang.com/v1/objects/93079d0d5608af9e10283be6be89b67a772d0c8f/client.jar",
-              "integrity": "sha1-kwedDVYIr54QKDvmvom2enctDI8=",
+              "url": "https://piston-data.mojang.com/v1/objects/dfd8debabea6621ec0396ecb7bdcc0f868956792/client.jar",
+              "integrity": "sha1-39jeur6mYh7AOW7Le9zA+GiVZ5I=",
               "downloaded_file_path": "client.jar"
             }
           },
-          "minecraft_26_1-pre-2_server": {
+          "minecraft_26_1-pre-3_server": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
             "attributes": {
-              "url": "https://piston-data.mojang.com/v1/objects/f48ed6831e21ca9a94c508d7fef3e80d2fc7836e/server.jar",
-              "integrity": "sha1-9I7Wgx4hypqUxQjX/vPoDS/Hg24=",
+              "url": "https://piston-data.mojang.com/v1/objects/f731aaf0a0f6be00b5aaba1fabbd75ce750e92e4/server.jar",
+              "integrity": "sha1-9zGq8KD2vgC1qrofq711znUOkuQ=",
               "downloaded_file_path": "server.jar"
             }
           },
@@ -9878,12 +9878,12 @@
               "path": "at/yawk/lz4/lz4-java/1.10.1/lz4-java-1.10.1.jar"
             }
           },
-          "minecraft_com_mojang_authlib_7_0_62_default": {
+          "minecraft_com_mojang_authlib_7_0_63_default": {
             "repoRuleId": "@@rules_mc+//private/repo:library.bzl%minecraft_library_repo",
             "attributes": {
-              "url": "https://libraries.minecraft.net/com/mojang/authlib/7.0.62/authlib-7.0.62.jar",
-              "sha1": "17e2759e9a92c1be617bbffc49fd89d101387e2a",
-              "path": "com/mojang/authlib/7.0.62/authlib-7.0.62.jar"
+              "url": "https://libraries.minecraft.net/com/mojang/authlib/7.0.63/authlib-7.0.63.jar",
+              "sha1": "54895b4e25e8b9b4cbbbe25f24eccf2b71b1ac2b",
+              "path": "com/mojang/authlib/7.0.63/authlib-7.0.63.jar"
             }
           },
           "minecraft_org_lwjgl_lwjgl_freetype_3_4_1_default": {
@@ -10485,7 +10485,7 @@
                   "client_mappings#file",
                   "server_mappings#file"
                 ],
-                "26.1-pre-2": [
+                "26.1-pre-3": [
                   "client#file",
                   "server#file"
                 ]
@@ -12498,7 +12498,7 @@
                   "org.lwjgl:lwjgl:3.3.3:natives-windows-x86",
                   "org.slf4j:slf4j-api:2.0.17"
                 ],
-                "26.1-pre-2": [
+                "26.1-pre-3": [
                   "at.yawk.lz4:lz4-java:1.10.1",
                   "ca.weblite:java-objc-bridge:1.1",
                   "com.azure:azure-json:1.4.0",
@@ -12508,7 +12508,7 @@
                   "com.google.guava:guava:33.5.0-jre",
                   "com.ibm.icu:icu4j:77.1",
                   "com.microsoft.azure:msal4j:1.23.1",
-                  "com.mojang:authlib:7.0.62",
+                  "com.mojang:authlib:7.0.63",
                   "com.mojang:blocklist:1.0.10",
                   "com.mojang:brigadier:1.3.10",
                   "com.mojang:datafixerupper:9.0.19",
@@ -14114,8 +14114,8 @@
                 "at.yawk.lz4:lz4-java:1.10.1": [
                   "default#struct(path = \"at/yawk/lz4/lz4-java/1.10.1/lz4-java-1.10.1.jar\", sha1 = \"f541d7f910fe3d76f38f799c507c48cc81b12ecb\", url = \"https://libraries.minecraft.net/at/yawk/lz4/lz4-java/1.10.1/lz4-java-1.10.1.jar\")"
                 ],
-                "com.mojang:authlib:7.0.62": [
-                  "default#struct(path = \"com/mojang/authlib/7.0.62/authlib-7.0.62.jar\", sha1 = \"17e2759e9a92c1be617bbffc49fd89d101387e2a\", url = \"https://libraries.minecraft.net/com/mojang/authlib/7.0.62/authlib-7.0.62.jar\")"
+                "com.mojang:authlib:7.0.63": [
+                  "default#struct(path = \"com/mojang/authlib/7.0.63/authlib-7.0.63.jar\", sha1 = \"54895b4e25e8b9b4cbbbe25f24eccf2b71b1ac2b\", url = \"https://libraries.minecraft.net/com/mojang/authlib/7.0.63/authlib-7.0.63.jar\")"
                 ],
                 "org.lwjgl:lwjgl-freetype:3.4.1": [
                   "default#struct(path = \"org/lwjgl/lwjgl-freetype/3.4.1/lwjgl-freetype-3.4.1.jar\", sha1 = \"caa75a37e857efc9b0686e434d708d6420c5b6ea\", url = \"https://libraries.minecraft.net/org/lwjgl/lwjgl-freetype/3.4.1/lwjgl-freetype-3.4.1.jar\")"
@@ -15797,7 +15797,7 @@
                 "at.yawk.lz4:lz4-java:1.10.1": [
                   "common#default"
                 ],
-                "com.mojang:authlib:7.0.62": [
+                "com.mojang:authlib:7.0.63": [
                   "common#default"
                 ],
                 "org.lwjgl:lwjgl-freetype:3.4.1": [
@@ -16016,17 +16016,17 @@
                 "1.17": "f425401a00adf0112fde624ee80c66333530f8a1",
                 "1.18": "d31a2e85ae149dd1b1a7070b22cb8887892fda6c",
                 "1.19": "a9c8b05a8082a65678beda6dfa2b8f21fa627bce",
-                "5": "ae6ddd3fd3d7da403c5aac7b0636a51f0e93d954",
-                "12": "ff0e8549175c374f76c73a34c940a4093db10997",
-                "16": "fd115a7b331ebaf3bacfd0980822122fdbaf4fc5",
-                "17": "72486eed4c004d6be65238018e107ca3456ac7c5",
-                "18": "4a07592383691673cebfd2563e3a73cb577cdd5d",
-                "19": "617eddee1cc6d2f0082ee758dbc4eda822055d90",
-                "24": "2d2dc31a4732f7adf40f359db18c93ae371b3647",
-                "26": "9cf34198f6a31646047f992765478a53a5c445d7",
-                "27": "52fabdeb0ab38e1ca9d389f58625ca521c8a9713",
-                "29": "863d838501cf9d9859d852ddbc6c7673fce00e56",
-                "30": "986e9ea6b69a981d90005601047d420902862d5c"
+                "5": "9b9ccd3b9fb47c9f3c148750e6d6c3f385752696",
+                "12": "d336b9ed7259ce248b3b093ea53811deb45c2d2b",
+                "16": "467241e9f44f914d7a08e99a0f56408ee6da43d4",
+                "17": "9b8e038bdac6a411b030ad0e9957d968a6cff2f2",
+                "18": "b3c339e949dfdc4e6908e3b4b45735d77a8268cf",
+                "19": "71b656469679a098eb9a47cc36ce5eae84da7801",
+                "24": "0e24b5db0eab9ac8c05631cc3338eb497f4c47c0",
+                "26": "48d459bc2a640a3f3d369c70274389a5ee9c2a65",
+                "27": "374a2e65977993dd6c4e6845f9ec2bd354fa11cd",
+                "29": "3a62d94df94bcbef68ee6514363c32603ac4449a",
+                "30": "c8333b47188ea66834801ea69434d65e3abebe6c"
               },
               "asset_urls": {
                 "pre-1.6": "https://launchermeta.mojang.com/v1/packages/3d8e55480977e32acd9844e545177e69a52f594b/pre-1.6.json",
@@ -16038,17 +16038,17 @@
                 "1.17": "https://piston-meta.mojang.com/v1/packages/f425401a00adf0112fde624ee80c66333530f8a1/1.17.json",
                 "1.18": "https://piston-meta.mojang.com/v1/packages/d31a2e85ae149dd1b1a7070b22cb8887892fda6c/1.18.json",
                 "1.19": "https://piston-meta.mojang.com/v1/packages/a9c8b05a8082a65678beda6dfa2b8f21fa627bce/1.19.json",
-                "5": "https://piston-meta.mojang.com/v1/packages/ae6ddd3fd3d7da403c5aac7b0636a51f0e93d954/5.json",
-                "12": "https://piston-meta.mojang.com/v1/packages/ff0e8549175c374f76c73a34c940a4093db10997/12.json",
-                "16": "https://piston-meta.mojang.com/v1/packages/fd115a7b331ebaf3bacfd0980822122fdbaf4fc5/16.json",
-                "17": "https://piston-meta.mojang.com/v1/packages/72486eed4c004d6be65238018e107ca3456ac7c5/17.json",
-                "18": "https://piston-meta.mojang.com/v1/packages/4a07592383691673cebfd2563e3a73cb577cdd5d/18.json",
-                "19": "https://piston-meta.mojang.com/v1/packages/617eddee1cc6d2f0082ee758dbc4eda822055d90/19.json",
-                "24": "https://piston-meta.mojang.com/v1/packages/2d2dc31a4732f7adf40f359db18c93ae371b3647/24.json",
-                "26": "https://piston-meta.mojang.com/v1/packages/9cf34198f6a31646047f992765478a53a5c445d7/26.json",
-                "27": "https://piston-meta.mojang.com/v1/packages/52fabdeb0ab38e1ca9d389f58625ca521c8a9713/27.json",
-                "29": "https://piston-meta.mojang.com/v1/packages/863d838501cf9d9859d852ddbc6c7673fce00e56/29.json",
-                "30": "https://piston-meta.mojang.com/v1/packages/986e9ea6b69a981d90005601047d420902862d5c/30.json"
+                "5": "https://piston-meta.mojang.com/v1/packages/9b9ccd3b9fb47c9f3c148750e6d6c3f385752696/5.json",
+                "12": "https://piston-meta.mojang.com/v1/packages/d336b9ed7259ce248b3b093ea53811deb45c2d2b/12.json",
+                "16": "https://piston-meta.mojang.com/v1/packages/467241e9f44f914d7a08e99a0f56408ee6da43d4/16.json",
+                "17": "https://piston-meta.mojang.com/v1/packages/9b8e038bdac6a411b030ad0e9957d968a6cff2f2/17.json",
+                "18": "https://piston-meta.mojang.com/v1/packages/b3c339e949dfdc4e6908e3b4b45735d77a8268cf/18.json",
+                "19": "https://piston-meta.mojang.com/v1/packages/71b656469679a098eb9a47cc36ce5eae84da7801/19.json",
+                "24": "https://piston-meta.mojang.com/v1/packages/0e24b5db0eab9ac8c05631cc3338eb497f4c47c0/24.json",
+                "26": "https://piston-meta.mojang.com/v1/packages/48d459bc2a640a3f3d369c70274389a5ee9c2a65/26.json",
+                "27": "https://piston-meta.mojang.com/v1/packages/374a2e65977993dd6c4e6845f9ec2bd354fa11cd/27.json",
+                "29": "https://piston-meta.mojang.com/v1/packages/3a62d94df94bcbef68ee6514363c32603ac4449a/29.json",
+                "30": "https://piston-meta.mojang.com/v1/packages/c8333b47188ea66834801ea69434d65e3abebe6c/30.json"
               },
               "version_assets": {
                 "b1.7.3": "pre-1.6",
@@ -16078,7 +16078,7 @@
                 "1.21.9": "27",
                 "1.21.10": "27",
                 "1.21.11": "29",
-                "26.1-pre-2": "30"
+                "26.1-pre-3": "30"
               }
             }
           }

@@ -314,7 +314,9 @@ https://maven.neoforged.net/releases/org/jline/jline-terminal/3.20.0/jline-termi
 https://maven.neoforged.net/releases/org/jline/jline-terminal/3.20.0/jline-terminal-3.20.0.jar 12125170e795519ba6dc8010c070b53c76aae92b485c1e37530e54ab5dd08d43
 https://maven.neoforged.net/releases/org/jspecify/jspecify/1.0.0/jspecify-1.0.0.jar 1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab
 https://maven.neoforged.net/releases/org/lwjgl/lwjgl-tinyfd/3.3.3/lwjgl-tinyfd-3.3.3.jar ee0515054ee19a3f4088426fee9d879eb2ee657b07e5064e4e2c851f6adcf14b
+https://maven.neoforged.net/releases/org/lwjgl/lwjgl-tinyfd/3.4.1/lwjgl-tinyfd-3.4.1.jar 3ffad01103b6cbc8c12c7156691fd87a96f063600a5ff5c9087d321c6736963a
 https://maven.neoforged.net/releases/org/lwjgl/lwjgl/3.3.3/lwjgl-3.3.3.jar dc9c7b2d48e8396d68895f8902ffa01e46253de44dfe927533ff09457ebfeec4
+https://maven.neoforged.net/releases/org/lwjgl/lwjgl/3.4.1/lwjgl-3.4.1.jar 9b1c3a3a078c2377219ecb8a2662730b3dece07c10592cf1d12f957286037b69
 https://maven.neoforged.net/releases/org/openjdk/nashorn/nashorn-core/15.4/nashorn-core-15.4.jar 6f816e84dfd63a81d4eaa7829c08337bbaff3ec683ff3bf6bbd90d017a00dc6f
 https://maven.neoforged.net/releases/org/openjdk/nashorn/nashorn-core/15.4/nashorn-core-15.4.jar 6f816e84dfd63a81d4eaa7829c08337bbaff3ec683ff3bf6bbd90d017a00dc6f
 https://maven.neoforged.net/releases/org/ow2/asm/asm-analysis/9.5/asm-analysis-9.5.jar 39f1cf1791335701c3b02cae7b2bc21057ec9a55b2240789cb6d552b2b2c62fa
