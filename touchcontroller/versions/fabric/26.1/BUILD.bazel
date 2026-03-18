@@ -102,6 +102,12 @@ fabric_merge_jij(
     } | touchcontroller_fabric_libraries | combine_fabric_libraries,
 )
 
+alias(
+    name = "26.1",
+    actual = "fabric",
+)
+
+
 java_binary(
     name = "dev_client",
     srcs = [],
