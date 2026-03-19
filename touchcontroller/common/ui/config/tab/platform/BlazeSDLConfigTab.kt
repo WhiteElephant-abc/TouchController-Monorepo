@@ -11,6 +11,7 @@ import top.fifthlight.combine.modifier.placement.padding
 import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.widget.layout.Column
 import top.fifthlight.touchcontroller.assets.Texts
+import top.fifthlight.touchcontroller.common.config.data.StatusConfig
 import top.fifthlight.touchcontroller.common.config.platform.BlazeSDLPlatformConfig
 import top.fifthlight.touchcontroller.common.ui.config.model.LocalConfigScreenModel
 import top.fifthlight.touchcontroller.common.ui.config.tab.Tab
@@ -24,6 +25,7 @@ object BlazeSDLConfigTab : Tab() {
         titleId = Texts.SCREEN_CONFIG_PLATFORM_TITLE,
         group = null,
         index = 2,
+        onReset = { copy(platform = platform.copy(blazesdl = BlazeSDLPlatformConfig())) },
     )
 
     @Composable
@@ -48,14 +50,14 @@ object BlazeSDLConfigTab : Tab() {
                 }
             }
             SliderPreferenceItem(
-                title = Text.translatable(Texts.SCREEN_CONFIG_PLATFORM_BLAZESDL_VIBRATION_STRENGTH),
+                title = Text.translatable(Texts.SCREEN_CONFIG_PLATFORM_BLAZESDL_VIBRATION_STRENGTH_TITLE),
                 description = Text.translatable(Texts.SCREEN_CONFIG_PLATFORM_BLAZESDL_VIBRATION_STRENGTH_DESCRIPTION),
                 value = globalConfig.platform.blazesdl.vibrationStrength,
                 range = 0f..1f,
                 onValueChanged = { update { copy(vibrationStrength = it) } }
             )
             IntSliderPreferenceItem(
-                title = Text.translatable(Texts.SCREEN_CONFIG_PLATFORM_BLAZESDL_VIBRATION_LENGTH),
+                title = Text.translatable(Texts.SCREEN_CONFIG_PLATFORM_BLAZESDL_VIBRATION_LENGTH_TITLE),
                 description = Text.translatable(Texts.SCREEN_CONFIG_PLATFORM_BLAZESDL_VIBRATION_LENGTH_DESCRIPTION),
                 value = globalConfig.platform.blazesdl.vibrationLength,
                 range = 0..1000,

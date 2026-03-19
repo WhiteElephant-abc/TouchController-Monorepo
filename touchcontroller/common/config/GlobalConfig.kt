@@ -5,12 +5,14 @@ import top.fifthlight.touchcontroller.common.config.data.ChatConfig
 import top.fifthlight.touchcontroller.common.config.data.ControlConfig
 import top.fifthlight.touchcontroller.common.config.data.DebugConfig
 import top.fifthlight.touchcontroller.common.config.data.RegularConfig
+import top.fifthlight.touchcontroller.common.config.data.StatusConfig
 import top.fifthlight.touchcontroller.common.config.data.TouchRingConfig
 import top.fifthlight.touchcontroller.common.config.platform.PlatformConfig
 import top.fifthlight.touchcontroller.common.gal.itemlist.DefaultItemListProvider
 
 @Serializable
 data class GlobalConfig(
+    val status: StatusConfig = StatusConfig(),
     val regular: RegularConfig = RegularConfig(),
     val control: ControlConfig = ControlConfig(),
     val platform: PlatformConfig = PlatformConfig(),

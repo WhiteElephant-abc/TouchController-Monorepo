@@ -5,6 +5,7 @@ kt_merge_library(
     srcs = glob(["*.kt"]),
     merge_deps = [
         "//touchcontroller/common/config",
+        "//touchcontroller/common/config/data",
         "//touchcontroller/common/config/platform",
         "//touchcontroller/common/platform",
         "//touchcontroller/common/platform/blazesdl",

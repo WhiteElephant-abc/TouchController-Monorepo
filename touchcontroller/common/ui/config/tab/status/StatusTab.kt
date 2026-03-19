@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.data.TextColor
+import top.fifthlight.combine.layout.Alignment
 import top.fifthlight.combine.layout.Arrangement
 import top.fifthlight.combine.modifier.Modifier
 import top.fifthlight.combine.modifier.drawing.border
@@ -16,20 +17,50 @@ import top.fifthlight.combine.modifier.scroll.verticalScroll
 import top.fifthlight.combine.widget.layout.Column
 import top.fifthlight.combine.widget.ui.Text
 import top.fifthlight.touchcontroller.assets.Texts
+import top.fifthlight.touchcontroller.common.config.data.ControlConfig
+import top.fifthlight.touchcontroller.common.config.data.StatusConfig
+import top.fifthlight.touchcontroller.common.ui.config.model.LocalConfigScreenModel
 import top.fifthlight.touchcontroller.common.ui.config.tab.Tab
 import top.fifthlight.touchcontroller.common.ui.config.tab.TabOptions
 import top.fifthlight.touchcontroller.common.ui.config.tab.status.model.StatusTabModel
 import top.fifthlight.touchcontroller.common.ui.theme.LocalTouchControllerTheme
+import top.fifthlight.touchcontroller.common.ui.widget.ListButton
 
 object StatusTab : Tab() {
     override val options = TabOptions(
         titleId = Texts.SCREEN_CONFIG_STATUS_TITLE,
         group = null,
         index = 1,
+        onReset = { copy(status = StatusConfig()) },
     )
 
     @Composable
+    private fun StatusItem(
+        modifier: Modifier = Modifier,
+        title: Text,
+        description: Text,
+        selected: Boolean,
+        onClick: () -> Unit,
+    ) {
+        ListButton(
+            modifier = Modifier.then(modifier),
+            checked = selected,
+            onClick = onClick,
+        ) {
+            Column(
+                modifier = Modifier.alignment(Alignment.CenterLeft),
+                verticalArrangement = Arrangement.spacedBy(4),
+            ) {
+                Text(title)
+                Text(description)
+            }
+        }
+    }
+
+    @Composable
     override fun Content() {
+        val screenModel = LocalConfigScreenModel.current
+        val screenState by screenModel.uiState.collectAsState()
         val tabModel = remember { StatusTabModel() }
         val uiState by tabModel.uiState.collectAsState()
         Column(
@@ -66,6 +97,38 @@ object StatusTab : Tab() {
 
                 Text(Text.format(Texts.SCREEN_CONFIG_STATUS_DEBUG_INFO_SYSTEM, systemInfo.system))
                 Text(Text.format(Texts.SCREEN_CONFIG_STATUS_DEBUG_INFO_ARCHITECTURE, systemInfo.arch))
+            }
+
+            Text(Text.translatable(Texts.SCREEN_CONFIG_STATUS_STATUS_TITLE))
+
+            Column(Modifier.fillMaxWidth()) {
+                StatusItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = Text.translatable(Texts.SCREEN_CONFIG_STATUS_STATUS_ENABLE_TITLE),
+                    description = Text.translatable(Texts.SCREEN_CONFIG_STATUS_STATUS_ENABLE_DESCRIPTION),
+                    selected = screenState.config.status.status == StatusConfig.Status.ENABLED,
+                    onClick = {
+                        screenModel.updateConfig { copy(status = status.copy(status = StatusConfig.Status.ENABLED)) }
+                    }
+                )
+                StatusItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = Text.translatable(Texts.SCREEN_CONFIG_STATUS_STATUS_ONLY_VIEW_TITLE),
+                    description = Text.translatable(Texts.SCREEN_CONFIG_STATUS_STATUS_ONLY_VIEW_DESCRIPTION),
+                    selected = screenState.config.status.status == StatusConfig.Status.ONLY_VIEW,
+                    onClick = {
+                        screenModel.updateConfig { copy(status = status.copy(status = StatusConfig.Status.ONLY_VIEW)) }
+                    }
+                )
+                StatusItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = Text.translatable(Texts.SCREEN_CONFIG_STATUS_STATUS_DISABLE_TITLE),
+                    description = Text.translatable(Texts.SCREEN_CONFIG_STATUS_STATUS_DISABLE_DESCRIPTION),
+                    selected = screenState.config.status.status == StatusConfig.Status.DISABLED,
+                    onClick = {
+                        screenModel.updateConfig { copy(status = status.copy(status = StatusConfig.Status.DISABLED)) }
+                    }
+                )
             }
         }
     }
