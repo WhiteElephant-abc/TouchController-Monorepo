@@ -2,6 +2,7 @@ package top.fifthlight.touchcontroller.common.ui.config.tab.all
 
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import top.fifthlight.touchcontroller.common.ui.config.model.ConfigScreenModel
 import top.fifthlight.touchcontroller.common.ui.config.tab.about.AboutTab
 import top.fifthlight.touchcontroller.common.ui.config.tab.ItemTabs
@@ -13,13 +14,15 @@ import top.fifthlight.touchcontroller.common.ui.config.tab.general.RegularTab
 import top.fifthlight.touchcontroller.common.ui.config.tab.general.TouchRingTab
 import top.fifthlight.touchcontroller.common.ui.config.tab.layout.custom.CustomControlLayoutTab
 import top.fifthlight.touchcontroller.common.ui.config.tab.layout.preset.ManageControlPresetsTab
+import top.fifthlight.touchcontroller.common.ui.config.tab.platform.platformTab
 import top.fifthlight.touchcontroller.common.ui.config.tab.status.StatusTab
 
 fun getAllTabs(configScreenModel: ConfigScreenModel): PersistentList<Tab> {
     val itemTabs = ItemTabs(configScreenModel)
-    return persistentListOf(
+    return listOfNotNull(
         StatusTab,
         AboutTab,
+        platformTab,
         ManageControlPresetsTab,
         CustomControlLayoutTab,
         RegularTab,
@@ -29,7 +32,7 @@ fun getAllTabs(configScreenModel: ConfigScreenModel): PersistentList<Tab> {
         itemTabs.usableItemsTab,
         itemTabs.showCrosshairItemsTab,
         itemTabs.crosshairAimingItemsTab,
-    )
+    ).toPersistentList()
 }
 
 val allTabGroups = persistentListOf(

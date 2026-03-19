@@ -26,6 +26,7 @@ java_library(
     srcs = glob(["**/*.java"]),
     resource_strip_prefix = "blazesdl/resources",
     resources = glob(["resources/**"]) + [":fabric_mod_json"],
+    visibility = ["//visibility:public"],
     runtime_deps = [
         "//game/26.1:game_client",
         "@maven_blazesdl//:org_lwjgl_lwjgl_sdl_natives_linux",
@@ -39,6 +40,7 @@ java_library(
     ],
     deps = [
         ":game_access_widened",
+        "//blazesdl/api",
         "//game/26.1:game_client_libraries",
         "@maven_blazesdl//:org_lwjgl_lwjgl",
         "@maven_blazesdl//:org_lwjgl_lwjgl_sdl",

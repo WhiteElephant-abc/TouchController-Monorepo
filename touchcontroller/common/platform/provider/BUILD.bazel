@@ -9,6 +9,7 @@ kt_merge_library(
         "//touchcontroller/common/gal/window",
         "//touchcontroller/common/platform",
         "//touchcontroller/common/platform/android",
+        "//touchcontroller/common/platform/blazesdl",
         "//touchcontroller/common/platform/ios",
         "//touchcontroller/common/platform/proxy",
         "//touchcontroller/common/platform/wayland",
@@ -23,6 +24,7 @@ kt_merge_library(
     ],
     visibility = ["//touchcontroller:__subpackages__"],
     deps = [
+        "//blazesdl/api",
         "@maven//:org_jetbrains_kotlinx_kotlinx_coroutines_core_jvm",
         "@maven//:org_slf4j_slf4j_api",
     ],

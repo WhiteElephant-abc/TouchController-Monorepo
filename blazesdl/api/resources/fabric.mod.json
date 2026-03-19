@@ -1,0 +1,18 @@
+{
+	"schemaVersion": 1,
+	"id": "blazesdl-api",
+	"version": "${version}",
+	"name": "BlazeSDL API",
+	"description": "API for BlazeSDL.",
+	"authors": ["fifth_light"],
+	"license": "Apache-2.0",
+	"environment": "client",
+	"depends": {
+		"fabricloader": "*"
+	},
+	"custom": {
+		"modmenu": {
+			"badges": ["library"]
+		}
+	}
+}

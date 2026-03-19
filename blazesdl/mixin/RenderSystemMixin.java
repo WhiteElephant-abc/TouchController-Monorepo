@@ -8,7 +8,6 @@ import java.util.function.LongSupplier;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallbackI;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.sdl.*;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -19,8 +18,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.fifthlight.blazesdl.*;
+import top.fifthlight.blazesdl.BlazeSDL;
 import top.fifthlight.blazesdl.SDLError;
-import top.fifthlight.blazesdl.api.impl.BlazeSDLAPIImpl;
+import top.fifthlight.blazesdl.BlazeSDLAPIImpl;
+import top.fifthlight.blazesdl.api.BlazeSDLAPI;
 
 @Mixin(RenderSystem.class)
 public class RenderSystemMixin {
@@ -52,7 +53,6 @@ public class RenderSystemMixin {
     @Redirect(method = "pollEvents", at = @At(value = "INVOKE", target = "Lorg/lwjgl/glfw/GLFW;glfwPollEvents()V"))
     private static void overridePollEvents() {
         var minecraft = Minecraft.getInstance();
-        var apiImpl = BlazeSDLAPIImpl.getInstance();
         if (!(minecraft.getWindow() instanceof SDLWindow sdlWindow)) {
             GLFW.glfwPollEvents();
             return;
@@ -63,7 +63,7 @@ public class RenderSystemMixin {
         try (var stack = MemoryStack.stackPush()) {
             var event = SDL_Event.malloc(stack);
             while (SDLEvents.SDL_PollEvent(event)) {
-                if (apiImpl.handleEvent(event)) {
+                if (BlazeSDL.API.handleEvent(event)) {
                     continue;
                 }
 

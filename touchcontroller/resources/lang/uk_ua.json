@@ -18,6 +18,7 @@
 
 
 
+
   "touchcontroller.back": "< %s",
 
   "touchcontroller.screen.chat.title": "Чат та команди",
@@ -47,6 +48,12 @@
   "touchcontroller.screen.config.reset.layout_settings": "Налаштування макета",
   "touchcontroller.screen.config.reset.all_settings": "Усі налаштування",
   "touchcontroller.screen.config.reset.cancel": "Скасувати",
+
+
+
+
+
+
 
 
 

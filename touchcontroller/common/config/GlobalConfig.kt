@@ -6,12 +6,14 @@ import top.fifthlight.touchcontroller.common.config.data.ControlConfig
 import top.fifthlight.touchcontroller.common.config.data.DebugConfig
 import top.fifthlight.touchcontroller.common.config.data.RegularConfig
 import top.fifthlight.touchcontroller.common.config.data.TouchRingConfig
+import top.fifthlight.touchcontroller.common.config.platform.PlatformConfig
 import top.fifthlight.touchcontroller.common.gal.itemlist.DefaultItemListProvider
 
 @Serializable
 data class GlobalConfig(
     val regular: RegularConfig = RegularConfig(),
     val control: ControlConfig = ControlConfig(),
+    val platform: PlatformConfig = PlatformConfig(),
     val touchRing: TouchRingConfig = TouchRingConfig(),
     val debug: DebugConfig = DebugConfig(),
     val item: ItemConfig = ItemConfig.default(DefaultItemListProvider),

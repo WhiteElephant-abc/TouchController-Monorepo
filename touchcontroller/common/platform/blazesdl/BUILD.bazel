@@ -1,0 +1,19 @@
+load("//rule:merge_library.bzl", "kt_merge_library")
+
+kt_merge_library(
+    name = "blazesdl",
+    srcs = glob(["*.kt"]),
+    merge_deps = [
+        "//touchcontroller/common/config/platform",
+        "//touchcontroller/common/platform",
+        "//touchcontroller/proxy/message",
+        "//touchcontroller/resources/lang:text_binding",
+    ],
+    visibility = ["//touchcontroller:__subpackages__"],
+    deps = [
+        "//blazesdl/api",
+        "//combine/core/data",
+        "@maven//:org_slf4j_slf4j_api",
+        "@maven_blazesdl//:org_lwjgl_lwjgl_sdl",
+    ],
+)

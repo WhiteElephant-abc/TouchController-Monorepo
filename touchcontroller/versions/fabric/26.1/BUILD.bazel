@@ -99,6 +99,7 @@ fabric_merge_jij(
     visibility = ["//visibility:public"],
     deps = {
         "//combine/backend/minecraft/fabric/26.1:fabric_merged": "combine:=",
+        "//blazesdl/api": "blazesdl-api:=",
     } | touchcontroller_fabric_libraries | combine_fabric_libraries,
 )
 
@@ -106,7 +107,6 @@ alias(
     name = "26.1",
     actual = "fabric",
 )
-
 
 java_binary(
     name = "dev_client",
@@ -135,6 +135,7 @@ java_binary(
         "//game/26.1:game_client_libraries",
         # Classpath separator
         ":fabric_unmerged",
+        "//blazesdl:blazesdl_unmerged",
         "//combine/backend/minecraft/fabric/26.1:fabric_merged",
         "//rule/dev_launch_wrapper",
         "@maven_fabric_26_1//:io_github_llamalad7_mixinextras_fabric",

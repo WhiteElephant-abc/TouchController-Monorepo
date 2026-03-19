@@ -25,7 +25,7 @@ object StatusTab : Tab() {
     override val options = TabOptions(
         titleId = Texts.SCREEN_CONFIG_STATUS_TITLE,
         group = null,
-        index = 0,
+        index = 1,
     )
 
     @Composable

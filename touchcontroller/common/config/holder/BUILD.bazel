@@ -3,11 +3,12 @@ load("//rule:merge_library.bzl", "kt_merge_library")
 kt_merge_library(
     name = "holder",
     srcs = glob(["**/*.kt"]),
+    actual = True,
     kotlinc_opts = "//touchcontroller/common:kotlinc_opts",
     merge_deps = [
         "//touchcontroller/common/config",
+        "//touchcontroller/common/config/platform",
         "//touchcontroller/common/config/preset",
-        "//touchcontroller/common/config/preset/builtin",
         "//touchcontroller/common/config/preset/builtin/key",
         "//touchcontroller/common/config/widget",
         "//touchcontroller/common/gal/config",

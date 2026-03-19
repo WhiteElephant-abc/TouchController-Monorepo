@@ -1,0 +1,24 @@
+load("@bazel_skylib//rules:expand_template.bzl", "expand_template")
+load("@rules_java//java:defs.bzl", "java_library")
+load("//blazesdl:properties.bzl", "blazesdl_version")
+
+expand_template(
+    name = "fabric_mod_json",
+    out = "fabric.mod.json",
+    substitutions = {
+        "${version}": blazesdl_version,
+    },
+    template = "resources/fabric.mod.json",
+)
+
+java_library(
+    name = "api",
+    srcs = glob(["**/*.java"]),
+    resource_strip_prefix = "blazesdl/api",
+    resources = [":fabric_mod_json"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@maven//:org_jspecify_jspecify",
+        "@maven_blazesdl//:org_lwjgl_lwjgl_sdl",
+    ],
+)

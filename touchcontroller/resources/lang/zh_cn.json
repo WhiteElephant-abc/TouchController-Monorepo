@@ -17,6 +17,7 @@
   "touchcontroller.platform.win32": "Win32",
   "touchcontroller.platform.wayland": "Wayland",
   "touchcontroller.platform.ios": "iOS",
+  "touchcontroller.platform.blazesdl": "BlazeSDL",
 
   "touchcontroller.back": "< %s",
 
@@ -54,6 +55,12 @@
   "touchcontroller.screen.config.status.debug_info.title": "调试信息",
   "touchcontroller.screen.config.status.debug_info.system": "系统：%s",
   "touchcontroller.screen.config.status.debug_info.architecture": "CPU 架构：%s",
+
+  "touchcontroller.screen.config.platform.title": "平台",
+  "touchcontroller.screen.config.platform.blazesdl.vibration_strength": "振动强度",
+  "touchcontroller.screen.config.platform.blazesdl.vibration_strength.description": "设置破坏方块时的振动强度",
+  "touchcontroller.screen.config.platform.blazesdl.vibration_length": "振动长度",
+  "touchcontroller.screen.config.platform.blazesdl.vibration_length.description": "设置破坏方块时的振动长度",
 
   "touchcontroller.screen.config.about.title": "关于",
   "touchcontroller.screen.config.about.authors.title": "作者：",

@@ -4,11 +4,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.updateAndGet
 import org.slf4j.LoggerFactory
+import top.fifthlight.mergetools.api.ActualConstructor
+import top.fifthlight.mergetools.api.ActualImpl
 import top.fifthlight.touchcontroller.common.config.GlobalConfig
 import top.fifthlight.touchcontroller.common.config.PresetConfig
 import top.fifthlight.touchcontroller.common.config.preset.PresetManager
-import top.fifthlight.touchcontroller.common.config.preset.builtin.BuiltinPresetsProviderImpl
 import top.fifthlight.touchcontroller.common.config.preset.builtin.key.BuiltinPresetKey
+import top.fifthlight.touchcontroller.common.config.platform.PlatformConfigProvider
 import top.fifthlight.touchcontroller.common.config.widget.WidgetPresetManager
 import top.fifthlight.touchcontroller.common.ext.combineStates
 import top.fifthlight.touchcontroller.common.ext.mapState
@@ -25,7 +27,12 @@ import kotlin.io.path.writeText
 import kotlin.jvm.java
 import kotlin.runCatching
 
-object GlobalConfigHolder {
+@ActualImpl(PlatformConfigProvider::class)
+object GlobalConfigHolder : PlatformConfigProvider {
+    @ActualConstructor
+    @JvmStatic
+    fun of(): PlatformConfigProvider = this
+
     private val logger = LoggerFactory.getLogger(GlobalConfigHolder::class.java)
     private val gameConfigEditor: GameConfigEditor = GameConfigEditorFactory.of()
     private val configDir = ConfigDirectoryProviderFactory.of().configDirectory
@@ -33,6 +40,8 @@ object GlobalConfigHolder {
 
     private val _config = MutableStateFlow(GlobalConfig.default)
     val config = _config.asStateFlow()
+    override val platformConfig
+        get() = config.mapState { it.platform }
 
     private val defaultPreset = BuiltinPresetKey.DEFAULT.preset
     val currentPreset = combineStates(config, PresetManager.presets) { config, presets ->

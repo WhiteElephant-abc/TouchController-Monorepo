@@ -17,6 +17,7 @@
   "touchcontroller.platform.win32": "Win32",
   "touchcontroller.platform.wayland": "Wayland",
   "touchcontroller.platform.ios": "iOS",
+  "touchcontroller.platform.blazesdl": "BlazeSDL",
 
   "touchcontroller.back": "< %s",
 
@@ -54,6 +55,12 @@
   "touchcontroller.screen.config.status.debug_info.title": "Debug info",
   "touchcontroller.screen.config.status.debug_info.system": "System: %s",
   "touchcontroller.screen.config.status.debug_info.architecture": "CPU architecture: %s",
+
+  "touchcontroller.screen.config.platform.title": "Platform",
+  "touchcontroller.screen.config.platform.blazesdl.vibration_strength": "Vibration strength",
+  "touchcontroller.screen.config.platform.blazesdl.vibration_strength.description": "Set vibration strength when breaking blocks ",
+  "touchcontroller.screen.config.platform.blazesdl.vibration_length": "Vibration length",
+  "touchcontroller.screen.config.platform.blazesdl.vibration_length.description": "Set vibration length when breaking blocks ",
 
   "touchcontroller.screen.config.about.title": "About",
   "touchcontroller.screen.config.about.authors.title": "Authors: ",

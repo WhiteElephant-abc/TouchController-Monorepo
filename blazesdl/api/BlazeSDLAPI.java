@@ -1,11 +1,12 @@
 package top.fifthlight.blazesdl.api;
 
 import org.jspecify.annotations.NonNull;
-import top.fifthlight.blazesdl.api.impl.BlazeSDLAPIImpl;
+import org.jspecify.annotations.Nullable;
 
 public interface BlazeSDLAPI {
+    @Nullable
     static BlazeSDLAPI getInstance() {
-        return BlazeSDLAPIImpl.getInstance();
+        return BlazeSDLApiHolder.INSTANCE;
     }
 
     void registerEventHandler(@NonNull BlazeSDLEventHandler handler);

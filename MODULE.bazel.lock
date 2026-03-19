@@ -784,7 +784,7 @@
           "REPO_MAPPING:,neoform_1_21_8 +neoform+neoform_1_21_8_20250717_133445",
           "REPO_MAPPING:,neoform_1_21_9 +neoform+neoform_1_21_9_20250930_151910",
           "REPO_MAPPING:,neoform_26_1 +neoform+neoform_26_1_pre_3_1",
-          "FILE:@@//neoforge_pin.txt 84c9d1c76cd4796b9a68ec93219caa83ea64bb8d8a6c7f9b79c87685dc298e0e"
+          "FILE:@@//neoforge_pin.txt 74a49878306ad4a8e27b991bf08842f7377b3c5dd306bc8995301906b01df05a"
         ],
         "generatedRepoSpecs": {
           "forge_1_14_4_28_2_28": {
@@ -3429,13 +3429,15 @@
           "neoforge_org_lwjgl_lwjgl_tinyfd_3_4_1": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
-              "url": "https://maven.neoforged.net/releases/org/lwjgl/lwjgl-tinyfd/3.4.1/lwjgl-tinyfd-3.4.1.jar"
+              "url": "https://maven.neoforged.net/releases/org/lwjgl/lwjgl-tinyfd/3.4.1/lwjgl-tinyfd-3.4.1.jar",
+              "sha256": "3ffad01103b6cbc8c12c7156691fd87a96f063600a5ff5c9087d321c6736963a"
             }
           },
           "neoforge_org_lwjgl_lwjgl_3_4_1": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
-              "url": "https://maven.neoforged.net/releases/org/lwjgl/lwjgl/3.4.1/lwjgl-3.4.1.jar"
+              "url": "https://maven.neoforged.net/releases/org/lwjgl/lwjgl/3.4.1/lwjgl-3.4.1.jar",
+              "sha256": "9b1c3a3a078c2377219ecb8a2662730b3dece07c10592cf1d12f957286037b69"
             }
           },
           "neoforge_net_neoforged_srgutils_1_0_10": {
@@ -3828,7 +3830,7 @@
           "REPO_MAPPING:rules_java+,compatibility_proxy rules_java++compatibility_proxy+compatibility_proxy",
           "REPO_MAPPING:rules_java+,rules_cc rules_cc+",
           "REPO_MAPPING:rules_java++compatibility_proxy+compatibility_proxy,rules_java rules_java+",
-          "FILE:@@//neoform_pin.txt f5f349c33255eb0173480b40bd5ae23a8309aac7342a8267bffb9294168be7c6"
+          "FILE:@@//neoform_pin.txt d22e6e3a6f5f26af4e74bc2400439a2dac44eadceac85e8dc37b3745c9f3c817"
         ],
         "generatedRepoSpecs": {
           "mcp_1_14_4_20190829_143755": {
@@ -4555,7 +4557,8 @@
           "neoform_net_neoforged_installertools_installertools_4_0_16_fatjar": {
             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_jar",
             "attributes": {
-              "url": "https://maven.neoforged.net/releases/net/neoforged/installertools/installertools/4.0.16/installertools-4.0.16-fatjar.jar"
+              "url": "https://maven.neoforged.net/releases/net/neoforged/installertools/installertools/4.0.16/installertools-4.0.16-fatjar.jar",
+              "sha256": "f8e5d76e3a388a106cf8a77cb34c604cb03517806b9f5f20e8e2201b9ec671e4"
             }
           },
           "neoform_net_neoforged_vineflower_plugins_0_1_5": {

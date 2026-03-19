@@ -18,6 +18,7 @@
 
 
 
+
   "touchcontroller.back": "< %s",
 
   "touchcontroller.screen.chat.title": "Чат и команды",
@@ -47,6 +48,12 @@
   "touchcontroller.screen.config.reset.layout_settings": "Настройки наложения",
   "touchcontroller.screen.config.reset.all_settings": "Все настройки",
   "touchcontroller.screen.config.reset.cancel": "Отменить",
+
+
+
+
+
+
 
 
 

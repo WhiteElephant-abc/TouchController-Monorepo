@@ -1,4 +1,4 @@
-package top.fifthlight.blazesdl.api.impl;
+package top.fifthlight.blazesdl;
 
 import org.jspecify.annotations.NonNull;
 import org.lwjgl.sdl.SDL_Event;
@@ -8,12 +8,7 @@ import top.fifthlight.blazesdl.api.BlazeSDLEventHandler;
 import java.util.ArrayList;
 
 public class BlazeSDLAPIImpl implements BlazeSDLAPI {
-    private static final BlazeSDLAPIImpl instance = new BlazeSDLAPIImpl();
     private static final ArrayList<BlazeSDLEventHandler> eventHandlers = new ArrayList<>();
-
-    public static BlazeSDLAPIImpl getInstance() {
-        return instance;
-    }
 
     @Override
     public synchronized void registerEventHandler(@NonNull BlazeSDLEventHandler handler) {
