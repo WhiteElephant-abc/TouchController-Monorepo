@@ -47,6 +47,8 @@ kt_merge_library(
     ]),
     merge_deps = [
         "//touchcontroller/buildinfo",
+        "//touchcontroller/common/config",
+        "//touchcontroller/common/config/data",
         "//touchcontroller/common/config/holder",
         "//touchcontroller/common/event/block",
         "//touchcontroller/common/event/connection",

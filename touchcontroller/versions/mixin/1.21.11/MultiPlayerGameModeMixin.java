@@ -19,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import top.fifthlight.combine.backend.minecraft.item.v1_21_11.ItemImpl;
+import top.fifthlight.touchcontroller.common.config.GlobalConfig;
+import top.fifthlight.touchcontroller.common.config.data.StatusConfig;
 import top.fifthlight.touchcontroller.common.config.holder.GlobalConfigHolder;
 import top.fifthlight.touchcontroller.common.util.crosshair.CrosshairTargetHelper;
 import top.fifthlight.touchcontroller.extension.v1_21_11.GameModeWithBreakingProgress;
@@ -55,16 +57,19 @@ public abstract class MultiPlayerGameModeMixin implements GameModeWithBreakingPr
     protected abstract void startPrediction(ClientLevel world, PredictiveAction packetCreator);
 
     @Unique
-    private boolean touchcontroller$crosshairAimingContainItem(Item item) {
-        var globalConfigHolder = GlobalConfigHolder.INSTANCE;
-        var globalConfig = globalConfigHolder.getConfig().getValue();
-        return globalConfig.getItem().getCrosshairAimingItems().contains(new ItemImpl(item));
+    private boolean touchcontroller$crosshairAimingContainItem(GlobalConfig config, Item item) {
+        return config.getItem().getCrosshairAimingItems().contains(new ItemImpl(item));
     }
 
     @Unique
     public void touchcontroller$interactBefore(Player player, InteractionHand hand) {
+        var config = GlobalConfigHolder.INSTANCE.getConfig().getValue();
+        if (config.getStatus().getStatus() == StatusConfig.Status.DISABLED) {
+            return;
+        }
+
         var itemStack = player.getItemInHand(hand);
-        if (!touchcontroller$crosshairAimingContainItem(itemStack.getItem())) {
+        if (!touchcontroller$crosshairAimingContainItem(config, itemStack.getItem())) {
             return;
         }
 

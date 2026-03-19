@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import top.fifthlight.touchcontroller.common.config.data.StatusConfig;
 import top.fifthlight.touchcontroller.common.config.holder.GlobalConfigHolder;
 
 @Mixin(MouseHandler.class)
@@ -20,10 +21,10 @@ abstract class DisableMouseDirectionMixin {
     )
     private void turnPlayer(CallbackInfo ci) {
         var configHolder = GlobalConfigHolder.INSTANCE;
-        if (configHolder == null) {
+        var config = configHolder.getConfig().getValue();
+        if (config.getStatus().getStatus() == StatusConfig.Status.DISABLED) {
             return;
         }
-        var config = configHolder.getConfig().getValue();
         if (config.getRegular().getDisableMouseMove()) {
             ci.cancel();
         }

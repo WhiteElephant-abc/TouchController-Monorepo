@@ -4,6 +4,8 @@ import top.fifthlight.combine.data.Text
 import top.fifthlight.combine.data.TextFactory
 import top.fifthlight.combine.data.TextFactoryFactory
 import top.fifthlight.touchcontroller.assets.Texts
+import top.fifthlight.touchcontroller.common.config.data.StatusConfig
+import top.fifthlight.touchcontroller.common.config.holder.GlobalConfigHolder
 import top.fifthlight.touchcontroller.common.gal.action.GameAction
 import top.fifthlight.touchcontroller.common.gal.action.GameActionFactory
 import top.fifthlight.touchcontroller.common.platform.provider.PlatformProvider
@@ -12,6 +14,10 @@ import top.fifthlight.touchcontroller.common.platform.warning.WarningProvider
 
 object ConnectionEvents {
     fun onJoinedWorld() {
+        val config = GlobalConfigHolder.config.value
+        if (config.status.status == StatusConfig.Status.DISABLED) {
+            return
+        }
         val platform = PlatformProvider.platform
         if (platform == null) {
             GameAction.sendMessage(Text.translatable(Texts.WARNING_PROXY_NOT_CONNECTED))

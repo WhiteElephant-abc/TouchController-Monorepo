@@ -15,6 +15,7 @@ import net.minecraft.client.KeyMapping
 import top.fifthlight.combine.backend.minecraft.render.v1_21_11.CanvasImpl
 import top.fifthlight.combine.backend.minecraft.identifier.v1_21_11.toMinecraft
 import top.fifthlight.touchcontroller.buildinfo.BuildInfo
+import top.fifthlight.touchcontroller.common.config.data.StatusConfig
 import top.fifthlight.touchcontroller.common.config.holder.GlobalConfigHolder
 import top.fifthlight.touchcontroller.common.event.block.BlockBreakEvents
 import top.fifthlight.touchcontroller.common.event.connection.ConnectionEvents
@@ -66,7 +67,7 @@ class TouchController : ClientModInitializer {
         }
 
         WorldRenderEvents.BEFORE_BLOCK_OUTLINE.register { _, _ ->
-            ControllerHudModel.result.showBlockOutline
+            GlobalConfigHolder.config.value.status.status == StatusConfig.Status.DISABLED || ControllerHudModel.result.showBlockOutline
         }
         ClientTickEvents.END_CLIENT_TICK.register {
             TickEvents.clientTick()

@@ -14,6 +14,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import top.fifthlight.touchcontroller.common.config.data.StatusConfig;
+import top.fifthlight.touchcontroller.common.config.holder.GlobalConfigHolder;
 import top.fifthlight.touchcontroller.common.event.render.RenderEvents;
 import top.fifthlight.touchcontroller.common.model.ControllerHudModel;
 
@@ -42,6 +44,10 @@ public abstract class InGameHudMixin {
             cancellable = true
     )
     public void renderCrosshair(GuiGraphicsExtractor graphics, DeltaTracker tickCounter, CallbackInfo callbackInfo) {
+        var config = GlobalConfigHolder.INSTANCE.getConfig().getValue();
+        if (config.getStatus().getStatus() == StatusConfig.Status.DISABLED) {
+            return;
+        }
         var shouldRender = RenderEvents.INSTANCE.shouldRenderCrosshair();
         if (!shouldRender) {
             if (this.minecraft.options.attackIndicator().get() == AttackIndicatorStatus.CROSSHAIR) {
@@ -74,6 +80,10 @@ public abstract class InGameHudMixin {
             )
     )
     private void renderHotbar(GuiGraphicsExtractor context, DeltaTracker deltaTracker, CallbackInfo ci) {
+        var config = GlobalConfigHolder.INSTANCE.getConfig().getValue();
+        if (config.getStatus().getStatus() == StatusConfig.Status.DISABLED) {
+            return;
+        }
         var player = minecraft.player;
         if (player != null) {
             var controllerHudModel = ControllerHudModel.Global;

@@ -8,7 +8,10 @@ import top.fifthlight.combine.paint.Canvas
 import top.fifthlight.data.IntOffset
 import top.fifthlight.data.Offset
 import top.fifthlight.touchcontroller.common.config.condition.input.BuiltinLayerCondition
+import top.fifthlight.touchcontroller.common.config.data.StatusConfig
 import top.fifthlight.touchcontroller.common.config.holder.GlobalConfigHolder
+import top.fifthlight.touchcontroller.common.config.preset.LayoutPreset
+import top.fifthlight.touchcontroller.common.config.preset.info.PresetControlInfo
 import top.fifthlight.touchcontroller.common.event.window.WindowEvents
 import top.fifthlight.touchcontroller.common.gal.gamestate.GameState
 import top.fifthlight.touchcontroller.common.gal.player.PlayerHandleFactory
@@ -56,6 +59,10 @@ object RenderEvents {
         }
 
         val config = GlobalConfigHolder.config.value
+        if (config.status.status == StatusConfig.Status.DISABLED) {
+            return
+        }
+
         val playerHandle = PlayerHandleFactory.current()
         val platform = PlatformProvider.platform
         if (platform != null) {
@@ -157,7 +164,10 @@ object RenderEvents {
             keyBindingHandler.getState(DefaultKeyBindingType.SNEAK).clearLock()
         }
 
-        val preset = GlobalConfigHolder.currentPreset.value
+        val preset = when (config.status.status) {
+            StatusConfig.Status.ENABLED -> GlobalConfigHolder.currentPreset.value
+            StatusConfig.Status.ONLY_VIEW, StatusConfig.Status.DISABLED -> LayoutPreset()
+        }
         val currentPresetUuid = GlobalConfigHolder.currentPresetUuid.value
         if (ControllerHudModel.status.previousPresetUuid != currentPresetUuid) {
             ControllerHudModel.status.previousPresetUuid = currentPresetUuid
