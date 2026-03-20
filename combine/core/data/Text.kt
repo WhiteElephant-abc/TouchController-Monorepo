@@ -23,11 +23,20 @@ enum class TextColor {
     WHITE,
 }
 
+data class TextStyle(
+    val bold: Boolean = false,
+    val underline: Boolean = false,
+    val italic: Boolean = false,
+    val color: TextColor? = null,
+)
+
 interface TextBuilder {
     fun bold(bold: Boolean = true, block: TextBuilder.() -> Unit)
     fun underline(underline: Boolean = true, block: TextBuilder.() -> Unit)
     fun italic(italic: Boolean = true, block: TextBuilder.() -> Unit)
     fun color(color: TextColor, block: TextBuilder.() -> Unit)
+    fun style(textStyle: TextStyle, block: TextBuilder.() -> Unit)
+
     fun append(string: String)
     fun appendWithoutStyle(text: Text)
 }
@@ -58,6 +67,8 @@ interface Text {
     fun underline(): Text
     fun italic(): Text
     fun color(color: TextColor): Text
+    fun style(textStyle: TextStyle): Text
+
     fun copy(): Text
     operator fun plus(other: Text): Text
 

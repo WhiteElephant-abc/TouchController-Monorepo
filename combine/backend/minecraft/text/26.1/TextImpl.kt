@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
 import top.fifthlight.combine.data.TextColor
+import top.fifthlight.combine.data.TextStyle
 import top.fifthlight.combine.data.Text as CombineText
 
 fun TextColor.toFormatting() = when (this) {
@@ -26,6 +27,12 @@ fun TextColor.toFormatting() = when (this) {
     TextColor.WHITE -> ChatFormatting.WHITE
 }
 
+fun TextStyle.toVanilla() = Style.EMPTY
+    .withBold(bold)
+    .withUnderlined(underline)
+    .withItalic(italic)
+    .withColor(color?.toFormatting())
+
 class TextImpl(
     val inner: Component,
 ) : CombineText {
@@ -40,6 +47,9 @@ class TextImpl(
 
     override fun color(color: TextColor) =
         TextImpl(MutableComponent.create(inner.contents).withStyle(color.toFormatting()))
+
+    override fun style(textStyle: TextStyle) =
+        TextImpl(MutableComponent.create(inner.contents).withStyle(textStyle.toVanilla()))
 
     override fun copy(): CombineText = TextImpl(inner.copy())
 
