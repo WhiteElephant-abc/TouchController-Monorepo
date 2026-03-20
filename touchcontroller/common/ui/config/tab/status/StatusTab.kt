@@ -113,11 +113,20 @@ object StatusTab : Tab() {
                 )
                 StatusItem(
                     modifier = Modifier.fillMaxWidth(),
-                    title = Text.translatable(Texts.SCREEN_CONFIG_STATUS_STATUS_ONLY_VIEW_TITLE),
-                    description = Text.translatable(Texts.SCREEN_CONFIG_STATUS_STATUS_ONLY_VIEW_DESCRIPTION),
-                    selected = screenState.config.status.status == StatusConfig.Status.ONLY_VIEW,
+                    title = Text.translatable(Texts.SCREEN_CONFIG_STATUS_STATUS_ONLY_VIEW_CLICK_TO_INTERACT_TITLE),
+                    description = Text.translatable(Texts.SCREEN_CONFIG_STATUS_STATUS_ONLY_VIEW_CLICK_TO_INTERACT_DESCRIPTION),
+                    selected = screenState.config.status.status == StatusConfig.Status.ONLY_VIEW_CLICK_TO_INTERACT,
                     onClick = {
-                        screenModel.updateConfig { copy(status = status.copy(status = StatusConfig.Status.ONLY_VIEW)) }
+                        screenModel.updateConfig { copy(status = status.copy(status = StatusConfig.Status.ONLY_VIEW_CLICK_TO_INTERACT)) }
+                    }
+                )
+                StatusItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = Text.translatable(Texts.SCREEN_CONFIG_STATUS_STATUS_ONLY_VIEW_AIMING_BY_CROSSHAIR_TITLE),
+                    description = Text.translatable(Texts.SCREEN_CONFIG_STATUS_STATUS_ONLY_VIEW_AIMING_BY_CROSSHAIR_DESCRIPTION),
+                    selected = screenState.config.status.status == StatusConfig.Status.ONLY_VIEW_AIMING_BY_CROSSHAIR,
+                    onClick = {
+                        screenModel.updateConfig { copy(status = status.copy(status = StatusConfig.Status.ONLY_VIEW_AIMING_BY_CROSSHAIR)) }
                     }
                 )
                 StatusItem(

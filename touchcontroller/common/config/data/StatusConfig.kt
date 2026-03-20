@@ -8,7 +8,8 @@ data class StatusConfig(
 ) {
     enum class Status {
         DISABLED,
-        ONLY_VIEW,
+        ONLY_VIEW_CLICK_TO_INTERACT,
+        ONLY_VIEW_AIMING_BY_CROSSHAIR,
         ENABLED,
     }
 }

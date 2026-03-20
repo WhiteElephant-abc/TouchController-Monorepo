@@ -58,8 +58,10 @@
   "touchcontroller.screen.config.status.status.title": "状态",
   "touchcontroller.screen.config.status.status.enable.title": "启用",
   "touchcontroller.screen.config.status.status.enable.description": "启用 TouchController 的全部功能。",
-  "touchcontroller.screen.config.status.status.only_view.title": "仅视角移动",
-  "touchcontroller.screen.config.status.status.only_view.description": "禁用 TouchController 的图层、控件功能。你只能使用触控移动视角。",
+  "touchcontroller.screen.config.status.status.only_view.click_to_interact.title": "仅视角移动 - 点击屏幕交互",
+  "touchcontroller.screen.config.status.status.only_view.click_to_interact.description": "禁用 TouchController 的图层、控件功能。你只能使用触控圈。",
+  "touchcontroller.screen.config.status.status.only_view.aiming_by_crosshair.title": "仅视角移动 - 使用准心瞄准",
+  "touchcontroller.screen.config.status.status.only_view.aiming_by_crosshair.description": "禁用 TouchController 的图层、控件功能。你只能使用准心瞄准。",
   "touchcontroller.screen.config.status.status.disable.title": "禁用",
   "touchcontroller.screen.config.status.status.disable.description": "禁用 TouchController 的全部功能。",
 

@@ -166,7 +166,13 @@ object RenderEvents {
 
         val preset = when (config.status.status) {
             StatusConfig.Status.ENABLED -> GlobalConfigHolder.currentPreset.value
-            StatusConfig.Status.ONLY_VIEW, StatusConfig.Status.DISABLED -> LayoutPreset()
+            StatusConfig.Status.ONLY_VIEW_CLICK_TO_INTERACT, StatusConfig.Status.DISABLED -> LayoutPreset()
+            StatusConfig.Status.ONLY_VIEW_AIMING_BY_CROSSHAIR -> LayoutPreset(
+                controlInfo = PresetControlInfo(
+                    splitControls = true,
+                    disableCrosshair = false,
+                )
+            )
         }
         val currentPresetUuid = GlobalConfigHolder.currentPresetUuid.value
         if (ControllerHudModel.status.previousPresetUuid != currentPresetUuid) {
@@ -255,6 +261,9 @@ object RenderEvents {
 
     fun shouldRenderCrosshair(): Boolean {
         val config = GlobalConfigHolder.config.value
+        if (config.status.status == StatusConfig.Status.ONLY_VIEW_AIMING_BY_CROSSHAIR) {
+            return true
+        }
         val preset = GlobalConfigHolder.currentPreset.value
         if (!preset.controlInfo.disableCrosshair) {
             return true
